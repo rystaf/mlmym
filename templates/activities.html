@@ -1,0 +1,37 @@
+{{ $state := . }}
+  {{ range $i, $activity := .Activities}}
+      <div class="activity">
+    {{ if $activity.Comment }}
+    <div class="title{{ if eq $activity.Comment.Op "unread"}} orangered{{end}}">
+      {{ if not $state.User }}
+      <b>comment</b> on
+      {{ end }}
+      <a href="../post/{{ $activity.Comment.P.Post.ID}}">{{ $activity.Comment.P.Post.Name}}</a>
+      {{ if $state.User}}
+      by
+      <a href="">{{$state.User.PersonView.Person.Name }}</a>
+      {{ end }}
+      in
+      <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">/c/{{ $activity.Comment.P.Community.Name }}</a>
+    </div>
+        {{ template "comment.html" $activity.Comment }}
+    {{ else if $activity.Post }}
+        {{ template "post.html" $activity.Post }}
+    {{ else if $activity.Message }}
+    <div class="message">
+      <span class="meta{{ if not $activity.Message.PrivateMessage.Read }} orangered{{end}}">
+        <b>message</b>
+    {{ if eq $activity.Message.Creator.ID $state.Session.UserID }}
+        to
+        <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Recipient}}">{{ $activity.Message.Recipient.Name }}</a>
+    {{ else }}
+        from
+        <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Creator}}">{{ $activity.Message.Creator.Name }}</a>
+    {{end}}
+      sent {{ humanize $activity.Message.PrivateMessage.Published.Time }}
+      </span>
+    <div>{{ markdown "" $activity.Message.PrivateMessage.Content }}</div>
+    </div>
+    {{ end }}
+      </div>
+  {{ end }}

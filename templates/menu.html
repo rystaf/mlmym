@@ -1,0 +1,21 @@
+    <div class="menu">
+      {{ if contains .Sort "Top" }}
+      links from past:
+      <a {{ if eq .Sort "TopDay"}}class="selected"{{end}} href="{{ .SortBy "TopDay"}}">day</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopMonth"}}class="selected"{{end}} href="{{ .SortBy "TopMonth"}}">month</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopWeek"}}class="selected"{{end}} href="{{ .SortBy "TopWeek"}}">week</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopYear"}}class="selected"{{end}} href="{{ .SortBy "TopYear"}}">year</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopAll"}}class="selected"{{end}} href="{{ .SortBy "TopAll"}}">all time</a>
+      {{ end }}
+      {{ if and (ne .SearchType "Communities") (not (and .Session (not .Posts) (not .Community) (and .Listing "Subscribed"))) }}
+      popular in:
+      <a href="{{ .ListBy "All"}}" {{if eq .Listing "All"}}class="selected"{{end}}>Everywhere</a>
+      <span>-</span>
+      <a href="{{ .ListBy "Local"}}" {{if eq .Listing "Local"}}class="selected"{{end}}>Local</a>
+      {{ end }}
+
+    </div>

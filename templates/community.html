@@ -1,0 +1,18 @@
+<div class="community">
+    <form method="POST" class="member {{ membership .Subscribed }}">
+      <input name="op" type="submit" value="{{ membership .Subscribed}}">
+      <input type="hidden" name="communityid" value ="{{.Community.ID}}">
+    </form>
+    <span class="title"><a href="{{proxy .Community.ActorID}}">c/{{fullcname .Community}}: {{.Community.Title}}</a></span>
+  <div class="details">
+{{ if .Community.Description.IsValid }}
+    <div class="description">
+      {{markdown "poop" .Community.Description.String}}
+    </div>
+{{ end }}
+    <div class="gray">
+      {{printer .Counts.Subscribers}} subscribers,
+      a community founded {{ humanize .Community.Published.Time }}
+    </div>
+  </div>
+</div>

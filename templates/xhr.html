@@ -1,0 +1,10 @@
+{{ if .CommentID }}
+  {{ range $i, $comment := .Comments }}
+      {{ template "comment.html" $comment }}
+  {{ end }}
+{{ else }}
+  {{ range $post := .Posts }}
+
+    {{ template "post.html" $post }}
+  {{ end }}
+{{ end }}

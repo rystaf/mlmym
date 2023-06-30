@@ -1,0 +1,42 @@
+{{ $p := .Posts }}
+<form class="create" method="POST" enctype="multipart/form-data">
+  <div>
+    <label for="url">url</label>
+    <input type="text" name="url" id="url" 
+    {{- if and $p (index $p 0).Post.URL.IsValid }} value="{{(index $p 0).Post.URL.String}}"{{end -}}
+    >
+    <input type="file" name="file" accept="image/*">
+  </div>
+  <div>
+    <label class="required" for="title">title</label>
+    <textarea required name="name" id="title">{{ if $p }}{{ (index $p 0).Post.Name }}{{end}}</textarea>
+  </div>
+  <div>
+    <label for="body">body</label>
+    <textarea name="body" id="body">{{ if and $p (index $p 0).Post.Body.IsValid }}{{ (index $p 0).Post.Body.String }}{{end}}</textarea>
+  </div>
+  <div>
+    <label for="language">language</label>
+    <select name="language" id="language">
+      {{ range $language := .Site.AllLanguages }}
+      <option {{ if and $p (eq (index $p 0).Post.LanguageID .ID) }}selected {{ end }}value="{{ .ID }}">{{ .Name }}</option>
+      {{end}}
+    </select>
+  </div>
+  <div>
+    <label>nsfw<input type="checkbox" name="nsfw"></label>
+  </div>
+  {{ if not $p }}
+  <div>
+    <label class="required" for="community">community</label>
+    <input required type="text" name="communityname" id="community" {{ if .CommunityName }} value="{{.CommunityName}}"{{end}}>
+  </div>
+  {{ end }}
+  {{ if eq .Op "create_post" }}
+  <input type="submit" name="submit" value="submit">
+  <input type="hidden" name="op" value="create_post">
+  {{ else }}
+  <input type="submit" name="submit" value="save">
+  <input type="hidden" name="op" value="edit_post">
+  {{ end }}
+</form>

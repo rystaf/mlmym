@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+  <head>
+    <title>{{ if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ .Host }}{{end}}</title>
+    <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
+    <link rel="stylesheet" href="/_/static/style.css">
+  </head>
+  <body>
+    <noscript>
+      <style>
+      .expando-button {
+        display: none;
+      }
+      .comment .meta a.minimize {
+        display: none;
+      }
+      </style>
+    </noscript>
+
+    {{ template "nav.html" . -}}
+    {{ template "sidebar.html" . }}
+{{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
+    {{ template "menu.html" . }}
+{{ end}}
+    <main>
+
+{{ if .Error }}
+      <div class="error">{{.Error}}</div>
+{{ end }}
+
+{{ range .Posts }}
+    {{ template "post.html" . }}
+{{ end }}
+
+{{ if and .Session (not .Posts) (not .Community) (and .Listing "Subscribed") }}
+<h2>This is your home</h2>
+<p>When you find a community that you like, click the <span class="join">join</span> button</p>
+<p><a href="/{{.Host}}/search?searchtype=Communities">Click here</a> to find communities or <a href="/{{.Host}}?listingType=All&sort=TopDay">check out what's popular</a></p>
+{{ else if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
+<div class="error">there doesn't seem to be anything here</div>
+{{ end }}
+
+
+{{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (and (eq .CommentCount 200) (gt (index .Posts 0).Counts.Comments .CommentCount))) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
+    <div class="pager">
+      view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
+    </div>
+{{ end }}
+
+    <script src="/_/static/utils.js"></script>
+    </main>
+  </body>
+</html>

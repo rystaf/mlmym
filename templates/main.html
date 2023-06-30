@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+  <head>
+    <title>{{if ne .PostID 0}}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ .Host }}{{end}}</title>
+    <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
+    <link rel="stylesheet" href="/_/static/style.css">
+  </head>
+  <body>
+    <noscript>
+      <style>
+      .expando-button {
+        display: none;
+      }
+      .comment .meta a.minimize {
+        display: none;
+      }
+      </style>
+    </noscript>
+
+    {{ template "nav.html" . -}}
+    {{ template "sidebar.html" . }}
+{{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
+    {{ template "menu.html" . }}
+{{ end}}
+    <main>
+
+{{ if or (ne .Query "") .Communities }}
+      <form class="search" method="GET">
+        <div>search</div>
+        <div class="query">
+          <input type="text" name="q" value="{{.Query}}">
+          <input type="submit" value="search">
+        </div>
+        {{ if ne .SearchType "Communities" }}
+        <div>
+          <select name="searchtype">
+            <option value="Posts"{{ if eq .SearchType "Posts" }} selected{{ end }}>posts</option>
+            <option value="Comments"{{ if eq .SearchType "Comments" }} selected{{ end }}>comments</option>
+          </select>
+          <label>from
+            <input type="text" placeholder="everywhere" name="communityname" value="{{.CommunityName}}"></label>
+          <label>by
+            <input type="text" placeholder="anyone" name="username" value="{{.UserName}}"></label>
+        </div>
+        {{ else }}
+        <input type="hidden" name="searchtype" value="Communities">
+        {{ end }}
+      </form>
+{{ end}}
+
+{{ if .Error }}
+      <div class="error">{{.Error}}</div>
+{{ end }}
+
+{{ range .Communities }}
+    {{ template "community.html" . }}
+{{ end }}
+
+{{ if eq .Op "create_community" "edit_community" }}
+  {{ template "create_community.html" . }}
+{{ end }}
+
+{{ range .Posts }}
+    {{ template "post.html" . }}
+{{ end }}
+
+{{ if eq .Op "create_post" "edit_post" }}
+  {{ template "create_post.html" . }}
+{{ end }}
+
+{{ if .PostID }}
+  {{ if .CommentID}}
+      <div class="warning">you are viewing a single comment's thread<br>
+        <a href="../post/{{.PostID}}/#c{{.CommentID}}">view the rest of the comments</a>
+      </div>
+  {{ else }}
+      <div class="commentmenu">
+      {{if .Comments}}{{if gt .Page 1}}next{{else if or (lt .CommentCount 200) (lt (index .Posts 0).Counts.Comments .CommentCount) }}all{{else}}top{{end}} {{.CommentCount}} comments{{else}} no comments (yet){{end}}
+        <div>
+          sorted by:
+          <a {{ if eq .Sort "Hot"}}class="selected"{{end}} href="{{ .SortBy "Hot"}}">hot</a>
+          <a {{ if eq .Sort "Top"}}class="selected"{{end}} href="{{ .SortBy "Top"}}">top</a>
+          <a {{ if eq .Sort "New"}}class="selected"{{end}} href="{{ .SortBy "New"}}">new</a>
+          <a {{ if eq .Sort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
+        </div>
+      </div>
+    {{ if and .Session (ne .Op "edit_post") }}
+      <form class="savecomment" method="POST">
+        <div>
+          <textarea required name="content" {{ if (index .Posts 0).Post.Deleted }} disabled {{end}}></textarea>
+        </div>
+        <input type="hidden" name="op" value="create_comment">
+        <input type="submit" value="save"{{ if (index .Posts 0).Post.Deleted }} disabled {{end}}>
+      </form>
+    {{ end }}
+  {{ end }}
+{{ end}}
+
+
+{{ range $i, $comment := .Comments }}
+    {{ template "comment.html" $comment }}
+{{ end }}
+
+{{ if eq .Op "send_message" }}
+{{ template "send_message.html" . }}
+{{ else }}
+{{ template "activities.html" . }}
+{{ end }}
+
+{{ if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
+<div class="error">there doesn't seem to be anything here</div>
+{{ end }}
+
+
+{{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (and (eq .CommentCount 200) (gt (index .Posts 0).Counts.Comments .CommentCount))) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
+    <div class="pager">
+      view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
+    </div>
+{{ end }}
+
+    <script src="/_/static/utils.js"></script>
+    </main>
+  </body>
+</html>

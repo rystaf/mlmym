@@ -1,0 +1,64 @@
+<nav>
+      <div class="communities">
+        <a href="/{{.Host}}">home</a>
+        <span> - </span>
+        <a href="/{{.Host}}?listingType=All">all</a>
+        |
+        {{ $last := (sub (len .TopCommunities) 1) }}
+        {{ $host := .Host }}
+        {{ range $i, $c := .TopCommunities}}
+        <a href="/{{$host}}/c/{{$c.Community.Name}}">{{$c.Community.Name}}</a>
+        {{ if ne $i $last }}<span> - </span>{{end}}
+        {{ end }}
+        <a href="/{{$host}}/search?searchtype=Communities" class="more">more »</a>
+      </div>
+      <div class="spacer">
+        <a href="/{{ .Host}}/">
+          <img class="icon" src="{{ if .Site }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
+        </a>
+      </div>
+      {{- if .Community }}
+      <a class="title" href="/{{ .Host}}//c/{{fullcname .Community.CommunityView.Community}}">{{fullcname .Community.CommunityView.Community}}</a>
+      {{ else if .User }}
+      <a class="title" href="/{{ .Host}}/u/{{fullname .User.PersonView.Person}}">{{fullname .User.PersonView.Person}}</a>
+      {{ else }}
+      <a class="title" href="/{{.Host}}">{{.Host}}</a>
+      {{- end -}}
+      {{- if eq .Op "create_post" "create_community" -}}
+      <span>: submit</span>
+      {{- else if eq .Op "edit_post" "edit_community" -}}
+      <span>: edit</span>
+      {{ else }}
+      {{- if ne .Query "" -}}
+      <span>: search</span>
+      {{ end }}
+      <ul>
+        {{ if .User }}
+        <li class="selected"><a href="">overview</a></li>
+        {{ else if .Comments -}}
+        <li class="selected"><a href="">comments</a></li>
+        {{ else if .Activities }}
+        <li class="selected"><a href="">mailbox</a></li>
+        {{ else }}
+        <li{{ if eq .Sort "Hot" }} class="selected"{{end}}><a href="{{ .SortBy "Hot" }}">hot</a></li>
+        <li{{ if eq .Sort "Active" }} class="selected"{{end}}><a href="{{ .SortBy "Active" }}">active</a></li>
+        <li{{ if eq .Sort "Old" }} class="selected"{{end}}><a href="{{ .SortBy "Old" }}">old</a></li>
+        <li{{ if eq .Sort "New" }} class="selected"{{end}}><a href="{{ .SortBy "New" }}">new</a></li>
+        <li{{ if eq .Sort "MostComments" }} class="selected"{{end}}><a href="{{ .SortBy "MostComments" }}">most comments</a></li>
+        <li{{ if eq .Sort "NewComments" }} class="selected"{{end}}><a href="{{ .SortBy "NewComments" }}">new comments</a></li>
+        <li{{ if contains .Sort "Top" }} class="selected"{{end}}><a href="{{ .SortBy "TopDay" }}">top</a></li>
+        {{ end }}
+      </ul>
+      {{ end }}
+      <div class="right">
+      {{ if .Session }}
+        <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>
+        |
+        <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>
+        |
+        <form method="POST"><input type="submit" name="op" value="logout"></form>
+      {{else}}
+      Want to join? <a href="/{{.Host}}/login">Log in</a> or <a href="/{{.Host}}/login">sign up</a> in seconds
+      {{end}}
+      </div>
+    </nav>

@@ -1,0 +1,120 @@
+{{ $host := .Host }}
+    <div class="{{ if .User }}user {{end}}side">
+
+{{ if eq .Query "" }}
+      <form method="GET" action="/{{.Host}}/search">
+        <input type="text" placeholder="search" name="q" value="{{.Query}}">
+  {{ if .User }}
+        <input type="hidden" name="username" value="{{.UserName}}">
+  {{ else if .Community }}
+        <input type="hidden" name="communityname" value="{{.CommunityName}}">
+  {{ end }}
+      </form>
+{{ end }}
+
+{{ if .User }}
+      <h1>{{ .User.PersonView.Person.Name }}</h1>
+      <b>{{ .User.PersonView.Counts.PostScore}}</b> post score <br>
+      <b>{{ .User.PersonView.Counts.CommentScore}}</b> comment score <br>
+      <div class="age">
+        {{ if .Session }}<span class="left">✉ <a href="/{{ $host}}/u/{{ fullname .User.PersonView.Person }}/message">send a message</a></span>{{end}}
+        <span title="{{ .User.PersonView.Person.Published.Time}}">joined {{ humanize .User.PersonView.Person.Published.Time }}</span>
+      </div>
+  {{ if .User.Moderates }}
+      MODERATOR OF
+      <div class="moderators">
+        {{ range $i, $mod := .User.Moderates }}
+        <div><a href="/{{$host}}/c/{{ fullcname $mod.Community}}">{{ $mod.Community.Name }}</a></div>
+        {{ end }}
+      </div>
+  {{ end }}
+{{ end }}
+
+{{ if not .Session -}}
+      <form class="login" method="post">
+        <input name="user" type="text" placeholder="username" maxlength="20">
+        <input name="pass" type="password" placeholder="password">
+        <div>
+          <input type="submit" name="op" value="login">
+        </div>
+      </form>
+{{ end }}
+
+{{ if .PostID }}
+      <div class="stats">
+        this post was submitted on {{ (index .Posts 0).Post.Published.Time.Format "01 Jan 2006" }}
+        <div><b><span>{{ (index .Posts 0).Counts.Score }}</span> points</b> ({{likedPerc (index .Posts 0).Counts}}% liked)</div>
+      </div>
+{{ end }}
+
+{{ if .Session }}
+      <div class="create">
+        <a href="/{{$host}}/create_post{{ if .Community }}?communityname={{.CommunityName}}{{ end }}"><div>Create a post »</div></a>
+        {{ if not .Community }}
+        <a href="/{{$host}}/create_community"><div>Create a community »</div></a>
+        {{ end }}
+      </div>
+{{ end }}
+
+{{ if and .Site (not .Community) }}
+  {{ if .Site.SiteView.Site.Banner.IsValid }}
+      <div class="banner" style="background-image: url({{ .Site.SiteView.Site.Banner }})"></div>
+  {{ else if .Site.SiteView.Site.Icon.IsValid }}
+      <div class="banner" style="background-image: url({{ .Site.SiteView.Site.Icon }})"></div>
+  {{ end }}
+      <h1>{{ .Site.SiteView.Site.Name }}</h1>
+      {{ printer .Site.SiteView.Counts.Users }} readers <br>
+      <span class="green" title="Users active in the last day"></span>
+      {{ printer .Site.SiteView.Counts.UsersActiveDay }} users here now
+      <p>{{ markdown .Host .Site.SiteView.Site.Sidebar.String }}</p>
+      <div class="age" title="{{ .Site.SiteView.Site.Published.Time}}">founded {{ humanize .Site.SiteView.Site.Published.Time }}</div>
+  {{ if .Site.Admins }}
+      ADMINS
+      <div class="moderators">
+    {{ range $i, $mod := .Site.Admins }}
+      <div><a href="/{{$host}}/u/{{ fullname $mod.Person}}">{{ fullname $mod.Person }}</a></div>
+    {{ end }}
+      </div>
+  {{ end }}
+{{ end }}
+
+
+{{ if .Community }}
+  {{ if .Community.CommunityView.Community.Banner.IsValid }}
+      <div class="banner" style="background-image: url({{ .Community.CommunityView.Community.Banner }})"></div>
+  {{ else if .Community.CommunityView.Community.Icon.IsValid }}
+      <div class="banner" style="background-image: url({{ .Community.CommunityView.Community.Icon }})"></div>
+  {{ end }}
+      <h1>{{ if ne .Community.CommunityView.Community.Title ""}}{{ .Community.CommunityView.Community.Title }}{{ else }}{{ .Community.CommunityView.Community.Name }}{{end}}</h1>
+  {{ if .Session }}
+      <form method="POST" class="member {{ membership .Community.CommunityView.Subscribed }}">
+        <input name="op" type="submit" value="{{ membership .Community.CommunityView.Subscribed}}">
+        <input name="communityid" type="hidden" value="{{ .Community.CommunityView.Community.ID }}">
+      </form>
+  {{ end }}
+      {{ .Community.CommunityView.Counts.Subscribers }} readers <br>
+      <span class="green" title="Users active in the last day"></span>
+      {{ .Community.CommunityView.Counts.UsersActiveDay }} users here now
+  {{ if and .Session (isMod .Community .Session.UserName) }}
+      <p class="gray">you are a moderator of this community</p>
+  {{ end }}
+      <p>{{ markdown .Host .Community.CommunityView.Community.Description.String }}</p>
+      <div class="age" title="{{ .Community.CommunityView.Counts.Published.Time}}">
+        founded {{ humanize .Community.CommunityView.Counts.Published.Time }}
+      </div>
+  {{ if and .Session (isMod .Community .Session.UserName) }}
+      MODERATOR TOOLS
+      <div class="moderators">
+        <a href="/{{.Host}}/c/{{.CommunityName}}?edit">community settings</a>
+      </div>
+  {{ end }}
+  {{ if .Community.Moderators }}
+      MODERATORS
+      <div class="moderators">
+        {{ range $i, $mod := .Community.Moderators }}
+        <div><a href="/{{$host}}/u/{{ fullname $mod.Moderator}}">{{ fullname $mod.Moderator }}</a></div>
+        {{ end }}
+      </div>
+  {{ end }}
+{{ end }}
+    </div>

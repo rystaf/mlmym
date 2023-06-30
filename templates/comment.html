@@ -1,0 +1,83 @@
+<div class="comment{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }} hidden{{end}}" id="c{{.P.Comment.ID}}" onclick="commentClick(event)">
+    <div class="meta">
+      {{ if .State.Session }}
+      <div class="score{{ if eq .P.MyVote.String "1"}} like{{ else if eq .P.MyVote.String "-1"}} dislike{{end}}">
+      <form class="link-btn" method="POST">
+        <input type="submit" name="vote" value="▲"> 
+        <div></div>
+        {{ if .P.MyVote.IsValid}}
+        <input type="hidden" name="undo" value="{{.P.MyVote.String}}">
+        {{ end}}
+        <input type="hidden" name="op" value="vote_comment">
+        <input type="hidden" name="commentid" value="{{.P.Comment.ID }}">
+        <input type="submit" value="▼"> 
+      </form>
+      </div>
+      {{ end }}
+      <a class="minimize" href="" for="c{{.P.Comment.ID}}">
+        {{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }}
+        [+]
+        {{ else }}
+        [-]
+        {{ end }}
+      </a>
+      <a {{if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">{{fullname .P.Creator}}</a>
+      {{.P.Counts.Score}} points <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
+            {{- if gt .P.Comment.Updated.Time.Unix .P.Comment.Published.Time.Unix -}}
+            * (last edited <span title="{{.P.Comment.Updated.Time}}">{{ humanize .P.Comment.Updated.Time }}</span>)
+            {{ end }}
+    </div>
+    {{ if eq .Op "edit" }}
+      <form class="savecomment" method="POST">
+        <div>
+          <textarea required name="content">{{ .P.Comment.Content }}</textarea>
+        </div>
+        <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
+        <input type="hidden" name="op" value="edit_comment">
+        <input type="submit" value="save">
+      </form>
+    {{ else }}
+    <div class="content{{ if and .Selected}} highlight{{end}}">{{if .P.Comment.Deleted}}[removed]{{else}}{{ markdown .State.Host .P.Comment.Content }}{{end}}</div>
+      {{ if eq .Op "source" }}<div><textarea>{{.P.Comment.Content}}</textarea></div>{{end}}
+    {{ end }}
+    <ul class="buttons">
+      <li><a href="/{{.State.Host}}/comment/{{.P.Comment.ID}}">permalink</a></li>
+      {{ if ne .Op "source"}}
+      <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?source">source</a></li>
+      {{ else }}
+      <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">hide source</a></li>
+      {{ end }}
+      {{ if and .State.Session (eq .P.Comment.CreatorID .State.Session.UserID) (ne .Op "edit")}}
+      <li><a class="edit" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?edit">edit</a></li>
+      <li>
+        <form class="delete" method="POST">
+          <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
+          <input type="hidden" name="op" value="delete_comment">
+          <input type="submit" value="delete">
+        </form>
+      </li>
+      {{ if ne .Op "reply"}}
+      <li><a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">reply</a></li>
+      {{ end }}
+      {{ end }}
+    </ul>
+    <div class="children">
+      {{ if eq .State.Op "reply" }}
+      <form class="savecomment" method="POST">
+        <div>
+          <textarea required name="content"></textarea>
+        </div>
+        <input type="hidden" name="parentid" value="{{.P.Comment.ID}}">
+        <input type="hidden" name="op" value="create_comment">
+        <input type="submit" value="save">
+      </form>
+      {{ end}}
+      {{ range $ci, $child := .C }}{{ template "comment.html" $child }}{{end}}
+    </div>
+    {{ if ne .P.Counts.ChildCount .ChildCount}}
+    <div class="morecomments">
+      <a class="loadmore" for="c{{ .P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">load more comments</a>
+      <span class="gray">({{ sub .P.Counts.ChildCount .ChildCount}} replies)</span>
+    </div>
+    {{end}}
+  </div>

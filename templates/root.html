@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+  <head>
+    <title>mlmym</title>
+    <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
+    <link rel="stylesheet" href="/_/static/style.css">
+  </head>
+  <body>
+    <nav>
+      <div class="spacer"></div>
+      <span class="title">mlmym</span>
+    </nav>
+    <form class="root" method="POST">
+      <label>Enter a <a href="https://join-lemmy.org/instances" target="blank_">lemmy</a> domain or url
+        <div>
+          <input type="text" name="destination">
+          <input type="submit" value="GO">
+        </div>
+      </label>
+{{ if .Error }}
+      <div class="error">{{.Error}}</div>
+{{ end }}
+    </form>
+  </body>
+</html>

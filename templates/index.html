@@ -1,0 +1,5 @@
+{{ if .XHR }}
+  {{ template "xhr.html" . }}
+{{ else }}
+  {{ template "main.html" . }}
+{{ end}}

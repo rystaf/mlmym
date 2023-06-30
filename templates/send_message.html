@@ -1,0 +1,13 @@
+<h2>send a private message</h2>
+<form class="create" method="POST">
+  <div>
+    <label class="required">to</label>
+    <input type="text" value="{{ fullname .User.PersonView.Person }}" disabled>
+  </div>
+  <div>
+    <label class="required">message</label>
+    <textarea required name="content"></textarea>
+  </div>
+  <input type="submit" name="submit" value="send">
+  <input type="hidden" name="userid" value="{{.User.PersonView.Person.ID}}">
+</form>

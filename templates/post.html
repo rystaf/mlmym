@@ -1,0 +1,68 @@
+      <div class="post {{if .Post.Deleted}}deleted{{end}}" onclick="postClick(event)">
+{{ if gt .Rank 0 }}
+        <div class="rank"> {{ .Rank }} </div>
+{{ end }}
+          <div class="score {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}">
+{{ if .State.Session }}
+          <form class="link-btn" method="POST">
+            <input type="submit" name="vote" value="▲"> 
+            {{ if .MyVote.IsValid}}
+            <input type="hidden" name="undo" value="{{.MyVote.String}}">
+            {{ end}}
+            <input type="hidden" name="op" value="vote_post">
+            <input type="hidden" name="postid" value="{{.Post.ID }}">
+            <div>{{ .Counts.Score }}</div>
+            <input type="submit" value="▼"> 
+          </form>
+{{ else }}
+<div style="margin-top: 19px;">{{ .Counts.Score }}</div>
+{{ end }}
+        </div>
+        <div class="thumb" style="background-image: url({{if .Post.ThumbnailURL.IsValid}}{{.Post.ThumbnailURL.String}}?format=jpg&thumbnail=96{{else if .Post.URL.IsValid}}/_/static/link.png{{else}}/_/static/text.png{{end}})"></div>
+        <div class="entry">
+          <div class="title">
+            <a href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ .Post.Name }}</a>
+            ({{ host . }})
+          </div>
+{{ if or (and .Post.Body.IsValid (ne .Post.Body.String "")) (isImage .Post.URL.String) }}
+          <div class="expando-button {{ if eq .Rank 0}}open{{ end }}"></div>
+{{ end }}
+          <div class="meta">
+            submitted
+            <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span>
+            {{- if gt .Post.Updated.Time.Unix .Post.Published.Time.Unix -}}
+            * (last edited <span title="{{.Post.Updated.Time}}">{{ humanize .Post.Updated.Time }}</span>)
+            {{ end }}
+            by
+            <a href="/{{ .State.Host }}/u/{{ fullname .Creator }}">{{ fullname .Creator }}</a>
+            to
+            <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">c/{{ fullcname .Community}}</a>
+          </div>
+          <div class="buttons">
+            <a href="/{{ .State.Host }}/post/{{ .Post.ID }}">{{ .Counts.Comments }} comments</a>
+            {{ if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
+            {{ if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
+            <form class="link-btn" method="POST">
+              <input type="hidden" name="postid" value="{{.Post.ID }}">
+              <input type="hidden" name="op" value="delete_post">
+              {{ if .Post.Deleted }}
+              <input type="submit" value="undelete">
+              <input type="hidden" name="undo" value="1">
+              {{ else }}
+              <input type="submit" value="delete">
+              {{ end }}
+            </form>
+            {{ end}}
+          </div>
+          <div class="expando {{ if eq .Rank 0 }}open{{ end}}">
+{{ if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
+            <div>{{ markdown .State.Host .Post.Body.String }}</div>
+{{ end }}
+{{ if isImage .Post.URL.String}}
+            <img loading="lazy" src="{{ .Post.URL }}">
+{{ end }}
+          </div>
+        </div>
+        <div></div>
+        <div class="clearleft"></div>
+      </div>
