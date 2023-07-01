@@ -40,7 +40,7 @@
       </form>
 {{ end }}
 
-{{ if .PostID }}
+{{ if and .PostID .Posts }}
       <div class="stats">
         this post was submitted on {{ (index .Posts 0).Post.Published.Time.Format "01 Jan 2006" }}
         <div><b><span>{{ (index .Posts 0).Counts.Score }}</span> points</b> ({{likedPerc (index .Posts 0).Counts}}% liked)</div>

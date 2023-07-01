@@ -109,12 +109,14 @@ var funcMap = template.FuncMap{
 		if err := md.Convert([]byte(body), &buf); err != nil {
 			panic(err)
 		}
-		converted := strings.Replace(buf.String(), `href="https://`+host, `href="/`+host, -1)
+		converted := buf.String()
 		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
+		re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
+		converted = re.ReplaceAllString(converted, `href="/$1`)
 		return template.HTML(converted)
 	},
 	"contains": strings.Contains,
-	"sub": func(a int, b int) int {
+	"sub": func(a int32, b int) int {
 		return int(a) - b
 	},
 }
@@ -522,7 +524,9 @@ func GetLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 	state.GetSite()
-	state.GetCaptcha()
+	if state.Site.SiteView.LocalSite.CaptchaEnabled {
+		state.GetCaptcha()
+	}
 	m, _ := url.ParseQuery(r.URL.RawQuery)
 	if len(m["alert"]) > 0 {
 		state.Alert = m["alert"][0]

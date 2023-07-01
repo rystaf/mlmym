@@ -11,11 +11,10 @@
         <span> - </span>
         <a href="/{{.Host}}?listingType=All">all</a>
         |
-        {{ $last := (sub (len .TopCommunities) 1) }}
         {{ $host := .Host }}
         {{ range $i, $c := .TopCommunities}}
         <a href="/{{$host}}/c/{{$c.Community.Name}}">{{$c.Community.Name}}</a>
-        {{ if ne $i $last }}<span> - </span>{{end}}
+        <span> - </span>
         {{ end }}
         <a href="/{{$host}}/search?searchtype=Communities" class="more">more »</a>
       </div>
@@ -54,7 +53,7 @@
           email
           <div><input {{ if and .Site .Site.SiteView.LocalSite.RequireEmailVerification }} required {{ end }}name="email" type="text"></div>
         </label>
-        {{ if and .Site (eq .Site.SiteView.LocalSite.RegistrationMode "requireapplication") }}
+        {{ if and .Site (or (eq .Site.SiteView.LocalSite.RegistrationMode "RequireApplication") (eq .Site.SiteView.LocalSite.RegistrationMode "requireapplication")) }}
         <div class="question">
           {{ markdown .Host .Site.SiteView.LocalSite.ApplicationQuestion.String }}
         </div>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
   <head>
-    <title>{{if ne .PostID 0}}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ .Host }}{{end}}</title>
+    <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ .Host }}{{end}}</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
     <link rel="stylesheet" href="/_/static/style.css">
   </head>
@@ -67,7 +67,7 @@
   {{ template "create_post.html" . }}
 {{ end }}
 
-{{ if .PostID }}
+{{ if and .PostID .Posts}}
   {{ if .CommentID}}
       <div class="warning">you are viewing a single comment's thread<br>
         <a href="../post/{{.PostID}}/#c{{.CommentID}}">view the rest of the comments</a>

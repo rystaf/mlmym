@@ -4,11 +4,10 @@
         <span> - </span>
         <a href="/{{.Host}}?listingType=All">all</a>
         |
-        {{ $last := (sub (len .TopCommunities) 1) }}
         {{ $host := .Host }}
         {{ range $i, $c := .TopCommunities}}
         <a href="/{{$host}}/c/{{$c.Community.Name}}">{{$c.Community.Name}}</a>
-        {{ if ne $i $last }}<span> - </span>{{end}}
+        <span> - </span>
         {{ end }}
         <a href="/{{$host}}/search?searchtype=Communities" class="more">more »</a>
       </div>
