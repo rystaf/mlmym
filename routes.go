@@ -220,9 +220,10 @@ type NodeInfo struct {
 	Software NodeSoftware `json:"software"`
 }
 
-func IsLemmy(domain string) bool {
+func IsLemmy(domain string, remoteAddr string) bool {
+	client := http.Client{Transport: NewAddHeaderTransport(remoteAddr)}
 	var nodeInfo NodeInfo
-	res, err := http.Get("https://" + domain + "/nodeinfo/2.0.json")
+	res, err := client.Get("https://" + domain + "/nodeinfo/2.0.json")
 	if err != nil {
 		return false
 	}
@@ -251,15 +252,21 @@ func PostRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		input = "https://" + input
 	}
 	dest, err := url.Parse(input)
-	if dest.Host != "" && IsLemmy(dest.Host) {
-		redirectUrl := "/" + dest.Host + dest.Path
-		if dest.RawQuery != "" {
-			redirectUrl = redirectUrl + "?" + dest.RawQuery
+	if dest.Host != "" {
+		state, _ := Initialize(dest.Host, r)
+		if err := state.LemmyError(dest.Host); err != nil {
+			data["Error"] = err
+		} else {
+			redirectUrl := "/" + dest.Host + dest.Path
+			if dest.RawQuery != "" {
+				redirectUrl = redirectUrl + "?" + dest.RawQuery
+			}
+			http.Redirect(w, r, redirectUrl, 302)
+			return
 		}
-		http.Redirect(w, r, redirectUrl, 302)
-		return
+	} else {
+		data["Error"] = "Invalid destination"
 	}
-	data["Error"] = "Invalid destination"
 	tmpl.Execute(w, data)
 }
 func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -271,7 +278,6 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state.Client.Token = ""
 	resp, err := state.Client.Site(context.Background(), types.GetSite{})
 	if err != nil {
-		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Server Error"))
 		return

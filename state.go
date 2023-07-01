@@ -211,6 +211,25 @@ func (state *State) ParseQuery(RawQuery string) {
 //
 //}
 
+func (state *State) LemmyError(domain string) error {
+	var nodeInfo NodeInfo
+	res, err := state.HTTPClient.Get("https://" + domain + "/nodeinfo/2.0.json")
+	if err != nil {
+		return err
+	}
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("Status Code: %v", res.StatusCode)
+	}
+	err = json.NewDecoder(res.Body).Decode(&nodeInfo)
+	if err != nil {
+		return err
+	}
+	if nodeInfo.Software.Name == "lemmy" {
+		return nil
+	}
+	return errors.New("Not a lemmy instance")
+}
+
 func (state *State) GetCaptcha() {
 	resp, err := state.Client.Captcha(context.Background(), types.GetCaptcha{})
 	if err != nil {
@@ -227,8 +246,8 @@ func (state *State) GetSite() {
 	state.Client.Token = ""
 	resp, err := state.Client.Site(context.Background(), types.GetSite{})
 	if err != nil {
-		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
+		state.Host = ""
 		return
 	}
 	state.Client.Token = token
@@ -420,7 +439,6 @@ func (state *State) GetCommunities() {
 		Limit: types.NewOptional(int64(20)),
 	})
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 	state.TopCommunities = resp.Communities

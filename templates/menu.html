@@ -11,11 +11,12 @@
       <span>-</span>
       <a {{ if eq .Sort "TopAll"}}class="selected"{{end}} href="{{ .SortBy "TopAll"}}">all time</a>
       {{ end }}
-      {{ if and (not .SearchType ) (not (and .Session (not .Posts) (not .Community) (and .Listing "Subscribed"))) }}
-      popular in:
-      <a href="{{ .ListBy "All"}}" {{if eq .Listing "All"}}class="selected"{{end}}>Everywhere</a>
+      <a href="{{ .ListBy "All"}}" {{if eq .Listing "All"}}class="selected"{{end}}>everywhere</a>
       <span>-</span>
-      <a href="{{ .ListBy "Local"}}" {{if eq .Listing "Local"}}class="selected"{{end}}>Local</a>
+      <a href="{{ .ListBy "Local"}}" {{if eq .Listing "Local"}}class="selected"{{end}}>local</a>
+      {{ if .Session }}
+      <span>-</span>
+      <a href="{{ .ListBy "Subscribed"}}" {{if eq .Listing "Subscribed"}}class="selected"{{end}}>subscribed</a>
       {{ end }}
 
     </div>

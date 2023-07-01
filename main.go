@@ -67,10 +67,14 @@ func init() {
 }
 func middleware(n httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if ps.ByName("host") != "" && !IsLemmy(ps.ByName("host")) {
-			http.Redirect(w, r, "/", 301)
-			return
-		}
+		//remoteAddr := r.RemoteAddr
+		//if r.Header.Get("CF-Connecting-IP") != "" {
+		//	remoteAddr = r.Header.Get("CF-Connecting-IP")
+		//}
+		//if ps.ByName("host") != "" && !IsLemmy(ps.ByName("host"), remoteAddr) {
+		//	http.Redirect(w, r, "/", 301)
+		//	return
+		//}
 		n(w, r, ps)
 	}
 }
@@ -79,8 +83,8 @@ func main() {
 	log.Println("serve", *addr)
 	router := httprouter.New()
 	router.ServeFiles("/:host/static/*filepath", http.Dir("public"))
-	router.GET("/", middleware(GetRoot))
-	router.POST("/", middleware(PostRoot))
+	router.GET("/", GetRoot)
+	router.POST("/", PostRoot)
 	router.GET("/:host/", middleware(GetFrontpage))
 	router.GET("/:host/search", middleware(Search))
 	router.POST("/:host/search", middleware(UserOp))
