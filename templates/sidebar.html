@@ -1,7 +1,7 @@
 {{ $host := .Host }}
     <div class="{{ if .User }}user {{end}}side">
 
-{{ if eq .Query "" }}
+{{ if not .SearchType }}
       <form method="GET" action="/{{.Host}}/search">
         <input type="text" placeholder="search" name="q" value="{{.Query}}">
   {{ if .User }}

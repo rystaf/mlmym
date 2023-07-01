@@ -110,6 +110,7 @@ var funcMap = template.FuncMap{
 			panic(err)
 		}
 		converted := strings.Replace(buf.String(), `href="https://`+host, `href="/`+host, -1)
+		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
 		return template.HTML(converted)
 	},
 	"contains": strings.Contains,
@@ -126,7 +127,11 @@ func Initialize(Host string, r *http.Request) (State, error) {
 		Status: http.StatusOK,
 	}
 	state.ParseQuery(r.URL.RawQuery)
-	client := http.Client{Transport: NewAddHeaderTransport(r.RemoteAddr)}
+	remoteAddr := r.RemoteAddr
+	if r.Header.Get("CF-Connecting-IP") != "" {
+		remoteAddr = r.Header.Get("CF-Connecting-IP")
+	}
+	client := http.Client{Transport: NewAddHeaderTransport(remoteAddr)}
 	c, err := lemmy.NewWithClient("https://"+state.Host, &client)
 	if err != nil {
 		fmt.Println(err)
@@ -237,21 +242,19 @@ func PostRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.Write([]byte("500 - Server Error"))
 		return
 	}
-
-	var dest url.URL
+	input := r.FormValue("destination")
 	re := regexp.MustCompile(`^(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z
- ]{2,3})$`)
-	if re.MatchString(r.FormValue("destination")) {
-		dest.Host = r.FormValue("destination")
-	} else if u, err := url.Parse(r.FormValue("destination")); err == nil && u.Host != "" {
-		dest.Parse(u.String())
+ ]{2,3})`)
+	if re.MatchString(input) {
+		input = "https://" + input
 	}
+	dest, err := url.Parse(input)
 	if dest.Host != "" && IsLemmy(dest.Host) {
 		redirectUrl := "/" + dest.Host + dest.Path
 		if dest.RawQuery != "" {
 			redirectUrl = redirectUrl + "?" + dest.RawQuery
 		}
-		http.Redirect(w, r, redirectUrl, 301)
+		http.Redirect(w, r, redirectUrl, 302)
 		return
 	}
 	data["Error"] = "Invalid destination"
@@ -548,7 +551,6 @@ func Search(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.SearchType = "Comments"
 		case "Communities":
 			state.SearchType = "Communities"
-			state.Listing = "All"
 		}
 	}
 	state.Search(state.SearchType)

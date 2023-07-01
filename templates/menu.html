@@ -11,7 +11,7 @@
       <span>-</span>
       <a {{ if eq .Sort "TopAll"}}class="selected"{{end}} href="{{ .SortBy "TopAll"}}">all time</a>
       {{ end }}
-      {{ if and (ne .SearchType "Communities") (not (and .Session (not .Posts) (not .Community) (and .Listing "Subscribed"))) }}
+      {{ if and (not .SearchType ) (not (and .Session (not .Posts) (not .Community) (and .Listing "Subscribed"))) }}
       popular in:
       <a href="{{ .ListBy "All"}}" {{if eq .Listing "All"}}class="selected"{{end}}>Everywhere</a>
       <span>-</span>
