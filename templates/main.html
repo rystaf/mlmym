@@ -1,6 +1,7 @@
 <!DOCTYPE html>
   <head>
-    <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ .Host }}{{end}}</title>
+    <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ host .Host }}{{end}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
     <link rel="stylesheet" href="/_/static/style.css">
   </head>
@@ -17,7 +18,6 @@
     </noscript>
 
     {{ template "nav.html" . -}}
-    {{ template "sidebar.html" . }}
 {{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
     {{ template "menu.html" . }}
 {{ end}}
@@ -118,6 +118,7 @@
 {{ end }}
 
     <script src="/_/static/utils.js"></script>
+    {{ template "sidebar.html" . }}
     </main>
   </body>
 </html>

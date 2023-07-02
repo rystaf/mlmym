@@ -1,10 +1,12 @@
+{{ if not .State.XHR }}
       <div class="post {{if .Post.Deleted}}deleted{{end}}" onclick="postClick(event)">
-{{ if gt .Rank 0 }}
+  {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
+  {{ end }}
+          <div class="score">
 {{ end }}
-          <div class="score {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}">
 {{ if .State.Session }}
-          <form class="link-btn" method="POST">
+          <form class="link-btn {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}" method="POST" onsubmit="formSubmit(event)">
             <input type="submit" name="vote" value="▲"> 
             {{ if .MyVote.IsValid}}
             <input type="hidden" name="undo" value="{{.MyVote.String}}">
@@ -12,17 +14,18 @@
             <input type="hidden" name="op" value="vote_post">
             <input type="hidden" name="postid" value="{{.Post.ID }}">
             <div>{{ .Counts.Score }}</div>
-            <input type="submit" value="▼"> 
+            <input type="submit" name="vote" value="▼"> 
           </form>
 {{ else }}
 <div style="margin-top: 19px;">{{ .Counts.Score }}</div>
 {{ end }}
+{{ if not .State.XHR}}
         </div>
         <div class="thumb" style="background-image: url({{if .Post.ThumbnailURL.IsValid}}{{.Post.ThumbnailURL.String}}?format=jpg&thumbnail=96{{else if .Post.URL.IsValid}}/_/static/link.png{{else}}/_/static/text.png{{end}})"></div>
         <div class="entry">
           <div class="title">
             <a href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ .Post.Name }}</a>
-            ({{ host . }})
+            ({{ domain . }})
           </div>
 {{ if or (and .Post.Body.IsValid (ne .Post.Body.String "")) (isImage .Post.URL.String) }}
           <div class="expando-button {{ if eq .Rank 0}}open{{ end }}"></div>
@@ -66,3 +69,4 @@
         <div></div>
         <div class="clearleft"></div>
       </div>
+{{ end }}

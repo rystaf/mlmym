@@ -1,4 +1,12 @@
     <div class="menu">
+      listing: 
+      <a href="{{ .ListBy "All"}}" {{if eq .Listing "All"}}class="selected"{{end}}>all</a>
+      <span>-</span>
+      <a href="{{ .ListBy "Local"}}" {{if eq .Listing "Local"}}class="selected"{{end}}>local</a>
+      {{ if .Session }}
+      <span>-</span>
+      <a href="{{ .ListBy "Subscribed"}}" {{if eq .Listing "Subscribed"}}class="selected"{{end}}>subscribed</a>
+      {{ end }}
       {{ if contains .Sort "Top" }}
       links from past:
       <a {{ if eq .Sort "TopDay"}}class="selected"{{end}} href="{{ .SortBy "TopDay"}}">day</a>
@@ -10,13 +18,6 @@
       <a {{ if eq .Sort "TopYear"}}class="selected"{{end}} href="{{ .SortBy "TopYear"}}">year</a>
       <span>-</span>
       <a {{ if eq .Sort "TopAll"}}class="selected"{{end}} href="{{ .SortBy "TopAll"}}">all time</a>
-      {{ end }}
-      <a href="{{ .ListBy "All"}}" {{if eq .Listing "All"}}class="selected"{{end}}>everywhere</a>
-      <span>-</span>
-      <a href="{{ .ListBy "Local"}}" {{if eq .Listing "Local"}}class="selected"{{end}}>local</a>
-      {{ if .Session }}
-      <span>-</span>
-      <a href="{{ .ListBy "Subscribed"}}" {{if eq .Listing "Subscribed"}}class="selected"{{end}}>subscribed</a>
       {{ end }}
 
     </div>

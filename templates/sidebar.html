@@ -105,7 +105,7 @@
   {{ if and .Session (isMod .Community .Session.UserName) }}
       MODERATOR TOOLS
       <div class="moderators">
-        <a href="/{{.Host}}/c/{{.CommunityName}}?edit">community settings</a>
+        <a href="/{{.Host}}/c/{{.CommunityName}}/edit">community settings</a>
       </div>
   {{ end }}
   {{ if .Community.Moderators }}
