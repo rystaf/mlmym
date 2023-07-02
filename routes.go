@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -24,6 +25,12 @@ import (
 )
 
 var funcMap = template.FuncMap{
+	"host": func(host string) string {
+		if l := os.Getenv("LEMMY_DOMAIN"); l != "" {
+			return l
+		}
+		return host
+	},
 	"proxy": func(s string) string {
 		u, err := url.Parse(s)
 		if err != nil {
@@ -68,7 +75,7 @@ var funcMap = template.FuncMap{
 		}
 		return false
 	},
-	"host": func(p Post) string {
+	"domain": func(p Post) string {
 		if p.Post.URL.IsValid() {
 			l, err := url.Parse(p.Post.URL.String())
 			if err != nil {
@@ -111,8 +118,10 @@ var funcMap = template.FuncMap{
 		}
 		converted := buf.String()
 		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
-		re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
-		converted = re.ReplaceAllString(converted, `href="/$1`)
+		if os.Getenv("LEMMY_DOMAIN") != "" {
+			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
+			converted = re.ReplaceAllString(converted, `href="/$1`)
+		}
 		return template.HTML(converted)
 	},
 	"contains": strings.Contains,
@@ -124,17 +133,20 @@ var funcMap = template.FuncMap{
 func Initialize(Host string, r *http.Request) (State, error) {
 	state := State{
 		Host:   Host,
-		Sort:   "Hot",
 		Page:   1,
 		Status: http.StatusOK,
 	}
-	state.ParseQuery(r.URL.RawQuery)
+	lemmyDomain := os.Getenv("LEMMY_DOMAIN")
+	if lemmyDomain != "" {
+		state.Host = "."
+		Host = lemmyDomain
+	}
 	remoteAddr := r.RemoteAddr
 	if r.Header.Get("CF-Connecting-IP") != "" {
 		remoteAddr = r.Header.Get("CF-Connecting-IP")
 	}
 	client := http.Client{Transport: NewAddHeaderTransport(remoteAddr)}
-	c, err := lemmy.NewWithClient("https://"+state.Host, &client)
+	c, err := lemmy.NewWithClient("https://"+Host, &client)
 	if err != nil {
 		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
@@ -142,24 +154,26 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	}
 	state.HTTPClient = &client
 	state.Client = c
-	session, err := store.Get(r, state.Host)
-	if err == nil {
-		token, ok1 := session.Values["token"].(string)
-		username, ok2 := session.Values["username"].(string)
-		userid, ok3 := session.Values["id"].(int)
-		if ok1 && ok2 && ok3 {
+	token := getCookie(r, "jwt")
+	user := getCookie(r, "user")
+	parts := strings.Split(user, ":")
+	if len(parts) == 2 {
+		if id, err := strconv.Atoi(parts[1]); err == nil {
 			state.Client.Token = token
 			sess := Session{
-				UserName: username,
-				UserID:   userid,
+				UserName: parts[0],
+				UserID:   id,
 			}
 			state.Session = &sess
-			if state.Listing == "" {
-				state.Listing = "Subscribed"
-			}
 		}
 	}
-	if state.Listing == "" {
+	state.Listing = getCookie(r, "DefaultListingType")
+	state.Sort = getCookie(r, "DefaultSortType")
+	state.ParseQuery(r.URL.RawQuery)
+	if state.Sort == "" {
+		state.Sort = "Hot"
+	}
+	if state.Listing == "" || state.Session == nil && state.Listing == "Subscribed" {
 		state.Listing = "All"
 	}
 	return state, nil
@@ -183,6 +197,7 @@ func Render(w http.ResponseWriter, templateName string, state State) {
 	tmpl, err := GetTemplate(templateName)
 	if err != nil {
 		w.Write([]byte("500 - Server Error"))
+		fmt.Println(err)
 		return
 	}
 	if len(state.TopCommunities) == 0 {
@@ -410,11 +425,16 @@ func GetCreatePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 func GetCreateCommunity(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
 	if err != nil {
+		fmt.Println(err)
 		Render(w, "index.html", state)
 		return
 	}
 	state.GetSite()
 	state.Op = "create_community"
+	if ps.ByName("community") != "" {
+		state.GetCommunity(ps.ByName("community"))
+		state.Op = "edit_community"
+	}
 	Render(w, "index.html", state)
 }
 
@@ -427,6 +447,48 @@ func Inbox(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state.GetMessages()
 	Render(w, "index.html", state)
 	state.MarkAllAsRead()
+}
+func getCookie(r *http.Request, name string) string {
+	cookie, err := r.Cookie(name)
+	if err != nil {
+		return ""
+	}
+	return cookie.Value
+}
+func setCookie(w http.ResponseWriter, name string, value string) {
+	cookie := http.Cookie{
+		Name:  name,
+		Value: value,
+	}
+	http.SetCookie(w, &cookie)
+}
+func deleteCookie(w http.ResponseWriter, name string) {
+	cookie := http.Cookie{
+		Name:   name,
+		MaxAge: -1,
+	}
+	http.SetCookie(w, &cookie)
+}
+func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	state, err := Initialize(ps.ByName("host"), r)
+	if err != nil {
+		Render(w, "index.html", state)
+		return
+	}
+	switch r.Method {
+	case "POST":
+		fmt.Println(r.FormValue("DefaultSortType"))
+		for _, name := range []string{"DefaultSortType", "DefaultListingType"} {
+			setCookie(w, name, r.FormValue(name))
+		}
+		state.Listing = r.FormValue("DefaultListingType")
+		state.Sort = r.FormValue("DefaultSortType")
+	case "GET":
+		if state.Session != nil {
+			fmt.Println("get settings")
+		}
+	}
+	Render(w, "settings.html", state)
 }
 
 func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -496,7 +558,6 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		}
 	}
 	if token != "" {
-		session, err := store.Get(r, state.Host)
 		if err != nil {
 			state.Error = err
 			state.GetSite()
@@ -513,11 +574,10 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			// Error is nil when value is nil?
 			return
 		} else {
-			session.Values["username"] = myUser.LocalUserView.Person.Name
-			session.Values["id"] = myUser.LocalUserView.Person.ID
+			userid := strconv.Itoa(myUser.LocalUserView.Person.ID)
+			setCookie(w, "user", myUser.LocalUserView.Person.Name+userid)
 		}
-		session.Values["token"] = token
-		session.Save(r, w)
+		setCookie(w, "jwt", token)
 		r.URL.Path = "/" + state.Host
 		http.Redirect(w, r, r.URL.String(), 301)
 		return
@@ -598,10 +658,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			Follow:      true,
 		})
 	case "logout":
-		if session, err := store.Get(r, state.Host); err == nil {
-			session.Options.MaxAge = -1
-			session.Save(r, w)
-		}
+		deleteCookie(w, "jwt")
+		deleteCookie(w, "user")
 	case "login":
 		resp, err := state.Client.Login(context.Background(), types.Login{
 			UsernameOrEmail: r.FormValue("user"),
@@ -611,14 +669,10 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.Status = http.StatusUnauthorized
 		}
 		if resp.JWT.IsValid() {
-			session, err := store.Get(r, state.Host)
-			if err == nil {
-				state.GetUser(r.FormValue("user"))
-				session.Values["token"] = resp.JWT.String()
-				session.Values["username"] = state.User.PersonView.Person.Name
-				session.Values["id"] = state.User.PersonView.Person.ID
-				session.Save(r, w)
-			}
+			state.GetUser(r.FormValue("user"))
+			setCookie(w, "jwt", resp.JWT.String())
+			userid := strconv.Itoa(state.User.PersonView.Person.ID)
+			setCookie(w, "user", state.User.PersonView.Person.Name+":"+userid)
 		}
 	case "create_community":
 		state.GetSite()
@@ -804,6 +858,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			Score:  score,
 		}
 		state.Client.CreatePostLike(context.Background(), post)
+		if r.FormValue("xhr") != "" {
+			state.GetPost(postid)
+			state.XHR = true
+			Render(w, "index.html", state)
+			return
+		}
 	case "vote_comment":
 		var score int16
 		score = 1
@@ -819,6 +879,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			Score:     score,
 		}
 		state.Client.CreateCommentLike(context.Background(), post)
+		if r.FormValue("xhr") != "" {
+			state.XHR = true
+			state.GetComment(commentid)
+			Render(w, "index.html", state)
+			return
+		}
 	case "create_comment":
 		if ps.ByName("postid") != "" {
 			postid, _ := strconv.Atoi(ps.ByName("postid"))
@@ -872,4 +938,72 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	}
 	http.Redirect(w, r, r.URL.String(), 301)
+}
+func GetRouter() *httprouter.Router {
+	host := os.Getenv("LEMMY_DOMAIN")
+	router := httprouter.New()
+	if host == "" {
+		router.ServeFiles("/:host/static/*filepath", http.Dir("public"))
+		router.GET("/", GetRoot)
+		router.POST("/", PostRoot)
+		router.GET("/:host/", middleware(GetFrontpage))
+		router.GET("/:host/search", middleware(Search))
+		router.POST("/:host/search", middleware(UserOp))
+		router.GET("/:host/inbox", middleware(Inbox))
+		router.GET("/:host/login", middleware(GetLogin))
+		router.POST("/:host/login", middleware(SignUpOrLogin))
+		router.GET("/:host/settings", middleware(Settings))
+		router.POST("/:host/settings", middleware(Settings))
+		router.POST("/:host/", middleware(UserOp))
+		router.GET("/:host/icon.jpg", middleware(GetIcon))
+		router.GET("/:host/c/:community", middleware(GetFrontpage))
+		router.POST("/:host/c/:community", middleware(UserOp))
+		router.GET("/:host/c/:community/search", middleware(Search))
+		router.GET("/:host/c/:community/edit", middleware(GetCreateCommunity))
+		router.GET("/:host/post/:postid", middleware(GetPost))
+		router.POST("/:host/post/:postid", middleware(UserOp))
+		router.GET("/:host/comment/:commentid", middleware(GetComment))
+		router.GET("/:host/comment/:commentid/:op", middleware(GetComment))
+		router.POST("/:host/comment/:commentid", middleware(UserOp))
+		router.GET("/:host/u/:username", middleware(GetUser))
+		router.GET("/:host/u/:username/message", middleware(GetMessageForm))
+		router.POST("/:host/u/:username/message", middleware(SendMessage))
+		router.POST("/:host/u/:username", middleware(UserOp))
+		router.GET("/:host/u/:username/search", middleware(Search))
+		router.GET("/:host/create_post", middleware(GetCreatePost))
+		router.POST("/:host/create_post", middleware(UserOp))
+		router.GET("/:host/create_community", middleware(GetCreateCommunity))
+		router.POST("/:host/create_community", middleware(UserOp))
+	} else {
+		router.ServeFiles("/_/static/*filepath", http.Dir("public"))
+		router.GET("/", middleware(GetFrontpage))
+		router.GET("/search", middleware(Search))
+		router.POST("/search", middleware(UserOp))
+		router.GET("/inbox", middleware(Inbox))
+		router.GET("/login", middleware(GetLogin))
+		router.POST("/login", middleware(SignUpOrLogin))
+		router.GET("/settings", middleware(Settings))
+		router.POST("/settings", middleware(Settings))
+		router.POST("/", middleware(UserOp))
+		router.GET("/icon.jpg", middleware(GetIcon))
+		router.GET("/c/:community", middleware(GetFrontpage))
+		router.POST("/c/:community", middleware(UserOp))
+		router.GET("/c/:community/search", middleware(Search))
+		router.GET("/c/:community/edit", middleware(GetCreateCommunity))
+		router.GET("/post/:postid", middleware(GetPost))
+		router.POST("/post/:postid", middleware(UserOp))
+		router.GET("/comment/:commentid", middleware(GetComment))
+		router.GET("/comment/:commentid/:op", middleware(GetComment))
+		router.POST("/comment/:commentid", middleware(UserOp))
+		router.GET("/u/:username", middleware(GetUser))
+		router.GET("/u/:username/message", middleware(GetMessageForm))
+		router.POST("/u/:username/message", middleware(SendMessage))
+		router.POST("/u/:username", middleware(UserOp))
+		router.GET("/u/:username/search", middleware(Search))
+		router.GET("/create_post", middleware(GetCreatePost))
+		router.POST("/create_post", middleware(UserOp))
+		router.GET("/create_community", middleware(GetCreateCommunity))
+		router.POST("/create_community", middleware(UserOp))
+	}
+	return router
 }

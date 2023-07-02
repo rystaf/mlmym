@@ -176,41 +176,6 @@ func (state *State) ParseQuery(RawQuery string) {
 	}
 }
 
-//func (state *State) Build() {
-//	if state.Listing == "" {
-//		state.Listing = "All"
-//	}
-//	if state.Op == "create_post" {
-//		if state.CommunityName != "" {
-//			state.GetCommunity()
-//		}
-//		return
-//	}
-//	if state.CommentID > 0 {
-//		state.GetComment()
-//		state.GetPost()
-//		state.GetCommunity()
-//		return
-//	}
-//
-//	if state.UserName != "" {
-//		state.GetUser()
-//		return
-//	}
-//
-//	if state.PostID == 0 {
-//		state.GetPosts()
-//	} else {
-//		state.GetPost()
-//		state.GetComments()
-//	}
-//
-//	if state.CommunityName != "" {
-//		state.GetCommunity()
-//	}
-//
-//}
-
 func (state *State) LemmyError(domain string) error {
 	var nodeInfo NodeInfo
 	res, err := state.HTTPClient.Get("https://" + domain + "/nodeinfo/2.0.json")
@@ -255,6 +220,9 @@ func (state *State) GetSite() {
 }
 
 func (state *State) GetComment(commentid int) {
+	if state.Sort != "Hot" && state.Sort != "Top" && state.Sort != "Old" && state.Sort != "New" {
+		state.Sort = "Hot"
+	}
 	state.CommentID = commentid
 	cresp, err := state.Client.Comments(context.Background(), types.GetComments{
 		ParentID: types.NewOptional(state.CommentID),
@@ -284,6 +252,9 @@ func (state *State) GetComment(commentid int) {
 	}
 }
 func (state *State) GetComments() {
+	if state.Sort != "Hot" && state.Sort != "Top" && state.Sort != "Old" && state.Sort != "New" {
+		state.Sort = "Hot"
+	}
 	cresp, err := state.Client.Comments(context.Background(), types.GetComments{
 		PostID: types.NewOptional(state.PostID),
 		Sort:   types.NewOptional(types.CommentSortType(state.Sort)),
@@ -293,6 +264,7 @@ func (state *State) GetComments() {
 	})
 	if err != nil {
 		state.Status = http.StatusInternalServerError
+		fmt.Println(err)
 		return
 	}
 	state.CommentCount = len(cresp.Comments)

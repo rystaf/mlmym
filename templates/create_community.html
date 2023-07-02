@@ -1,8 +1,8 @@
 {{ $c := .Community }}
-<form class="create" method="POST" enctype="multipart/form-data">
+<form class="create" method="POST" {{ if eq .Op "edit_community" }} action="./" {{ end }} enctype="multipart/form-data">
   <div>
     <label class="required" for="name">name</label>
-    <input type="text" required name="name" id="name" value="{{ if $c }}{{ $c.CommunityView.Community.Name }}{{end}}">
+    <input type="text" required name="name" id="name" {{ if $c }}value="{{ $c.CommunityView.Community.Name }}" disabled{{end}}>
   </div>
   <div>
     <label class="required" for="title">display name</label>

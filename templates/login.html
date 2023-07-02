@@ -1,6 +1,6 @@
 <!DOCTYPE html>
   <head>
-    <title>{{ .Host }}: sign up or log in</title>
+    <title>{{ host .Host }}: sign up or log in</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
     <link rel="stylesheet" href="/_/static/style.css">
   </head>
@@ -23,7 +23,7 @@
           <img class="icon" src="{{ if .Site }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
         </a>
       </div>
-      <span class="title"><a class="title" href="/{{.Host}}">{{.Host}}</a> - sign up or login</span>
+      <span class="title"><a class="title" href="/{{.Host}}">{{ host .Host}}</a> - sign up or login</span>
     </nav>
 {{ if .Alert }}
     <div class="alert">
