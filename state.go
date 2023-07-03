@@ -537,7 +537,6 @@ func (state *State) GetCommunity(communityName string) {
 	if state.CommunityName == "" {
 		return
 	}
-	fmt.Println("Get community " + state.CommunityName)
 	resp, err := state.Client.Community(context.Background(), types.GetCommunity{
 		Name: types.NewOptional(state.CommunityName),
 	})

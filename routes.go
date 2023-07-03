@@ -198,6 +198,7 @@ func Render(w http.ResponseWriter, templateName string, state State) {
 	tmpl, err := GetTemplate(templateName)
 	if err != nil {
 		w.Write([]byte("500 - Server Error"))
+		fmt.Println(err)
 		return
 	}
 	if len(state.TopCommunities) == 0 {
@@ -485,7 +486,6 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	switch r.Method {
 	case "POST":
-		fmt.Println(r.FormValue("DefaultSortType"))
 		for _, name := range []string{"DefaultSortType", "DefaultListingType"} {
 			setCookie(w, state.Host, name, r.FormValue(name))
 		}
@@ -500,7 +500,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.Sort = r.FormValue("DefaultSortType")
 	case "GET":
 		if state.Session != nil {
-			fmt.Println("get settings")
+			// TODO fetch server settings
 		}
 	}
 	Render(w, "settings.html", state)
@@ -653,7 +653,6 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		Render(w, "index.html", state)
 		return
 	}
-	fmt.Println("user op ", r.FormValue("op"))
 	switch r.FormValue("op") {
 	case "leave":
 		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
@@ -668,7 +667,6 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			Follow:      true,
 		})
 	case "logout":
-		fmt.Println("logout")
 		deleteCookie(w, state.Host, "jwt")
 		deleteCookie(w, state.Host, "user")
 	case "login":
@@ -838,7 +836,6 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	case "delete_post":
 		postid, _ := strconv.Atoi(r.FormValue("postid"))
-		fmt.Println("delete " + r.FormValue("postid"))
 		post := types.DeletePost{
 			PostID:  postid,
 			Deleted: true,
