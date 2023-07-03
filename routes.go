@@ -455,16 +455,24 @@ func getCookie(r *http.Request, name string) string {
 	}
 	return cookie.Value
 }
-func setCookie(w http.ResponseWriter, name string, value string) {
+func setCookie(w http.ResponseWriter, host string, name string, value string) {
+	if host == "." {
+		host = ""
+	}
 	cookie := http.Cookie{
 		Name:  name,
 		Value: value,
+		Path:  "/" + host,
 	}
 	http.SetCookie(w, &cookie)
 }
-func deleteCookie(w http.ResponseWriter, name string) {
+func deleteCookie(w http.ResponseWriter, host string, name string) {
+	if host == "." {
+		host = ""
+	}
 	cookie := http.Cookie{
 		Name:   name,
+		Path:   "/" + host,
 		MaxAge: -1,
 	}
 	http.SetCookie(w, &cookie)
@@ -479,13 +487,13 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case "POST":
 		fmt.Println(r.FormValue("DefaultSortType"))
 		for _, name := range []string{"DefaultSortType", "DefaultListingType"} {
-			setCookie(w, name, r.FormValue(name))
+			setCookie(w, state.Host, name, r.FormValue(name))
 		}
 		if r.FormValue("darkmode") != "" {
-			setCookie(w, "Dark", "1")
+			setCookie(w, state.Host, "Dark", "1")
 			state.Dark = true
 		} else {
-			deleteCookie(w, "Dark")
+			deleteCookie(w, state.Host, "Dark")
 			state.Dark = false
 		}
 		state.Listing = r.FormValue("DefaultListingType")
@@ -576,10 +584,10 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			return
 		}
 		state.GetUser(username)
-		setCookie(w, "jwt", token)
+		setCookie(w, state.Host, "jwt", token)
 		userid := strconv.Itoa(state.User.PersonView.Person.ID)
-		setCookie(w, "user", state.User.PersonView.Person.Name+":"+userid)
-		setCookie(w, "jwt", token)
+		setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
+		setCookie(w, state.Host, "jwt", token)
 		r.URL.Path = "/" + state.Host
 		http.Redirect(w, r, r.URL.String(), 301)
 		return
@@ -661,8 +669,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		})
 	case "logout":
 		fmt.Println("logout")
-		deleteCookie(w, "jwt")
-		deleteCookie(w, "user")
+		deleteCookie(w, state.Host, "jwt")
+		deleteCookie(w, state.Host, "user")
 	case "login":
 		resp, err := state.Client.Login(context.Background(), types.Login{
 			UsernameOrEmail: r.FormValue("user"),
@@ -673,9 +681,9 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 		if resp.JWT.IsValid() {
 			state.GetUser(r.FormValue("user"))
-			setCookie(w, "jwt", resp.JWT.String())
+			setCookie(w, state.Host, "jwt", resp.JWT.String())
 			userid := strconv.Itoa(state.User.PersonView.Person.ID)
-			setCookie(w, "user", state.User.PersonView.Person.Name+":"+userid)
+			setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
 		}
 	case "create_community":
 		state.GetSite()
