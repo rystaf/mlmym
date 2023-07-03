@@ -169,6 +169,7 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	}
 	state.Listing = getCookie(r, "DefaultListingType")
 	state.Sort = getCookie(r, "DefaultSortType")
+	state.Dark = getCookie(r, "Dark") != ""
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
 		state.Sort = "Hot"
@@ -480,6 +481,13 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		for _, name := range []string{"DefaultSortType", "DefaultListingType"} {
 			setCookie(w, name, r.FormValue(name))
 		}
+		if r.FormValue("darkmode") != "" {
+			setCookie(w, "Dark", "1")
+			state.Dark = true
+		} else {
+			deleteCookie(w, "Dark")
+			state.Dark = false
+		}
 		state.Listing = r.FormValue("DefaultListingType")
 		state.Sort = r.FormValue("DefaultSortType")
 	case "GET":
@@ -600,7 +608,7 @@ func Search(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 	if state.CommunityName != "" {
-		state.GetCommunity(ps.ByName("community"))
+		state.GetCommunity(state.CommunityName)
 	}
 	if state.UserName != "" {
 		state.GetUser(state.UserName)
@@ -744,8 +752,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			fmt.Println(err)
 		}
 	case "create_post":
-		state.CommunityName = r.FormValue("communityname")
-		state.GetCommunity("")
+		state.GetCommunity(state.CommunityName)
 		state.GetSite()
 		if state.Community == nil {
 			state.Status = http.StatusBadRequest
