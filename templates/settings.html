@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+  <head>
+    <title>{{  host .Host }}: preferences</title>
+    <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
+    <link rel="stylesheet" href="/_/static/style.css?1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body {{ if .Dark}}class="dark"{{end}}>
+    <nav>
+      <div class="communities">
+        <a href="/{{.Host}}">home</a>
+        <span> - </span>
+        <a href="/{{.Host}}?listingType=All">all</a>
+        |
+        {{ $host := .Host }}
+        {{ range $i, $c := .TopCommunities}}
+        <a href="/{{$host}}/c/{{$c.Community.Name}}">{{$c.Community.Name}}</a>
+        <span> - </span>
+        {{ end }}
+        <a href="/{{$host}}/search?searchtype=Communities" class="more">more »</a>
+      </div>
+      <div class="right">
+{{ if .Session }}
+        <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>
+        |
+        <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>
+        |
+        <a href="/{{.Host}}/settings">settings</a>
+        | 
+        <form method="POST"><input type="submit" name="op" value="logout"></form>
+{{else}}
+      Want to join? <a href="/{{.Host}}/login">Log in</a> or <a href="/{{.Host}}/login">sign up</a> in seconds
+        | 
+        <a href="/{{.Host}}/settings">settings</a>
+{{end}}
+      </div>
+      <div class="spacer">
+        <a href="/{{ .Host}}/">
+          <img class="icon" src="{{ if .Site }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
+        </a>
+      </div>
+      <span class="title"><a class="title" href="/{{.Host}}">{{host .Host}}</a> - settings</span>
+      <ul>
+        <li class="selected"><a href="">options</a></li>
+      </ul>
+    </nav>
+{{ if .Alert }}
+    <div class="alert">
+      {{ .Alert }}
+    </div>
+{{ end }}
+{{ if .Error }}
+    <div class="error">{{.Error}}</div>
+{{ end }}
+    <form class="preferences" method="POST">
+      <div>
+        <label>
+          default listing
+        </label>
+        <select name="DefaultListingType">
+          <option value="All"{{ if eq .Listing "All" }} selected{{end}}>All</option>
+          <option value="Local"{{ if eq .Listing "Local" }} selected{{end}}>Local</option>
+          <option value="Subscribed"{{ if eq .Listing "Subscribed" }} selected{{end}}>Subscribed</option>
+        </select>
+      </div>
+      <div>
+        <label>
+          default sort
+        </label>
+        <select name="DefaultSortType">
+          <option value="Hot"{{ if eq .Sort "Hot"}} selected{{end}}>Hot</option>
+          <option value="Active"{{ if eq .Sort "Active"}} selected{{end}}>Active</option>
+          <option value="New"{{ if eq .Sort "New"}} selected{{end}}>New</option>
+          <option value="Old"{{ if eq .Sort "Old"}} selected{{end}}>Old</option>
+          <option value="MostComments"{{ if eq .Sort "MostComments"}} selected{{end}}>Most Comments</option>
+          <option value="NewComments"{{ if eq .Sort "NewComments"}} selected{{end}}>New Comments</option>
+          <option value="TopHour"{{ if eq .Sort "TopHour"}} selected{{end}}>Top Hour</option>
+          <option value="TopSixHour"{{ if eq .Sort "TopSixHour"}} selected{{end}}>Top Six Hours</option>
+          <option value="TopTwelveHour"{{ if eq .Sort "TopTwelveHour"}} selected{{end}}>Top Twelve Hours</option>
+          <option value="TopDay"{{ if eq .Sort "TopDay"}} selected{{end}}>Top Day</option>
+          <option value="TopWeek"{{ if eq .Sort "TopWeek"}} selected{{end}}>Top Week</option>
+          <option value="TopMonth"{{ if eq .Sort "TopMonth"}} selected{{end}}>Top Month</option>
+          <option value="TopYear"{{ if eq .Sort "TopYear"}} selected{{end}}>Top Year</option>
+          <option value="TopAll"{{ if eq .Sort "TopAll"}} selected{{end}}>Top All Time</option></select>
+        </select>
+      </div>
+      <div>
+        <label>
+          dark mode
+        </label>
+        <input type="checkbox" name="darkmode" {{ if .Dark }}checked{{end}}>
+      <div>
+        <label></label>
+        <input type="submit" value="save">
+      </div>
+    </form>
+
+  </body>
+</html>
