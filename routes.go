@@ -461,9 +461,10 @@ func setCookie(w http.ResponseWriter, host string, name string, value string) {
 		host = ""
 	}
 	cookie := http.Cookie{
-		Name:  name,
-		Value: value,
-		Path:  "/" + host,
+		Name:   name,
+		Value:  value,
+		MaxAge: 86400 * 30,
+		Path:   "/" + host,
 	}
 	http.SetCookie(w, &cookie)
 }
