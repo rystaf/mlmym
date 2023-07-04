@@ -510,6 +510,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
 	if err != nil {
+		fmt.Println(err)
 		Render(w, "index.html", state)
 		return
 	}
@@ -517,11 +518,19 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	var username string
 	switch r.FormValue("submit") {
 	case "log in":
-		resp, err := state.Client.Login(context.Background(), types.Login{
+		login := types.Login{
 			UsernameOrEmail: r.FormValue("username"),
 			Password:        r.FormValue("password"),
-		})
+		}
+		if r.FormValue("totp") != "" {
+			login.Totp2faToken = types.NewOptional(r.FormValue("totp"))
+		}
+		resp, err := state.Client.Login(context.Background(), login)
 		if err != nil {
+			if strings.Contains(fmt.Sprintf("%v", err), "missing_totp_token") {
+				state.Op = "2fa"
+			}
+			fmt.Println(err)
 			state.Error = err
 			state.GetSite()
 			state.GetCaptcha()
@@ -577,13 +586,6 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		}
 	}
 	if token != "" {
-		if err != nil {
-			state.Error = err
-			state.GetSite()
-			state.GetCaptcha()
-			Render(w, "login.html", state)
-			return
-		}
 		state.GetUser(username)
 		setCookie(w, state.Host, "jwt", token)
 		userid := strconv.Itoa(state.User.PersonView.Person.ID)
@@ -671,18 +673,28 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		deleteCookie(w, state.Host, "jwt")
 		deleteCookie(w, state.Host, "user")
 	case "login":
-		resp, err := state.Client.Login(context.Background(), types.Login{
-			UsernameOrEmail: r.FormValue("user"),
-			Password:        r.FormValue("pass"),
-		})
-		if err != nil {
-			state.Status = http.StatusUnauthorized
+		login := types.Login{
+			UsernameOrEmail: r.FormValue("username"),
+			Password:        r.FormValue("password"),
 		}
-		if resp.JWT.IsValid() {
-			state.GetUser(r.FormValue("user"))
-			setCookie(w, state.Host, "jwt", resp.JWT.String())
-			userid := strconv.Itoa(state.User.PersonView.Person.ID)
-			setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
+		if r.FormValue("totp") != "" {
+			login.Totp2faToken = types.NewOptional(r.FormValue("totp"))
+		}
+		resp, err := state.Client.Login(context.Background(), login)
+		if err != nil {
+			if strings.Contains(fmt.Sprintf("%v", err), "missing_totp_token") {
+				state.Op = "2fa"
+				Render(w, "login.html", state)
+				return
+			}
+			state.Status = http.StatusUnauthorized
+		} else if resp.JWT.IsValid() {
+			state.GetUser(r.FormValue("username"))
+			if state.User != nil {
+				setCookie(w, state.Host, "jwt", resp.JWT.String())
+				userid := strconv.Itoa(state.User.PersonView.Person.ID)
+				setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
+			}
 		}
 	case "create_community":
 		state.GetSite()

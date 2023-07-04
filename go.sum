@@ -29,6 +29,8 @@ github.com/rystaf/go-lemmy v0.0.0-20230623191111-7ff8c74b1935 h1:zmzUz6PGRB8yQTT
 github.com/rystaf/go-lemmy v0.0.0-20230623191111-7ff8c74b1935/go.mod h1:nRSkTD+ARAHXtqlSPdf5q3hjHLP1ALsS1m5D3o86o+4=
 github.com/rystaf/go-lemmy v0.0.0-20230623191350-f39e3c8bdcb5 h1:MoI87uid2KqpLdUMZGK2HBOuxJMnPOJaar/4Og2PshM=
 github.com/rystaf/go-lemmy v0.0.0-20230623191350-f39e3c8bdcb5/go.mod h1:nRSkTD+ARAHXtqlSPdf5q3hjHLP1ALsS1m5D3o86o+4=
+github.com/rystaf/go-lemmy v0.0.0-20230704005320-c4b010dd339b h1:6z+gOUUvKwKQfgqEbxXS229gjr5V3HYg9bYbL9VHFdQ=
+github.com/rystaf/go-lemmy v0.0.0-20230704005320-c4b010dd339b/go.mod h1:nRSkTD+ARAHXtqlSPdf5q3hjHLP1ALsS1m5D3o86o+4=
 github.com/yuin/goldmark v1.5.4 h1:2uY/xC0roWy8IBEGLgB1ywIoEJFGmRrX21YQcvGZzjU=
 github.com/yuin/goldmark v1.5.4/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.elara.ws/go-lemmy v0.17.3 h1:644k23BS2xqKJHJ9cHd8eyt1INpb5myqsBQQL2chBiA=

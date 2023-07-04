@@ -35,6 +35,7 @@
       <div class="error">{{.Error}}</div>
 {{ end }}
     <div class="signup">
+{{ if ne .Op "2fa" }}
     <div>
       <h2>create a new account</h2>
       <form method="POST">
@@ -81,9 +82,10 @@
         <input type="submit" name="submit" value="sign up">
       </form>
     </div>
+{{ end }}
     <div>
       <h2>login</h2>
-      <form method="POST">
+      <form method="POST" action="/{{host .Host}}/login">
         <label>
           username
           <div><input required name="username" type="text"></div>
@@ -92,6 +94,12 @@
           password
           <div><input required name="password" type="password"></div>
         </label>
+        {{ if  eq .Op "2fa" }}
+        <label>
+          2fa code
+          <div><input required name="totp" type="text"></div>
+        </label>
+        {{ end }}
         <input type="submit" name="submit" value="log in">
       </form>
     </div>
