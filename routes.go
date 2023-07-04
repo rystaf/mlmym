@@ -118,7 +118,7 @@ var funcMap = template.FuncMap{
 		}
 		converted := buf.String()
 		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
-		if os.Getenv("LEMMY_DOMAIN") != "" {
+		if os.Getenv("LEMMY_DOMAIN") == "" {
 			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
 			converted = re.ReplaceAllString(converted, `href="/$1`)
 		}
