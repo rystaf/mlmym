@@ -7,6 +7,9 @@ body.dark {
   background-color: #262626;
   color: #ddd;
 }
+code {
+  word-wrap: break-word;
+}
 .dark a {
   color: #8cb3d9;
 }
