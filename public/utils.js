@@ -12,15 +12,12 @@ function request(url, params, callback) {
   xmlHttp.send(params);
 }
 function postClick(e) {
-  console.log(e)
   e = e || window.event;
   if (e.target.className.indexOf("expando-button") == -1) { return }
   var targ = e.currentTarget || e.srcElement || e;
   if (targ.nodeType == 3) targ = targ.parentNode;
   var bdy = targ.getElementsByClassName("expando")[0]
   var btn = targ.getElementsByClassName("expando-button")[0]
-  console.log(bdy.style.display)
-  console.log(bdy.style.display.indexOf("block"))
   if (bdy.className.indexOf("open")>-1) {
     bdy.className = 'expando';
     btn.className = "expando-button"
@@ -83,7 +80,6 @@ function commentClick(e) {
 function formSubmit(e) {
   e = e || window.event;
   var targ = e.currentTarget || e.srcElement || e;
-  console.log(e)
   e.preventDefault()
   var data = new FormData(targ)
   params = new URLSearchParams(data).toString()
@@ -98,7 +94,7 @@ function formSubmit(e) {
 function parse_youtube(url){
   var regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
   var match = url.match(regExp);
-  if (match.length > 1) {
+  if (match && match.length > 1) {
     return match[1]
   }
   return false
@@ -113,7 +109,6 @@ for (var i = 0; i < posts.length; i++) {
   if (id = parse_youtube(url)) {
     var btn = posts[i].getElementsByClassName("expando-button")[0]
     if (btn.className.indexOf("open") > -1) {
-      console.log(id)
       posts[i].getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
     } else {
       btn.className = "expando-button"
