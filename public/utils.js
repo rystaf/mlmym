@@ -24,9 +24,14 @@ function postClick(e) {
   if (bdy.className.indexOf("open")>-1) {
     bdy.className = 'expando';
     btn.className = "expando-button"
+    targ.getElementsByClassName("embed")[0].innerHTML = ""
   } else {
     bdy.className = 'expando open';
     btn.className = "expando-button open"
+    var url = targ.getElementsByClassName("url")[0].href
+    if (id = parse_youtube(url)) {
+      targ.getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
+    }
   }
 }
 function commentClick(e) {
@@ -88,4 +93,30 @@ function formSubmit(e) {
     targ.outerHTML = res
   })
   return false
+}
+
+function parse_youtube(url){
+  var regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+  var match = url.match(regExp);
+  if (match.length > 1) {
+    return match[1]
+  }
+  return false
+}
+function youtube_iframe(id) {
+  return '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'
+}
+
+var posts = document.getElementsByClassName("post")
+for (var i = 0; i < posts.length; i++) {
+  var url = posts[i].getElementsByClassName("url")[0].href
+  if (id = parse_youtube(url)) {
+    var btn = posts[i].getElementsByClassName("expando-button")[0]
+    if (btn.className.indexOf("open") > -1) {
+      console.log(id)
+      posts[i].getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
+    } else {
+      btn.className = "expando-button"
+    }
+  }
 }

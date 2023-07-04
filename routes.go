@@ -771,6 +771,9 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			fmt.Println(err)
 		}
 	case "create_post":
+		if state.CommunityName == "" {
+			state.CommunityName = r.FormValue("communityname")
+		}
 		state.GetCommunity(state.CommunityName)
 		state.GetSite()
 		if state.Community == nil {
