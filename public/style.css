@@ -447,13 +447,24 @@ form.nsfw div {
 .expando {
   display: none;
   max-width: 587px;
+  position: relative;
   color: #000;
 }
 .expando.open{
   display: block;
 }
-.expando img {
-  max-width: 100%;
+.expando .image {
+  display: inline-block;
+  overflow: hidden;
+  resize: both;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: top left;
+}
+.expando .image img {
+  visibility: hidden;
+  width: 100%;
 }
 .expando .md {
   background-color: #fafafa;
