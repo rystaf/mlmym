@@ -64,6 +64,20 @@ function commentClick(e) {
     }
     return false
   }
+  if (e.target.className.indexOf("hidechildren") != -1) {
+    if (e.target.getAttribute("for") != targ.id) { return }
+    e.preventDefault()
+    var btn = targ.getElementsByClassName("hidechildren")[0]
+    var children = targ.getElementsByClassName("children")[0]
+    if (children.className.indexOf("hidden") == -1) {
+      children.className = "children hidden"
+      btn.className = "hidechildren hidden"
+    } else {
+      children.className = "children"
+      btn.className = "hidechildren"
+    }
+    return false
+  }
   if ((e.target.className.indexOf("loadmore") != -1) ||
     (e.target.className.indexOf("edit") != -1) ||
     (e.target.className.indexOf("source") != -1) ||
@@ -76,6 +90,26 @@ function commentClick(e) {
     })
     return false
   }
+}
+function hideAllChildComments(e) {
+  e.preventDefault()
+  var comments = document.getElementsByClassName("comment")
+  for (var i = 0; i < comments.length; i++) {
+    var comment = comments[i]
+    var btn = comment.getElementsByClassName("hidechildren")
+    if (!btn.length) { continue }
+    btn = btn[0]
+    if (btn.getAttribute("for") != comment.id) { continue }
+    var children = comment.getElementsByClassName("children")[0]
+    if (children.className.indexOf("hidden") == -1) {
+      children.className = "children hidden"
+      btn.className = "hidechildren hidden"
+    } else {
+      children.className = "children"
+      btn.className = "hidechildren"
+    }
+  }
+  return false
 }
 function formSubmit(e) {
   e = e || window.event;

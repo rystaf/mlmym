@@ -66,7 +66,7 @@
       {{ printer .Site.SiteView.Counts.Users }} readers <br>
       <span class="green" title="Users active in the last day"></span>
       {{ printer .Site.SiteView.Counts.UsersActiveDay }} users here now
-      <p>{{ markdown .Host .Site.SiteView.Site.Sidebar.String }}</p>
+      {{ markdown .Host .Site.SiteView.Site.Sidebar.String }}
       <div class="age" title="{{ .Site.SiteView.Site.Published.Time}}">founded {{ humanize .Site.SiteView.Site.Published.Time }}</div>
   {{ if .Site.Admins }}
       ADMINS

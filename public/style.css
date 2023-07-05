@@ -389,9 +389,10 @@ form.nsfw div {
 .buttons a, .buttons form input, .comment .buttons form input {
   text-decoration: none;
   color: #888;
-  padding-right: 4px;
+  display: inline-block;
+  margin-right: 8px !important;
 }
-.buttons a:hover, .title a:hover, .buttons input:hover {
+.buttons a:hover, .title a:hover, .buttons form input:hover, .comment .buttons form input:hover {
   text-decoration: underline;
 }
 .entry {
@@ -431,7 +432,16 @@ form.nsfw div {
 .expando-button:hover{
   background-color: #466599;
 }
-.expando-button.hidden {
+.expando-button.hidden, .children.hidden {
+  display: none;
+}
+.hidechildren .show {
+  display: none;
+}
+.hidechildren.hidden .show {
+  display: inline;
+}
+.hidechildren.hidden .hide {
   display: none;
 }
 .expando {

@@ -66,6 +66,9 @@
               {{ end }}
             </form>
           {{end}}
+          {{ if .State.PostID }}
+            <a class="hidechildren" onclick="hideAllChildComments(event)" href="">hide all child comments</a>
+          {{ end }}
           </div>
           <div class="expando {{ if eq .Rank 0 }}open{{ end}}">
 {{ if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}

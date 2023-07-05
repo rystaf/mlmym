@@ -80,6 +80,9 @@
       </li>
   {{ end }}
 {{ end }}
+{{ if gt .ChildCount 0 }}
+      <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{ .ChildCount }}</span> child comments</a></li>
+{{ end }}
     </ul>
     <div class="children">
 {{ if and (eq .State.Op "reply") (eq .State.CommentID .P.Comment.ID)}}
