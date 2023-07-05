@@ -1,4 +1,4 @@
-{{ if .CommentID }}
+{{ if or .PostID .CommentID }}
   {{ range $i, $comment := .Comments }}
       {{ template "comment.html" $comment }}
   {{ end }}

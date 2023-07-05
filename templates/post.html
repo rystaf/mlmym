@@ -1,4 +1,4 @@
-{{ if not .State.XHR }}
+{{ if ne .State.Op "vote_post" }}
 <div class="post{{if .Post.Deleted}} deleted{{end}}{{ if or .Post.FeaturedCommunity .Post.FeaturedLocal }} distinguished{{end}}" onclick="postClick(event)">
   {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
@@ -19,7 +19,7 @@
 {{ else }}
 <div style="margin-top: 19px;">{{ .Counts.Score }}</div>
 {{ end }}
-{{ if not .State.XHR}}
+{{ if ne .State.Op "vote_post" }}
         </div>
         <div class="thumb"><div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{if .Post.ThumbnailURL.IsValid}}{{.Post.ThumbnailURL.String}}?format=jpg&thumbnail=96{{else if .Post.URL.IsValid}}/_/static/link.png{{else}}/_/static/text.png{{end}})"></div></div>
         <div class="entry">

@@ -351,7 +351,11 @@ func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	if state.Op == "" {
 		state.GetPosts()
 	}
-	Render(w, "frontpage.html", state)
+	if state.XHR {
+		Render(w, "xhr.html", state)
+	} else {
+		Render(w, "frontpage.html", state)
+	}
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -508,10 +512,11 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			setCookie(w, state.Host, name, r.FormValue(name))
 		}
 		if r.FormValue("darkmode") != "" {
-			setCookie(w, state.Host, "Dark", "1")
+			setCookie(w, "", "Dark", "1")
 			state.Dark = true
 		} else {
 			deleteCookie(w, state.Host, "Dark")
+			deleteCookie(w, "", "Dark")
 			state.Dark = false
 		}
 		if r.FormValue("shownsfw") != "" {
@@ -934,6 +939,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.Client.CreatePostLike(context.Background(), post)
 		if r.FormValue("xhr") != "" {
 			state.GetPost(postid)
+			state.PostID = 0
+			state.Op = "vote_post"
 			state.XHR = true
 			Render(w, "index.html", state)
 			return

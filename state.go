@@ -235,7 +235,7 @@ func (state *State) GetComment(commentid int) {
 		ParentID: types.NewOptional(state.CommentID),
 		Sort:     types.NewOptional(types.CommentSortType(state.Sort)),
 		Type:     types.NewOptional(types.ListingType("All")),
-		Limit:    types.NewOptional(int64(200)),
+		Limit:    types.NewOptional(int64(50)),
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -266,17 +266,9 @@ func (state *State) GetComments() {
 		PostID: types.NewOptional(state.PostID),
 		Sort:   types.NewOptional(types.CommentSortType(state.Sort)),
 		Type:   types.NewOptional(types.ListingType("All")),
-		Limit:  types.NewOptional(int64(200)),
+		Limit:  types.NewOptional(int64(50)),
 		Page:   types.NewOptional(int64(state.Page)),
 	})
-	if err != nil && strings.Contains(fmt.Sprintf("%v", err), "couldnt_get_comments") {
-		cresp, err = state.Client.Comments(context.Background(), types.GetComments{
-			PostID: types.NewOptional(state.PostID),
-			Sort:   types.NewOptional(types.CommentSortType(state.Sort)),
-			Type:   types.NewOptional(types.ListingType("All")),
-			Page:   types.NewOptional(int64(state.Page)),
-		})
-	}
 	if err != nil {
 		state.Status = http.StatusInternalServerError
 		fmt.Println(err)

@@ -91,6 +91,24 @@ function commentClick(e) {
     return false
   }
 }
+function loadMore(e) {
+  e.preventDefault()
+  page = e.target.getAttribute("data-page")
+  e.target.disabled="disabled"
+  e.target.value="loading"
+  var urlParams = new URLSearchParams(window.location.search);
+  urlParams.set("xhr", "1")
+  urlParams.set("page", page)
+  request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "", function(res){
+    if (res.trim()) {
+    e.target.outerHTML = res + '<div id="loadmore"><input type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)"></div>'
+    }
+    else {
+      e.target.outerHTML = ""
+    }
+  })
+  return false;
+}
 function hideAllChildComments(e) {
   e.preventDefault()
   var comments = document.getElementsByClassName("comment")

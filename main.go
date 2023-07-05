@@ -51,7 +51,7 @@ func init() {
 	md = goldmark.New(goldmark.WithExtensions(extension.Linkify))
 	templates = make(map[string]*template.Template)
 	if !*watch {
-		for _, name := range []string{"index.html", "login.html", "frontpage.html", "root.html", "settings.html"} {
+		for _, name := range []string{"index.html", "login.html", "frontpage.html", "root.html", "settings.html", "xhr.html"} {
 			t := template.New(name).Funcs(funcMap)
 			glob, err := t.ParseGlob("templates/*")
 			if err != nil {

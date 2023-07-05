@@ -121,6 +121,9 @@ code {
 [disabled] {
   cursor: not-allowed;
 }
+#loadmore [disabled] {
+  cursor: wait;
+}
 .post .title  {
   color: #888;
   font-size: 10px;
@@ -357,6 +360,7 @@ form.nsfw div {
 }
 .pager {
   margin: 10px;
+  display: none;
 }
 .pager a {
   padding: 1px 4px;
@@ -366,6 +370,9 @@ form.nsfw div {
   font-weight: bold;
   text-decoration: none;
   color: #369;
+}
+#loadmore {
+  margin: 10px 0px;
 }
 .buttons li {
   display: inline;
@@ -457,14 +464,14 @@ form.nsfw div {
   display: inline-block;
   overflow: hidden;
   resize: both;
-  width: 100%;
+  max-width: 100%;
   background-repeat: no-repeat;
   background-size: contain;
   background-position: top left;
 }
 .expando .image img {
   visibility: hidden;
-  width: 100%;
+  max-width: 100%;
 }
 .expando .md {
   background-color: #fafafa;
@@ -711,6 +718,9 @@ nav .communities a.more {
   font-weight: bold;
   position: absolute;
   right: 0;
+}
+.dark nav .communities a.more {
+  background-color: #cccccc;
 }
 .orangered, .orangered b {
   color: orangered !important;
