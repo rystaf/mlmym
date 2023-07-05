@@ -18,32 +18,36 @@
     </noscript>
 
     {{ template "nav.html" . -}}
+{{ if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
+  {{ template "nsfw.html" }}
+{{ else }}
     <main>
-{{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
-    {{ template "menu.html" . }}
-{{ end}}
+  {{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
+      {{ template "menu.html" . }}
+  {{ end}}
 
-{{ if .Error }}
+  {{ if .Error }}
       <div class="error">{{.Error}}</div>
-{{ end }}
+  {{ end }}
 
-{{ range .Posts }}
-    {{ template "post.html" . }}
-{{ end }}
+  {{ range .Posts }}
+      {{ template "post.html" . }}
+  {{ end }}
 
-{{ if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
-<div class="error">there doesn't seem to be anything here</div>
-{{ end }}
+  {{ if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
+      <div class="error">there doesn't seem to be anything here</div>
+  {{ end }}
 
 
-{{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (and (eq .CommentCount 200) (gt (index .Posts 0).Counts.Comments .CommentCount))) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
-    <div class="pager">
-      view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
-    </div>
-{{ end }}
+  {{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (and (eq .CommentCount 200) (gt (index .Posts 0).Counts.Comments .CommentCount))) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
+      <div class="pager">
+        view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
+      </div>
+  {{ end }}
 
-    {{ template "sidebar.html" . }}
+      {{ template "sidebar.html" . }}
     </main>
+{{ end }}
     <script src="/_/static/utils.js?1"></script>
   </body>
 </html>

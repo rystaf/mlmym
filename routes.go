@@ -170,6 +170,7 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	state.Listing = getCookie(r, "DefaultListingType")
 	state.Sort = getCookie(r, "DefaultSortType")
 	state.Dark = getCookie(r, "Dark") != ""
+	state.ShowNSFW = getCookie(r, "ShowNSFW") != ""
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
 		state.Sort = "Hot"
@@ -497,11 +498,19 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			deleteCookie(w, state.Host, "Dark")
 			state.Dark = false
 		}
+		if r.FormValue("shownsfw") != "" {
+			setCookie(w, state.Host, "ShowNSFW", "1")
+			state.ShowNSFW = true
+		} else {
+			deleteCookie(w, state.Host, "ShowNSFW")
+			state.ShowNSFW = false
+		}
 		state.Listing = r.FormValue("DefaultListingType")
 		state.Sort = r.FormValue("DefaultSortType")
+		// TODO save user settings
 	case "GET":
 		if state.Session != nil {
-			// TODO fetch server settings
+			// TODO fetch user settings
 		}
 	}
 	Render(w, "settings.html", state)
@@ -540,6 +549,7 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		if resp.JWT.IsValid() {
 			token = resp.JWT.String()
 			username = r.FormValue("username")
+			deleteCookie(w, state.Host, "ShowNSFW")
 		}
 	case "sign up":
 		register := types.Register{
@@ -958,6 +968,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			commentid := strconv.Itoa(resp.CommentView.Comment.ID)
 			r.URL.Fragment = "c" + commentid
 			r.URL.RawQuery = ""
+		}
+	case "shownsfw":
+		if r.FormValue("submit") == "continue" {
+			setCookie(w, state.Host, "ShowNSFW", "1")
+		} else {
+			r.URL.Path = "/" + state.Host
 		}
 	}
 	http.Redirect(w, r, r.URL.String(), 301)

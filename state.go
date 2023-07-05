@@ -88,6 +88,7 @@ type State struct {
 	SearchType     string
 	Captcha        *types.CaptchaResponse
 	Dark           bool
+	ShowNSFW       bool
 }
 
 func (p State) SortBy(v string) string {

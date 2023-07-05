@@ -1,5 +1,5 @@
 {{ if not .State.XHR }}
-      <div class="post {{if .Post.Deleted}}deleted{{end}}" onclick="postClick(event)">
+<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if or .Post.FeaturedCommunity .Post.FeaturedLocal }} distinguished{{end}}" onclick="postClick(event)">
   {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{ end }}
@@ -21,13 +21,12 @@
 {{ end }}
 {{ if not .State.XHR}}
         </div>
-        <div class="thumb" style="background-image: url({{if .Post.ThumbnailURL.IsValid}}{{.Post.ThumbnailURL.String}}?format=jpg&thumbnail=96{{else if .Post.URL.IsValid}}/_/static/link.png{{else}}/_/static/text.png{{end}})"></div>
+        <div class="thumb"><div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{if .Post.ThumbnailURL.IsValid}}{{.Post.ThumbnailURL.String}}?format=jpg&thumbnail=96{{else if .Post.URL.IsValid}}/_/static/link.png{{else}}/_/static/text.png{{end}})"></div></div>
         <div class="entry">
           <div class="title">
             <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ .Post.Name }}</a>
             ({{ domain . }})
           </div>
-
           <div class="expando-button {{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }}hidden{{else if eq .Rank 0}}open{{ end }}"></div>
           <div class="meta">
             submitted
@@ -41,8 +40,9 @@
             <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">c/{{ fullcname .Community}}</a>
           </div>
           <div class="buttons">
+            {{ if .Post.NSFW }}<span class="nsfw">NSFW</span>{{end}}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}">{{ .Counts.Comments }} comments</a>
-            {{ if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
+          {{ if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
             {{ if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
             <form class="link-btn" method="POST">
               <input type="hidden" name="postid" value="{{.Post.ID }}">

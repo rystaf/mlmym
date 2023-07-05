@@ -24,6 +24,14 @@ code {
 .clearleft {
   clear: left;
 }
+.img-blur {
+  filter: blur(10px);
+  -webkit-filter: blur(10px);
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+  transform: scale(1.03);
+}
 .post {
   margin: 6px;
 }
@@ -31,10 +39,16 @@ code {
   height: 52px;
   width: 70px;
   margin: 0px 4px;
+  position: relative;
+  overflow: hidden;
+  --background-color: #e7e7e7;
+}
+.post .thumb div {
+  height: 52px;
+  width: 70px;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  --background-color: #e7e7e7;
 }
 .rank {
   color: #c6c6c6;
@@ -93,6 +107,10 @@ code {
   color: #0000ff;
   font-size: medium;
   text-decoration: none;
+}
+.post.distinguished .title a {
+  color: #228822;
+  font-weight: bold;
 }
 .dark .title a {
   color: #dedede;
@@ -207,6 +225,13 @@ code {
   border-radius: 3px;
   padding: 0px 2px;
 }
+.comment .meta a.distinguished {
+  background-color: #228822;
+  color: white;
+  font-weight: bold;
+  border-radius: 3px;
+  padding: 0px 2px;
+}
 .commentmenu {
   font-size: 16px;
   margin: 0px 0px 10px 10px;
@@ -280,6 +305,31 @@ code {
 }
 .left {
   float: left;
+}
+span.nsfw {
+  color: #d10023;
+  font-size: 10px;
+  line-height: 14px;
+  border-radius:3px;
+  border: 1px solid #d10023;
+  padding: 0 4px;
+  display: inline-block;
+  font-weight: 400;
+}
+form.nsfw {
+  text-align: center;
+  margin: 50px auto;
+  width: 650px;
+  font-size: 18px;
+}
+form.nsfw div {
+  font-size: 40px;
+  background-color: #ff575b;
+  display: inline-block;
+  padding: 20px 10px;
+  border-radius: 50%;
+  font-weight: bold;
+  color: white;
 }
 .gray {
   color: #808080;
@@ -843,13 +893,16 @@ form.create input[type=file], form.create select {
   content: "*";
   color: red;
 }
+.preferences {
+  margin: 20px;
+}
 .preferences div {
   font-size: 13px;
   margin: 10px;
 }
 .preferences label{
   display: inline-block;
-  width: 100px;
+  width: 120px;
   text-align: right;
  
 }
