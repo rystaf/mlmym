@@ -860,6 +860,30 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.Error = err
 			fmt.Println(err)
 		}
+	case "save_post":
+		postid, _ := strconv.Atoi(r.FormValue("postid"))
+		_, err := state.Client.SavePost(context.Background(), types.SavePost{
+			PostID: postid,
+			Save:   r.FormValue("submit") == "save",
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+	case "save_comment":
+		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
+		_, err := state.Client.SaveComment(context.Background(), types.SaveComment{
+			CommentID: commentid,
+			Save:      r.FormValue("submit") == "save",
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+		if r.FormValue("xhr") != "" {
+			state.XHR = true
+			state.GetComment(commentid)
+			Render(w, "index.html", state)
+			return
+		}
 	case "delete_post":
 		postid, _ := strconv.Atoi(r.FormValue("postid"))
 		post := types.DeletePost{
@@ -900,7 +924,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case "vote_comment":
 		var score int16
 		score = 1
-		if r.FormValue("vote") != "▲" {
+		if r.FormValue("submit") != "▲" {
 			score = -1
 		}
 		if r.FormValue("undo") == strconv.Itoa(int(score)) {

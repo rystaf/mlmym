@@ -48,7 +48,10 @@
       {{ end }}
       <ul>
         {{ if .User }}
-        <li class="selected"><a href="">overview</a></li>
+        <li {{if eq .Op "" }}class="selected"{{end}}><a href="">overview</a></li>
+          {{ if eq .User.PersonView.Person.ID .Session.UserID}}
+          <li {{if eq .Op "Saved"}}class="selected"{{end}}><a href="?view=Saved">saved</a></li>
+          {{ end }}
         {{ else if .Comments -}}
         <li class="selected"><a href="">comments</a></li>
         {{ else if .Activities }}

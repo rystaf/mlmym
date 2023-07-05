@@ -35,7 +35,7 @@ function commentClick(e) {
   e = e || window.event;
   var targ = e.currentTarget || e.srcElement || e;
   if (targ.nodeType == 3) targ = targ.parentNode;
-  if (e.target.name=="vote") {
+  if (e.target.name=="submit") {
     e.preventDefault()
     var form = e.target.parentNode
     if (form) {

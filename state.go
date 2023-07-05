@@ -169,6 +169,11 @@ func (state *State) ParseQuery(RawQuery string) {
 	if len(m["xhr"]) > 0 {
 		state.XHR = true
 	}
+	if len(m["view"]) > 0 {
+		if m["view"][0] == "Saved" {
+			state.Op = "Saved"
+		}
+	}
 	//if len(m["op"]) > 0 {
 	//	state.Op = m["op"][0]
 	//}
@@ -363,9 +368,10 @@ func (state *State) GetUser(username string) {
 		limit = 1
 	}
 	resp, err := state.Client.PersonDetails(context.Background(), types.GetPersonDetails{
-		Username: types.NewOptional(state.UserName),
-		Page:     types.NewOptional(int64(state.Page)),
-		Limit:    types.NewOptional(int64(limit)),
+		Username:  types.NewOptional(state.UserName),
+		Page:      types.NewOptional(int64(state.Page)),
+		Limit:     types.NewOptional(int64(limit)),
+		SavedOnly: types.NewOptional(state.Op == "Saved"),
 	})
 	if err != nil {
 		fmt.Println(err)

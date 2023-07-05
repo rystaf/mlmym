@@ -54,7 +54,18 @@
               <input type="submit" value="delete">
               {{ end }}
             </form>
-            {{ end}}
+          {{ end}}
+          {{ if .State.Session }}
+            <form class="link-btn" method="POST">
+              <input type="hidden" name="postid" value="{{.Post.ID }}">
+              <input type="hidden" name="op" value="save_post">
+              {{ if .PostView.Saved }}
+              <input type="submit" name="submit" value="unsave">
+              {{ else }}
+              <input type="submit" name="submit" value="save">
+              {{ end }}
+            </form>
+          {{end}}
           </div>
           <div class="expando {{ if eq .Rank 0 }}open{{ end}}">
 {{ if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}

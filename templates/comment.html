@@ -3,14 +3,14 @@
 {{ if .State.Session }}
       <div class="score">
       <form class="link-btn{{ if eq .P.MyVote.String "1"}} like{{ else if eq .P.MyVote.String "-1"}} dislike{{end}}" method="POST">
-        <input type="submit" name="vote" value="▲"> 
+        <input type="submit" name="submit" value="▲"> 
         <div></div>
   {{ if .P.MyVote.IsValid}}
         <input type="hidden" name="undo" value="{{.P.MyVote.String}}">
   {{ end}}
         <input type="hidden" name="op" value="vote_comment">
         <input type="hidden" name="commentid" value="{{.P.Comment.ID }}">
-        <input type="submit" name="vote" value="▼"> 
+        <input type="submit" name="submit" value="▼"> 
       </form>
       </div>
 {{ end }}
@@ -49,9 +49,8 @@
 {{ else }}
       <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">hide source</a></li>
 {{ end }}
-
 {{ if .State.Session }}
-  {{ if and (eq .P.Comment.CreatorID .State.Session.UserID) (ne .Op "edit")}}
+  {{ if and (eq .P.Comment.CreatorID .State.Session.UserID) (ne .Op "edit") }}
       <li><a class="edit" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?edit">edit</a></li>
       <li>
         <form class="delete" method="POST">
@@ -61,8 +60,24 @@
         </form>
       </li>
   {{ end }}
-  {{ if ne .Op "reply"}}
-      <li><a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">reply</a></li>
+      <li>
+        <form class="link-btn" method="POST">
+          <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
+          <input type="hidden" name="op" value="save_comment">
+          {{ if .P.Saved }}
+          <input type="submit" name="submit" value="unsave">
+          {{ else }}
+          <input type="submit" name="submit" value="save">
+
+          {{ end }}
+        </form>
+      </li>
+  {{ if ne .Op "reply" }}
+      <li>
+        <a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">
+          reply
+        </a>
+      </li>
   {{ end }}
 {{ end }}
     </ul>

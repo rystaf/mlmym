@@ -89,7 +89,7 @@ code {
 .dark .score form.link-btn input {
   color: #646464;
 }
-.comment form.link-btn input {
+.comment .score form.link-btn input {
   line-height: 17px;
 }
 .score form.like.link-btn input:first-child, .score .like div {
@@ -386,7 +386,7 @@ form.nsfw div {
   border-left: 2px solid #c5c1ad;
   padding: 0 8px;
 }
-.buttons a, .buttons form input {
+.buttons a, .buttons form input, .comment .buttons form input {
   text-decoration: none;
   color: #888;
   padding-right: 4px;
