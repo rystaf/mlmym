@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/sessions v1.2.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/julienschmidt/httprouter v1.3.0 // indirect
+	github.com/k3a/html2text v1.2.1 // indirect
 	github.com/rystaf/go-lemmy v0.0.0-20230704005320-c4b010dd339b // indirect
 	github.com/yuin/goldmark v1.5.4 // indirect
 	go.elara.ws/go-lemmy v0.17.3 // indirect

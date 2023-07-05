@@ -24,7 +24,7 @@
         <div class="thumb"><div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{if .Post.ThumbnailURL.IsValid}}{{.Post.ThumbnailURL.String}}?format=jpg&thumbnail=96{{else if .Post.URL.IsValid}}/_/static/link.png{{else}}/_/static/text.png{{end}})"></div></div>
         <div class="entry">
           <div class="title">
-            <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ .Post.Name }}</a>
+            <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ rmmarkdown .Post.Name }}</a>
             ({{ domain . }})
           </div>
           <div class="expando-button {{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }}hidden{{else if eq .Rank 0}}open{{ end }}"></div>

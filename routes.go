@@ -18,6 +18,7 @@ import (
 
 	"github.com/dustin/go-humanize"
 	"github.com/julienschmidt/httprouter"
+	"github.com/k3a/html2text"
 	"github.com/rystaf/go-lemmy"
 	"github.com/rystaf/go-lemmy/types"
 	"golang.org/x/text/language"
@@ -114,7 +115,8 @@ var funcMap = template.FuncMap{
 	"markdown": func(host string, body string) template.HTML {
 		var buf bytes.Buffer
 		if err := md.Convert([]byte(body), &buf); err != nil {
-			panic(err)
+			fmt.Println(err)
+			return template.HTML(body)
 		}
 		converted := buf.String()
 		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
@@ -127,6 +129,16 @@ var funcMap = template.FuncMap{
 		re = regexp.MustCompile(` !([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+) `)
 		converted = re.ReplaceAllString(converted, ` <a href="/$2/c/$1">!$1@$2</a> `)
 		return template.HTML(converted)
+	},
+	"rmmarkdown": func(body string) string {
+		var buf bytes.Buffer
+		if err := md.Convert([]byte(body), &buf); err != nil {
+			fmt.Println(err)
+			return body
+		}
+		text := html2text.HTML2TextWithOptions(buf.String(), html2text.WithLinksInnerText())
+		re := regexp.MustCompile(`\<https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)\>`)
+		return re.ReplaceAllString(text, "")
 	},
 	"contains": strings.Contains,
 	"sub": func(a int32, b int) int {
