@@ -6,7 +6,7 @@
         |
         {{ $host := .Host }}
         {{ range $i, $c := .TopCommunities}}
-        <a href="/{{$host}}/c/{{$c.Community.Name}}">{{$c.Community.Name}}</a>
+        <a href="/{{$host}}/c/{{fullcname $c.Community}}">{{$c.Community.Name}}</a>
         <span> - </span>
         {{ end }}
         <a href="/{{$host}}/search?searchtype=Communities" class="more">more »</a>
