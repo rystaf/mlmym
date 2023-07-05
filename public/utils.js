@@ -92,6 +92,7 @@ function formSubmit(e) {
 }
 
 function parse_youtube(url){
+  if (url.indexOf("youtu") == -1) return false
   var regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
   var match = url.match(regExp);
   if (match && match.length > 1) {
