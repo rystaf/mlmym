@@ -269,6 +269,14 @@ func (state *State) GetComments() {
 		Limit:  types.NewOptional(int64(200)),
 		Page:   types.NewOptional(int64(state.Page)),
 	})
+	if err != nil && strings.Contains(fmt.Sprintf("%v", err), "couldnt_get_comments") {
+		cresp, err = state.Client.Comments(context.Background(), types.GetComments{
+			PostID: types.NewOptional(state.PostID),
+			Sort:   types.NewOptional(types.CommentSortType(state.Sort)),
+			Type:   types.NewOptional(types.ListingType("All")),
+			Page:   types.NewOptional(int64(state.Page)),
+		})
+	}
 	if err != nil {
 		state.Status = http.StatusInternalServerError
 		fmt.Println(err)
@@ -432,13 +440,16 @@ func (state *State) MarkAllAsRead() {
 }
 
 func (state *State) GetPosts() {
-	resp, err := state.Client.Posts(context.Background(), types.GetPosts{
-		Sort:          types.NewOptional(types.SortType(state.Sort)),
-		Type:          types.NewOptional(types.ListingType(state.Listing)),
-		CommunityName: types.NewOptional(state.CommunityName),
-		Limit:         types.NewOptional(int64(25)),
-		Page:          types.NewOptional(int64(state.Page)),
-	})
+	posts := types.GetPosts{
+		Sort:  types.NewOptional(types.SortType(state.Sort)),
+		Type:  types.NewOptional(types.ListingType(state.Listing)),
+		Limit: types.NewOptional(int64(25)),
+		Page:  types.NewOptional(int64(state.Page)),
+	}
+	if state.CommunityName != "" {
+		posts.CommunityName = types.NewOptional(state.CommunityName)
+	}
+	resp, err := state.Client.Posts(context.Background(), posts)
 	if err != nil {
 		fmt.Println(err)
 		state.Status = http.StatusInternalServerError

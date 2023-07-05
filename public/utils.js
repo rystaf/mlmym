@@ -104,9 +104,11 @@ function hideAllChildComments(e) {
     if (children.className.indexOf("hidden") == -1) {
       children.className = "children hidden"
       btn.className = "hidechildren hidden"
+      e.target.innerHTML = "show all child comments"
     } else {
       children.className = "children"
       btn.className = "hidechildren"
+      e.target.innerHTML = "hide all child comments"
     }
   }
   return false
