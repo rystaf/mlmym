@@ -49,7 +49,7 @@
       <ul>
         {{ if .User }}
         <li {{if eq .Op "" }}class="selected"{{end}}><a href="">overview</a></li>
-          {{ if eq .User.PersonView.Person.ID .Session.UserID}}
+          {{ if and .Session (eq .User.PersonView.Person.ID .Session.UserID) }}
           <li {{if eq .Op "Saved"}}class="selected"{{end}}><a href="?view=Saved">saved</a></li>
           {{ end }}
         {{ else if .Comments -}}
