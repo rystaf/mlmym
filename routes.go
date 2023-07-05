@@ -119,9 +119,13 @@ var funcMap = template.FuncMap{
 		converted := buf.String()
 		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
 		if os.Getenv("LEMMY_DOMAIN") == "" {
-			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
+			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.\-]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
 			converted = re.ReplaceAllString(converted, `href="/$1`)
 		}
+		re := regexp.MustCompile(`href="\/(c\/[a-zA-Z0-9\-]+|(post|comment)\/\d+)`)
+		converted = re.ReplaceAllString(converted, `href="/`+host+`/$1`)
+		re = regexp.MustCompile(` !([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+) `)
+		converted = re.ReplaceAllString(converted, ` <a href="/$2/c/$1">!$1@$2</a> `)
 		return template.HTML(converted)
 	},
 	"contains": strings.Contains,
@@ -830,6 +834,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		post := types.EditPost{
 			PostID: postid,
 			Body:   types.NewOptional(r.FormValue("body")),
+			Name:   types.NewOptional(r.FormValue("name")),
 			URL:    types.NewOptional(r.FormValue("url")),
 		}
 		if r.FormValue("url") == "" {
