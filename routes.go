@@ -238,6 +238,7 @@ func Render(w http.ResponseWriter, templateName string, state State) {
 }
 func GetRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	data := make(map[string]any)
+	data["Title"] = r.Host
 	tmpl, err := GetTemplate("root.html")
 	if err != nil {
 		fmt.Println("execute fail", err)

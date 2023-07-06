@@ -105,7 +105,7 @@ code {
   top: 2px;
 }
 .title a {
-  color: #006414;
+  color: #0000ff;
   font-size: medium;
   text-decoration: none;
 }
@@ -117,7 +117,7 @@ code {
   font-weight: bold;
 }
 .dark .title a {
-  color: #a0d798;
+  color: #dedede;
 }
 .post.deleted .title a {
   text-decoration: line-through;
@@ -226,7 +226,7 @@ code {
   text-decoration: underline;
 }
 .comment .meta a.submitter {
-  background-color: #006414;
+  background-color: #0055df;
   color: white;
   font-weight: bold;
   border-radius: 3px;
@@ -805,7 +805,6 @@ nav li {
 nav ul a {
   background-color: #eff7ff;
   text-decoration: none;
-  color: #006414;
   padding: 2px 6px 0 6px;
 }
 .dark nav ul a {
@@ -818,7 +817,6 @@ nav ul a {
 }
 
 nav .selected a {
-  color: orangered;
   background-color: white;
   border: 1px solid #00a846;
   border-bottom: 1px solid white;
