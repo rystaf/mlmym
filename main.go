@@ -48,7 +48,10 @@ func NewAddHeaderTransport(remoteAddr string) *AddHeaderTransport {
 }
 
 func init() {
-	md = goldmark.New(goldmark.WithExtensions(extension.Linkify))
+	md = goldmark.New(goldmark.WithExtensions(
+		extension.Linkify,
+		extension.Table,
+	))
 	templates = make(map[string]*template.Template)
 	if !*watch {
 		for _, name := range []string{"index.html", "login.html", "frontpage.html", "root.html", "settings.html", "xhr.html"} {
