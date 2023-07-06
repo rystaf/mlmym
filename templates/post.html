@@ -17,7 +17,7 @@
             <input type="submit" name="vote" value="▼"> 
           </form>
 {{ else }}
-<div style="margin-top: 19px;">{{ .Counts.Score }}</div>
+          <div style="margin-top: 19px;">{{ .Counts.Score }}</div>
 {{ end }}
 {{ if ne .State.Op "vote_post" }}
         </div>

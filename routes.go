@@ -128,6 +128,8 @@ var funcMap = template.FuncMap{
 		converted = re.ReplaceAllString(converted, `href="/`+host+`/$1`)
 		re = regexp.MustCompile(` !([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+) `)
 		converted = re.ReplaceAllString(converted, ` <a href="/$2/c/$1">!$1@$2</a> `)
+		re = regexp.MustCompile(`::: spoiler ([^\n]*)\n([\S\s\n]*):::`)
+		converted = re.ReplaceAllString(converted, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(converted)
 	},
 	"rmmarkdown": func(body string) string {

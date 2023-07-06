@@ -44,6 +44,7 @@ function commentClick(e) {
       params = new URLSearchParams(data).toString()
       params += "&" + e.target.name + "=" + e.target.value
       params += "&xhr=1"
+      e.target.disabled = "disabled"
       request(targ.target, params, function(res){
         targ.outerHTML = res
       })
@@ -139,6 +140,7 @@ function formSubmit(e) {
   params = new URLSearchParams(data).toString()
   params += "&" + e.submitter.name + "=" + e.submitter.value
   params += "&xhr=1"
+  e.submitter.disabled = "disabled"
   request(targ.target, params, function(res){
     targ.outerHTML = res
   })

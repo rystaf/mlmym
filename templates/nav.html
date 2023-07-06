@@ -21,7 +21,7 @@
         | 
         <form method="POST"><input type="submit" name="op" value="logout"></form>
 {{else}}
-      Want to join? <a href="/{{.Host}}/login">Log in</a> or <a href="/{{.Host}}/login">sign up</a> in seconds
+         <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
         | 
         <a href="/{{.Host}}/settings">settings</a>
 {{end}}
@@ -48,7 +48,7 @@
       {{ end }}
       <ul>
         {{ if .User }}
-        <li {{if eq .Op "" }}class="selected"{{end}}><a href="">overview</a></li>
+        <li {{if eq .Op "" }}class="selected"{{end}}><a href="?">overview</a></li>
           {{ if and .Session (eq .User.PersonView.Person.ID .Session.UserID) }}
           <li {{if eq .Op "Saved"}}class="selected"{{end}}><a href="?view=Saved">saved</a></li>
           {{ end }}

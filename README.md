@@ -1,7 +1,7 @@
 # mlmym
 a familiar desktop experience for [lemmy](https://join-lemmy.org).
 
-![screenshot](https://raw.githubusercontent.com/rystaf/mlmym/main/screenshot.png?raw=true)
+![screenshot](https://raw.githubusercontent.com/rystaf/mlmym/main/screenshot1.png?raw=true)
 
 ### deployment
 

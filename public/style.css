@@ -76,6 +76,7 @@ code {
 }
 .comment .content {
   overflow:hidden;
+  max-width: 840px;
 }
 .comment.hidden .score {
   display: none;
@@ -93,10 +94,10 @@ code {
   line-height: 17px;
 }
 .score form.like.link-btn input:first-child, .score .like div {
-  color: orangered;
+  color: #3880ff;
 }
 .score form.dislike.link-btn input:last-child, .score .dislike div {
-  color: #8080FF;
+  color: #eb445a;
 }
 
 .score form div {
@@ -104,16 +105,19 @@ code {
   top: 2px;
 }
 .title a {
-  color: #0000ff;
+  color: #006414;
   font-size: medium;
   text-decoration: none;
 }
+.title a p {
+  display: inline;
+}
 .post.distinguished .title a {
-  color: #228822;
+  color: #f1641e;
   font-weight: bold;
 }
 .dark .title a {
-  color: #dedede;
+  color: #a0d798;
 }
 .post.deleted .title a {
   text-decoration: line-through;
@@ -121,7 +125,7 @@ code {
 [disabled] {
   cursor: not-allowed;
 }
-#loadmore [disabled] {
+#loadmore [disabled], .link-btn [disabled]  {
   cursor: wait;
 }
 .post .title  {
@@ -222,14 +226,14 @@ code {
   text-decoration: underline;
 }
 .comment .meta a.submitter {
-  background-color: #0055df;
+  background-color: #006414;
   color: white;
   font-weight: bold;
   border-radius: 3px;
   padding: 0px 2px;
 }
 .comment .meta a.distinguished {
-  background-color: #228822;
+  background-color: #f1641e;
   color: white;
   font-weight: bold;
   border-radius: 3px;
@@ -482,6 +486,9 @@ form.nsfw div {
   font-size: 14px;
   overflow: auto;
 }
+.expand .md img {
+  max-width: 100%;
+}
 .dark .expando .md {
   background-color: #262626;
   color: #ddd;
@@ -525,6 +532,9 @@ form.nsfw div {
   width: 300px;
   padding-right: 5px;
   margin-bottom: 10px;
+}
+.side img, .md img{
+  max-width: 100%;
 }
 main {
   position: relative;
@@ -594,17 +604,17 @@ main {
 }
 .create a div {
   margin: 5px 0px;
-  background-color: #EFF7FF;
+  background-color: #EFFFEF;
   text-align: center;
   padding: 5px;
-  border: 1px solid #369;
+  border: 1px solid #008909;
 }
 .dark .create a div {
   background-color: #444444;
   border: 0;
 }
 .create a div:hover {
-  background-color: #369;
+  background-color: #0f7d1b;
 }
 .dark .create a div:hover {
   background-color: #333333;
@@ -613,7 +623,7 @@ main {
   font-weight: bold;
   text-decoration: none;
   font-size: 13px;
-  color: #369;
+  color: #0f7d1b;
 }
 .dark .create a {
   color: white;
@@ -622,7 +632,7 @@ main {
   color: white;
 }
 .dark .create a:hover{
-  color: #1496dc;
+  color: #0cbe30;
 }
 .dark .create input[type=submit],
 .dark .search .query input, 
@@ -682,8 +692,8 @@ h1, h2 {
   margin-left: 36px;
 }
 nav {
-  border-bottom: 1px solid #5f99cf;
-  background-color: #cee3f8;
+  border-bottom: 1px solid #00a846;
+  background-color: #9ad59b;
   z-index: 99;
   margin-bottom: 5px;
   position: relative;
@@ -718,6 +728,7 @@ nav .communities a.more {
   font-weight: bold;
   position: absolute;
   right: 0;
+  margin: 0;
 }
 .dark nav .communities a.more {
   background-color: #cccccc;
@@ -743,7 +754,7 @@ nav .title, nav > span {
   font-variant: small-caps;
 }
 .dark nav .title, .dark nav > span {
-  color: #8cb3d9;;
+  color: #ececec;
 }
 nav a.title {
   margin-left: 70px;
@@ -794,12 +805,12 @@ nav li {
 nav ul a {
   background-color: #eff7ff;
   text-decoration: none;
-  color: #369;
+  color: #006414;
   padding: 2px 6px 0 6px;
 }
 .dark nav ul a {
   background-color: #262626;
-  color: #6a98af;
+  color: #dadada;
 }
 
 .selected {
@@ -809,7 +820,7 @@ nav ul a {
 nav .selected a {
   color: orangered;
   background-color: white;
-  border: 1px solid #5f99cf;
+  border: 1px solid #00a846;
   border-bottom: 1px solid white;
 }
 .dark nav .selected a {
@@ -819,10 +830,12 @@ nav .selected a {
 nav .right {
   position: absolute;
   right: 0px;
-  background-color: #EFF7FF;
+  background-color: #EFFFEF;
   padding: 4px 6px;
   line-height: 12px;
   border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  margin-right: 10px;
   color: gray;
   font-size: 10px;
   z-index: 101;
@@ -837,11 +850,11 @@ nav .right a.mailbox {
   color: gray;
 }
 nav .right a, .right input[type=submit] {
-  color: #369;
+  color: #006414;
   text-decoration: none;
 }
 .dark nav .right a, .dark .right input[type=submit]{
-  color: #8cb3d9;
+  color: #dadada;
 }
 nav .right form, .comment form, form.link-btn {
   display: inline-block;
@@ -898,7 +911,7 @@ form.create {
 form.create div {
   margin: 10px 0px;
   padding: 5px 5px 10px 5px;
-  background-color: #cee3f8;
+  background-color: #9ad59b;
   border-radius: 4px;
 }
 .dark form.create div {

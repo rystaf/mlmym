@@ -2,7 +2,7 @@
   <head>
     <title>{{  host .Host }}: preferences</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?1">
+    <link rel="stylesheet" href="/_/static/style.css?v=7">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body {{ if .Dark}}class="dark"{{end}}>
@@ -29,7 +29,7 @@
         | 
         <form method="POST"><input type="submit" name="op" value="logout"></form>
 {{else}}
-      Want to join? <a href="/{{.Host}}/login">Log in</a> or <a href="/{{.Host}}/login">sign up</a> in seconds
+        <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
         | 
         <a href="/{{.Host}}/settings">settings</a>
 {{end}}
