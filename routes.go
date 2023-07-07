@@ -114,6 +114,8 @@ var funcMap = template.FuncMap{
 	"humanize": humanize.Time,
 	"markdown": func(host string, body string) template.HTML {
 		var buf bytes.Buffer
+		re := regexp.MustCompile(`\s---\s`)
+		body = re.ReplaceAllString(body, "\n***\n")
 		if err := md.Convert([]byte(body), &buf); err != nil {
 			fmt.Println(err)
 			return template.HTML(body)
@@ -124,11 +126,11 @@ var funcMap = template.FuncMap{
 			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.\-]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
 			converted = re.ReplaceAllString(converted, `href="/$1`)
 		}
-		re := regexp.MustCompile(`href="\/(c\/[a-zA-Z0-9\-]+|(post|comment)\/\d+)`)
+		re = regexp.MustCompile(`href="\/(c\/[a-zA-Z0-9\-]+|(post|comment)\/\d+)`)
 		converted = re.ReplaceAllString(converted, `href="/`+host+`/$1`)
 		re = regexp.MustCompile(` !([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+) `)
 		converted = re.ReplaceAllString(converted, ` <a href="/$2/c/$1">!$1@$2</a> `)
-		re = regexp.MustCompile(`::: spoiler ([^\n]*)\n([\S\s\n]*):::`)
+		re = regexp.MustCompile(`::: spoiler (.*?)\n(.*?)\s:::`)
 		converted = re.ReplaceAllString(converted, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(converted)
 	},

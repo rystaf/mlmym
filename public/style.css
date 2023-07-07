@@ -10,6 +10,9 @@ body.dark {
 code {
   word-wrap: break-word;
 }
+summary {
+  cursor: pointer;
+}
 .dark a {
   color: #8cb3d9;
 }
