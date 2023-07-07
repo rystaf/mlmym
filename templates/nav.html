@@ -64,6 +64,9 @@
         <li{{ if eq .Sort "MostComments" }} class="selected"{{end}}><a href="{{ .SortBy "MostComments" }}">most comments</a></li>
         <li{{ if eq .Sort "NewComments" }} class="selected"{{end}}><a href="{{ .SortBy "NewComments" }}">new comments</a></li>
         <li{{ if contains .Sort "Top" }} class="selected"{{end}}><a href="{{ .SortBy "TopDay" }}">top</a></li>
+          {{ if .Posts }}
+        <li id="showimages"><a href="" onclick="show_images(event)">show images</a></li>
+          {{ end }}
         {{ end }}
       </ul>
       {{ end }}

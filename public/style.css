@@ -58,7 +58,7 @@ summary {
   font-size: 14px;
   margin-top: 17px;
   text-align: right;
-  min-width: 32px;
+  min-width: 21px;
 }
 .dark .post .rank {
   color: #646464;
@@ -499,8 +499,11 @@ form.nsfw div {
   font-size: 14px;
   overflow: auto;
 }
-.expand .md img {
+.expando .md img {
   max-width: 100%;
+}
+.expando.open.showimage .md {
+  display: none;
 }
 .dark .expando .md {
   background-color: #262626;
@@ -804,7 +807,6 @@ nav .tabs {
 }
 
 nav ul {
-  white-space: nowrap;
   list-style: none;
   margin: 5px 2.5px 0px 2.5px;
   padding: 0;
@@ -813,9 +815,11 @@ nav ul {
 }
 
 nav li {
+  white-space: nowrap;
   margin: 0px 1px;
   padding: 0px;
-  display: inline;
+  display: inline-block;
+  margin-top: 5px;
   font-size: 12px;
   font-weight: 700;
 }
@@ -836,11 +840,13 @@ nav ul a {
 }
 
 nav .selected a {
+  color: orangered;
   background-color: white;
   border: 1px solid #00a846;
   border-bottom: 1px solid white;
 }
 .dark nav .selected a {
+  color: #d25a32;
   border-bottom: 1px solid #262626;
 }
 

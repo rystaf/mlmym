@@ -103,6 +103,11 @@ function loadMore(e) {
   request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "", function(res){
     if (res.trim()) {
       e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)">'
+      if (showimages = document.getElementById("showimages")) {
+        if (showimages.className == "selected") {
+          toggle_images(true)
+        }
+      }
     }
     else {
       e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
@@ -158,6 +163,40 @@ function parse_youtube(url){
 }
 function youtube_iframe(id) {
   return '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'
+}
+
+function show_images(e) {
+  e = e || window.event;
+  e.preventDefault()
+  var targ = e.currentTarget || e.srcElement || e;
+  console.log(targ)
+  var parent = targ.parentNode
+  if (parent.className == "") {
+    parent.className = "selected"
+    toggle_images(true)
+  } else {
+    parent.className = ""
+    toggle_images(false)
+  }
+  return false
+}
+
+function toggle_images(open) {
+  var posts = document.getElementsByClassName("post")
+  for (var i = 0; i < posts.length; i++) {
+    var btn = posts[i].getElementsByClassName("expando-button")[0]
+    if (btn.className.indexOf("hidden") != -1) { continue }
+    var img = posts[i].getElementsByClassName("image")
+    if (!img.length) { continue }
+    var bdy = posts[i].getElementsByClassName("expando")[0]
+    if (open) {
+      bdy.className = 'expando open showimage';
+      btn.className = "expando-button open"
+    } else {
+      bdy.className = 'expando';
+      btn.className = "expando-button"
+    }
+  }
 }
 
 var posts = document.getElementsByClassName("post")
