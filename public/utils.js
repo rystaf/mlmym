@@ -105,7 +105,7 @@ function loadMore(e) {
       e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)">'
     }
     else {
-      e.target.outerHTML = ""
+      e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
     }
   })
   return false;

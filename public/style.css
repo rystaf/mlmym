@@ -83,7 +83,7 @@ summary {
   max-width: 840px;
 }
 .comment.hidden .score {
-  display: none;
+  visibility: hidden;
 }
 .score form.link-btn input {
   display: block;
@@ -264,7 +264,6 @@ summary {
 }
 .comment.hidden {
   margin-bottom: 10px;
-  padding-left: 26px;
 }
 .comment.hidden .meta a {
   color: gray;
@@ -379,7 +378,7 @@ form.nsfw div {
   text-decoration: none;
   color: #369;
 }
-#loadmore {
+#loadmore, #end {
   visibility: hidden;
   margin: 10px 0px;
 }
