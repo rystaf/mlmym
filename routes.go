@@ -514,7 +514,8 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	switch r.Method {
 	case "POST":
 		for _, name := range []string{"DefaultSortType", "DefaultListingType"} {
-			setCookie(w, state.Host, name, r.FormValue(name))
+			deleteCookie(w, state.Host, name)
+			setCookie(w, "", name, r.FormValue(name))
 		}
 		if r.FormValue("darkmode") != "" {
 			setCookie(w, "", "Dark", "1")
@@ -525,10 +526,11 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.Dark = false
 		}
 		if r.FormValue("shownsfw") != "" {
-			setCookie(w, state.Host, "ShowNSFW", "1")
+			setCookie(w, "", "ShowNSFW", "1")
 			state.ShowNSFW = true
 		} else {
 			deleteCookie(w, state.Host, "ShowNSFW")
+			deleteCookie(w, "", "ShowNSFW")
 			state.ShowNSFW = false
 		}
 		state.Listing = r.FormValue("DefaultListingType")
@@ -1024,7 +1026,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	case "shownsfw":
 		if r.FormValue("submit") == "continue" {
-			setCookie(w, state.Host, "ShowNSFW", "1")
+			setCookie(w, "", "ShowNSFW", "1")
 		} else {
 			r.URL.Path = "/" + state.Host
 		}
