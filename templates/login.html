@@ -85,7 +85,7 @@
 {{ end }}
     <div>
       <h2>login</h2>
-      <form method="POST" action="/{{host .Host}}/login">
+      <form method="POST" action="/{{ .Host}}/login">
         <label>
           username
           <div><input required name="username" type="text"></div>
