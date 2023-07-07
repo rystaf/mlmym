@@ -102,7 +102,7 @@ function loadMore(e) {
   urlParams.set("page", page)
   request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "", function(res){
     if (res.trim()) {
-    e.target.outerHTML = res + '<div id="loadmore"><input type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)"></div>'
+      e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)">'
     }
     else {
       e.target.outerHTML = ""
@@ -172,3 +172,13 @@ for (var i = 0; i < posts.length; i++) {
     }
   }
 }
+
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight) {
+      var loadmore = document.getElementById("loadmore")
+      if (loadmore) {
+        loadmore.click()
+      }
+    }
+};
+

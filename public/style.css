@@ -74,10 +74,11 @@ summary {
   color: #646464;
 }
 .comment .score {
-  margin-right: 2px;
+  margin-right: 4px;
   overflow:hidden;
 }
 .comment .content {
+  line-height: 20px;
   overflow:hidden;
   max-width: 840px;
 }
@@ -108,7 +109,6 @@ summary {
   top: 2px;
 }
 .title a {
-  color: #0000ff;
   font-size: medium;
   text-decoration: none;
 }
@@ -116,11 +116,14 @@ summary {
   display: inline;
 }
 .post.distinguished .title a {
-  color: #f1641e;
+  color: #228822;
   font-weight: bold;
 }
 .dark .title a {
   color: #dedede;
+}
+.dark .title a:visited {
+  color: #a6a6a6
 }
 .post.deleted .title a {
   text-decoration: line-through;
@@ -158,9 +161,6 @@ summary {
 }
 .message b {
   color: #000;
-}
-.meta {
-  color: #888;
 }
 .dark .meta {
   color: #b4b4b4;
@@ -214,7 +214,7 @@ summary {
 }
 .comment .meta {
   font-size: 10px;
-  margin-bottom: 3px;
+  margin-bottom: 6px;
 }
 .meta a {
   color: #369;
@@ -236,7 +236,7 @@ summary {
   padding: 0px 2px;
 }
 .comment .meta a.distinguished {
-  background-color: #f1641e;
+  background-color: #228822;
   color: white;
   font-weight: bold;
   border-radius: 3px;
@@ -250,8 +250,8 @@ summary {
   border-top: 1px dotted gray;
   font-size: 12px;
 }
-.savecomment {
-  margin: 10px;
+.comment form.savecomment {
+  margin: 0px 0px 10px 10px;
 }
 .savecomment textarea {
   width: 500px;
@@ -264,6 +264,7 @@ summary {
 }
 .comment.hidden {
   margin-bottom: 10px;
+  padding-left: 26px;
 }
 .comment.hidden .meta a {
   color: gray;
@@ -379,7 +380,11 @@ form.nsfw div {
   color: #369;
 }
 #loadmore {
+  visibility: hidden;
   margin: 10px 0px;
+}
+#loadmore[disabled] {
+  visibility: visible;
 }
 .buttons li {
   display: inline;
@@ -389,8 +394,11 @@ form.nsfw div {
   font-size: 10px;
   padding: 0;
 }
+.comment .textarea {
+  width: 100%;
+}
 .comment .buttons {
-  margin: 8px 0px 3px 0px;
+  margin: 3px 0px 10px 0px;
 }
 .comment.hidden .buttons {
   display: none;
@@ -404,7 +412,7 @@ form.nsfw div {
   text-decoration: none;
   color: #888;
   display: inline-block;
-  margin-right: 8px !important;
+  margin-right: 5px !important;
 }
 .buttons a:hover, .title a:hover, .buttons form input:hover, .comment .buttons form input:hover {
   text-decoration: underline;
@@ -460,7 +468,8 @@ form.nsfw div {
 }
 .expando {
   display: none;
-  max-width: 587px;
+  max-width: 870px;
+  margin-top: 5px;
   position: relative;
   color: #000;
 }
@@ -468,10 +477,11 @@ form.nsfw div {
   display: block;
 }
 .expando .image {
-  display: inline-block;
+  display: block;
   overflow: hidden;
   resize: both;
-  max-width: 100%;
+  max-width: 578px;
+  margin: 0 auto;
   background-repeat: no-repeat;
   background-size: contain;
   background-position: top left;
@@ -485,7 +495,8 @@ form.nsfw div {
   border: 1px solid #369;
   border-radius: 7px;
   padding: 5px 10px;
-  margin: 5px 0px;
+  margin: 5px auto;
+  max-width: 578px;
   font-size: 14px;
   overflow: auto;
 }
@@ -495,6 +506,7 @@ form.nsfw div {
 .dark .expando .md {
   background-color: #262626;
   color: #ddd;
+  border-color: #666;
 }
 .expando p, .comment p, .message p {
   margin-top: 0;
@@ -607,17 +619,17 @@ main {
 }
 .create a div {
   margin: 5px 0px;
-  background-color: #EFFFEF;
+  background-color: #EFF7FF;
   text-align: center;
   padding: 5px;
-  border: 1px solid #008909;
+  border: 1px solid #369;
 }
 .dark .create a div {
   background-color: #444444;
   border: 0;
 }
 .create a div:hover {
-  background-color: #0f7d1b;
+  background-color: #369;
 }
 .dark .create a div:hover {
   background-color: #333333;
@@ -626,7 +638,7 @@ main {
   font-weight: bold;
   text-decoration: none;
   font-size: 13px;
-  color: #0f7d1b;
+  color: #369;
 }
 .dark .create a {
   color: white;
@@ -788,12 +800,16 @@ nav .icon img {
   height:100%;
 }
 
+nav .tabs {
+  overflow-x: auto;
+}
+
 nav ul {
   white-space: nowrap;
   list-style: none;
   margin: 5px 2.5px 0px 2.5px;
   padding: 0;
-  display: inline;
+  display: inline-block;
   vertical-align: bottom;
 }
 
@@ -806,13 +822,14 @@ nav li {
 }
 
 nav ul a {
+  color: #369;
   background-color: #eff7ff;
   text-decoration: none;
   padding: 2px 6px 0 6px;
 }
 .dark nav ul a {
   background-color: #262626;
-  color: #dadada;
+  color: #ddd;
 }
 
 .selected {
@@ -851,7 +868,7 @@ nav .right a.mailbox {
   color: gray;
 }
 nav .right a, .right input[type=submit] {
-  color: #006414;
+  color: #369;
   text-decoration: none;
 }
 .dark nav .right a, .dark .right input[type=submit]{
@@ -900,9 +917,15 @@ nav .right form input, .comment .buttons input, form.link-btn input {
   padding: 5px 10px;
   margin: 5px 10px;
 }
+.dark .warning {
+  background-color: #544400;
+}
 .highlight {
   background-color: #ffc;
   padding-left: 5px;
+}
+.dark .highlight{
+  background-color: #4c4c4c;
 }
 
 form.create {
@@ -912,7 +935,7 @@ form.create {
 form.create div {
   margin: 10px 0px;
   padding: 5px 5px 10px 5px;
-  background-color: #9ad59b;
+  background-color: #cee3f8;
   border-radius: 4px;
 }
 .dark form.create div {

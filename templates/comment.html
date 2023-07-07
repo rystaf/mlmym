@@ -22,7 +22,7 @@
 {{ end }}
       </a>
       <a {{ if .P.Comment.Distinguished}}class="distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">{{fullname .P.Creator}}</a>
-      {{.P.Counts.Score}} points <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
+      <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
             {{- if gt .P.Comment.Updated.Time.Unix .P.Comment.Published.Time.Unix -}}
             * (last edited <span title="{{.P.Comment.Updated.Time}}">{{ humanize .P.Comment.Updated.Time }}</span>)
             {{ end }}
@@ -37,53 +37,55 @@
         <input type="submit" value="save">
       </form>
 {{ else }}
-    <div class="content{{ if and .Selected}} highlight{{end}}">{{if .P.Comment.Deleted}}[removed]{{else}}{{ markdown .State.Host .P.Comment.Content }}{{end}}</div>
+    <div class="content{{ if and .Selected}} highlight{{end}}">
+      {{if .P.Comment.Deleted}}[removed]{{else}}{{ markdown .State.Host .P.Comment.Content }}{{end}}
   {{ if eq .Op "source" }}
-    <div><textarea>{{.P.Comment.Content}}</textarea></div>
+      <div><textarea>{{.P.Comment.Content}}</textarea></div>
   {{end}}
 {{ end }}
-    <ul class="buttons">
-      <li><a href="/{{.State.Host}}/comment/{{.P.Comment.ID}}">permalink</a></li>
+      <ul class="buttons">
+        <li><a href="/{{.State.Host}}/comment/{{.P.Comment.ID}}">permalink</a></li>
 {{ if ne .Op "source"}}
-      <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?source">source</a></li>
+        <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?source">source</a></li>
 {{ else }}
-      <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">hide source</a></li>
+        <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">hide source</a></li>
 {{ end }}
 {{ if .State.Session }}
   {{ if and (eq .P.Comment.CreatorID .State.Session.UserID) (ne .Op "edit") }}
-      <li><a class="edit" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?edit">edit</a></li>
-      <li>
-        <form class="delete" method="POST">
-          <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
-          <input type="hidden" name="op" value="delete_comment">
-          <input type="submit" value="delete">
-        </form>
-      </li>
+        <li><a class="edit" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?edit">edit</a></li>
+        <li>
+          <form class="delete" method="POST">
+            <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
+            <input type="hidden" name="op" value="delete_comment">
+            <input type="submit" value="delete">
+          </form>
+        </li>
   {{ end }}
-      <li>
-        <form class="link-btn" method="POST">
-          <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
-          <input type="hidden" name="op" value="save_comment">
-          {{ if .P.Saved }}
-          <input type="submit" name="submit" value="unsave">
-          {{ else }}
-          <input type="submit" name="submit" value="save">
+        <li>
+          <form class="link-btn" method="POST">
+            <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
+            <input type="hidden" name="op" value="save_comment">
+            {{ if .P.Saved }}
+            <input type="submit" name="submit" value="unsave">
+            {{ else }}
+            <input type="submit" name="submit" value="save">
 
-          {{ end }}
-        </form>
-      </li>
+            {{ end }}
+          </form>
+        </li>
   {{ if ne .Op "reply" }}
-      <li>
-        <a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">
-          reply
-        </a>
-      </li>
+        <li>
+          <a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">
+            reply
+          </a>
+        </li>
   {{ end }}
 {{ end }}
 {{ if gt .ChildCount 0 }}
-      <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{ .ChildCount }}</span> child comments</a></li>
+        <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{ .ChildCount }}</span> child comments</a></li>
 {{ end }}
-    </ul>
+      </ul>
+    </div>
     <div class="children">
 {{ if and (eq .State.Op "reply") (eq .State.CommentID .P.Comment.ID)}}
       <form class="savecomment" method="POST">
