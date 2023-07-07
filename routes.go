@@ -115,10 +115,15 @@ var funcMap = template.FuncMap{
 		if p.ThumbnailURL.IsValid() {
 			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=96"
 		}
-		re := regexp.MustCompile(`^https:\/\/i.imgur.com\/([a-zA-Z0-9]+)\.([a-z]+)$`)
+		re := regexp.MustCompile(`\/pictrs\/image\/([a-z0-9\-]+)\.([a-z]+)$`)
+		if re.MatchString(p.URL.String()) {
+			return p.URL.String() + "?format=jpg&thumbnail=96"
+		}
+		re = regexp.MustCompile(`^https:\/\/i.imgur.com\/([a-zA-Z0-9]+)\.([a-z]+)$`)
 		if re.MatchString(p.URL.String()) {
 			return re.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${1}s.$2")
-		} else if p.URL.IsValid() {
+		}
+		if p.URL.IsValid() {
 			return "/_/static/link.png"
 		}
 		return "/_/static/text.png"

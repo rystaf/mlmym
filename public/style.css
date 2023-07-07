@@ -36,7 +36,7 @@ summary {
   transform: scale(1.03);
 }
 .post {
-  margin: 6px;
+  margin: 6px 0px;
 }
 .post .thumb {
   height: 52px;
@@ -55,10 +55,10 @@ summary {
 }
 .rank {
   color: #c6c6c6;
-  font-size: medium;
+  font-size: 14px;
   margin-top: 17px;
   text-align: right;
-  min-width: 19px;
+  min-width: 32px;
 }
 .dark .post .rank {
   color: #646464;
