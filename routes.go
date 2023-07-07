@@ -111,6 +111,18 @@ var funcMap = template.FuncMap{
 		}
 		return false
 	},
+	"thumbnail": func(p types.Post) string {
+		if p.ThumbnailURL.IsValid() {
+			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=96"
+		}
+		re := regexp.MustCompile(`^https:\/\/i.imgur.com\/([a-zA-Z0-9]+)\.([a-z]+)$`)
+		if re.MatchString(p.URL.String()) {
+			return re.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${1}s.$2")
+		} else if p.URL.IsValid() {
+			return "/_/static/link.png"
+		}
+		return "/_/static/text.png"
+	},
 	"humanize": humanize.Time,
 	"markdown": func(host string, body string) template.HTML {
 		var buf bytes.Buffer
