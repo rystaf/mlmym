@@ -1,8 +1,9 @@
-function request(url, params, callback) {
+function request(url, params, callback, errorcallback) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-      callback(xmlHttp.responseText);
+      return callback(xmlHttp.responseText);
+    errorcallback(xmlHttp.responseText);
   }
   var method = "GET"
   if (params) method = "POST"
@@ -45,9 +46,13 @@ function commentClick(e) {
       params += "&" + e.target.name + "=" + e.target.value
       params += "&xhr=1"
       e.target.disabled = "disabled"
-      request(targ.target, params, function(res){
-        targ.outerHTML = res
-      })
+      request(targ.target || "", params,
+        function(res){
+          targ.outerHTML = res
+        },
+        function(res){
+          e.target.disabled = ""
+        })
     }
     return false
   }
@@ -100,19 +105,24 @@ function loadMore(e) {
   var urlParams = new URLSearchParams(window.location.search);
   urlParams.set("xhr", "1")
   urlParams.set("page", page)
-  request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "", function(res){
-    if (res.trim()) {
-      e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)">'
-      if (showimages = document.getElementById("showimages")) {
-        if (showimages.className == "selected") {
-          toggle_images(true)
+  request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "",
+    function(res){
+      if (res.trim()) {
+        e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)">'
+        if (showimages = document.getElementById("showimages")) {
+          if (showimages.className == "selected") {
+            toggle_images(true)
+          }
         }
       }
+      else {
+        e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
+      }
+    },
+    function(res) {
+      e.target.outerHTML = '<input id="end" type="submit" value="loading failed" onclick="loadMore(event)">'
     }
-    else {
-      e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
-    }
-  })
+  )
   return false;
 }
 function hideAllChildComments(e) {
@@ -146,9 +156,14 @@ function formSubmit(e) {
   params += "&" + e.submitter.name + "=" + e.submitter.value
   params += "&xhr=1"
   e.submitter.disabled = "disabled"
-  request(targ.target, params, function(res){
-    targ.outerHTML = res
-  })
+  request(targ.target, params,
+    function(res){
+      targ.outerHTML = res
+    },
+    function(res){
+      e.submitter.disabled = ""
+    }
+  )
   return false
 }
 

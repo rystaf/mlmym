@@ -349,6 +349,7 @@ func (state *State) GetMessages() {
 					Post:      m.Post,
 					Creator:   m.Creator,
 					Community: m.Community,
+					Counts:    m.Counts,
 				},
 				Op:    unread,
 				State: state,
