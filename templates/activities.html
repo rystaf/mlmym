@@ -6,7 +6,7 @@
       {{ if not $state.User }}
       <b>comment</b> on
       {{ end }}
-      <a href="../post/{{ $activity.Comment.P.Post.ID}}">{{ $activity.Comment.P.Post.Name}}</a>
+      <a href="/{{$state.Host}}/post/{{ $activity.Comment.P.Post.ID}}">{{ $activity.Comment.P.Post.Name}}</a>
       {{ if $state.User}}
       by
       <a href="">{{$state.User.PersonView.Person.Name }}</a>

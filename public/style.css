@@ -162,6 +162,9 @@ summary {
 .message b {
   color: #000;
 }
+.dark .message b {
+  color: #ddd;
+}
 .dark .meta {
   color: #b4b4b4;
 }
@@ -544,6 +547,7 @@ form.nsfw div {
   text-align: right;
 }
 .side {
+  display: none;
   margin: 0 auto;
   font-size: 12px;
   width: 300px;
@@ -558,6 +562,7 @@ main {
 }
 @media (min-width: 900px) {
   .side {
+    display: block;
     position: absolute;
     top: 0;
     right: 0;
