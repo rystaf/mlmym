@@ -253,8 +253,11 @@ summary {
   border-top: 1px dotted gray;
   font-size: 12px;
 }
-.comment form.savecomment {
+form.savecomment {
   margin: 0px 0px 10px 10px;
+}
+.comment > .children > form.savecomment {
+  margin: 0px 0px 10px 20px;
 }
 .savecomment textarea {
   width: 500px;
@@ -370,7 +373,6 @@ form.nsfw div {
 }
 .pager {
   margin: 10px;
-  display: none;
 }
 .pager a {
   padding: 1px 4px;
@@ -381,9 +383,17 @@ form.nsfw div {
   text-decoration: none;
   color: #369;
 }
+.pager.hidden {
+  display: none;
+}
+#loadmore {
+  display: none;
+}
 #loadmore, #end {
-  visibility: hidden;
   margin: 10px 0px;
+}
+#loadmore.show {
+  display: block;
 }
 #loadmore[disabled] {
   visibility: visible;
@@ -474,6 +484,23 @@ form.nsfw div {
   margin-top: 5px;
   position: relative;
   color: #000;
+}
+#settings {
+  background-color: white;
+  border: 1px solid #888;
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 45px;
+}
+#settings form {
+  margin: 0px;
+}
+.dark #settings {
+  background-color: #262626;
+}
+#settings.open {
+  display: inline-block;
 }
 .expando.open{
   display: block;
@@ -980,7 +1007,7 @@ form.create input[type=file], form.create select {
 }
 .preferences label{
   display: inline-block;
-  width: 120px;
+  width: 100px;
   text-align: right;
  
 }

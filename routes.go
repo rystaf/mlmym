@@ -147,7 +147,7 @@ var funcMap = template.FuncMap{
 		converted = re.ReplaceAllString(converted, `href="/`+host+`/$1`)
 		re = regexp.MustCompile(` !([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+) `)
 		converted = re.ReplaceAllString(converted, ` <a href="/$2/c/$1">!$1@$2</a> `)
-		re = regexp.MustCompile(`::: spoiler (.*?)\n(.*?)\s:::`)
+		re = regexp.MustCompile(`::: spoiler (.*?)\n([\S\s]*?):::`)
 		converted = re.ReplaceAllString(converted, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(converted)
 	},
@@ -999,33 +999,59 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			parentid, _ := strconv.Atoi(r.FormValue("parentid"))
 			state.GetComment(parentid)
 		}
-		createComment := types.CreateComment{
-			Content: r.FormValue("content"),
-			PostID:  state.PostID,
+		if r.FormValue("submit") == "save" {
+			createComment := types.CreateComment{
+				Content: r.FormValue("content"),
+				PostID:  state.PostID,
+			}
+			if state.CommentID > 0 {
+				createComment.ParentID = types.NewOptional(state.CommentID)
+			}
+			resp, err := state.Client.CreateComment(context.Background(), createComment)
+			if err == nil {
+				if r.FormValue("xhr") != "" {
+					state.XHR = true
+					state.Comments = nil
+					state.GetComment(resp.CommentView.Comment.ID)
+					Render(w, "index.html", state)
+					return
+				}
+				postid := strconv.Itoa(state.PostID)
+				commentid := strconv.Itoa(resp.CommentView.Comment.ID)
+				r.URL.Path = "/" + state.Host + "/post/" + postid
+				r.URL.Fragment = "c" + commentid
+			} else {
+				fmt.Println(err)
+			}
+		} else if r.FormValue("xhr") != "" {
+			w.Write([]byte{})
+			return
 		}
-		if state.CommentID > 0 {
-			createComment.ParentID = types.NewOptional(state.CommentID)
-		}
-		resp, err := state.Client.CreateComment(context.Background(), createComment)
-		if err == nil {
-			postid := strconv.Itoa(state.PostID)
-			commentid := strconv.Itoa(resp.CommentView.Comment.ID)
-			r.URL.Path = "/" + state.Host + "/post/" + postid
-			r.URL.Fragment = "c" + commentid
-		} else {
-			fmt.Println(err)
+		if r.FormValue("submit") == "cancel" {
+			r.URL.RawQuery = ""
 		}
 	case "edit_comment":
 		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
-		resp, err := state.Client.EditComment(context.Background(), types.EditComment{
-			CommentID: commentid,
-			Content:   types.NewOptional(r.FormValue("content")),
-		})
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			commentid := strconv.Itoa(resp.CommentView.Comment.ID)
-			r.URL.Fragment = "c" + commentid
+		if r.FormValue("submit") == "save" {
+			resp, err := state.Client.EditComment(context.Background(), types.EditComment{
+				CommentID: commentid,
+				Content:   types.NewOptional(r.FormValue("content")),
+			})
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				commentid := strconv.Itoa(resp.CommentView.Comment.ID)
+				r.URL.Fragment = "c" + commentid
+				r.URL.RawQuery = ""
+			}
+		}
+		if r.FormValue("xhr") != "" {
+			state.XHR = true
+			state.GetComment(commentid)
+			Render(w, "index.html", state)
+			return
+		}
+		if r.FormValue("submit") == "cancel" {
 			r.URL.RawQuery = ""
 		}
 	case "delete_comment":

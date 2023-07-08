@@ -1,11 +1,19 @@
+{{ if not .XHR }}
 <!DOCTYPE html>
   <head>
     <title>{{  host .Host }}: preferences</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?v=7">
+    <link rel="stylesheet" href="/_/static/style.css?v=15">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body {{ if .Dark}}class="dark"{{end}}>
+    <noscript>
+      <style>
+      .scripting {
+        display: none;
+      }
+      </style>
+    </noscript>
     <nav>
       <div class="communities">
         <a href="/{{.Host}}">home</a>
@@ -52,7 +60,8 @@
 {{ if .Error }}
     <div class="error">{{.Error}}</div>
 {{ end }}
-    <form class="preferences" method="POST">
+{{ end }}
+<form class="preferences" method="POST" target="/{{.Host}}/settings" onsubmit="save_settings(event)" >
       <div>
         <label>
           default listing
@@ -90,11 +99,26 @@
         </label>
         <input type="checkbox" name="darkmode" {{ if .Dark }}checked{{end}}>
       </div>
+      <div class="scripting">
+        <label>
+          endless scrolling
+        </label>
+        <input type="checkbox" name="endlessScrolling">
+      </div>
+      <div class="scripting">
+        <label>
+          auto load more
+        </label>
+        <input type="checkbox" name="autoLoad">
+      </div>
       <div>
         <label></label>
         <input type="submit" value="save">
+        {{ if .XHR }}<input type="submit" value="close" onclick="close_settings(event)">{{ end }}
       </div>
     </form>
-
+{{ if not .XHR}}
+    <script src="/_/static/utils.js?v=8"></script>
   </body>
 </html>
+{{ end }}

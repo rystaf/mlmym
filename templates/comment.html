@@ -28,17 +28,25 @@
             {{ end }}
     </div>
 {{ if eq .Op "edit" }}
+    <div class="content">
       <form class="savecomment" method="POST">
         <div>
           <textarea required name="content">{{ .P.Comment.Content }}</textarea>
         </div>
         <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
         <input type="hidden" name="op" value="edit_comment">
-        <input type="submit" value="save">
+        <input name="submit" type="submit" value="save">
+        <input name="submit" type="submit" value="cancel">
       </form>
 {{ else }}
-    <div class="content{{ if and .Selected}} highlight{{end}}">
-      {{if .P.Comment.Deleted}}[removed]{{else}}{{ markdown .State.Host .P.Comment.Content }}{{end}}
+    <div class="content">
+      {{if .P.Comment.Deleted}}
+      [removed]
+      {{else}}
+      <div {{ if and .Selected (not .State.XHR) (ne .State.Op "reply")}}class="highlight" {{end}}>
+        {{ markdown .State.Host .P.Comment.Content }}
+      </div>
+      {{end}}
   {{ if eq .Op "source" }}
       <div><textarea>{{.P.Comment.Content}}</textarea></div>
   {{end}}
@@ -73,13 +81,11 @@
             {{ end }}
           </form>
         </li>
-  {{ if ne .Op "reply" }}
         <li>
           <a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">
             reply
           </a>
         </li>
-  {{ end }}
 {{ end }}
 {{ if gt .ChildCount 0 }}
         <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{ .ChildCount }}</span> child comments</a></li>
@@ -90,11 +96,12 @@
 {{ if and (eq .State.Op "reply") (eq .State.CommentID .P.Comment.ID)}}
       <form class="savecomment" method="POST">
         <div>
-          <textarea required name="content"></textarea>
+          <textarea name="content"></textarea>
         </div>
         <input type="hidden" name="parentid" value="{{.P.Comment.ID}}">
         <input type="hidden" name="op" value="create_comment">
-        <input type="submit" value="save">
+        <input type="submit" name="submit" value="save">
+        <input type="submit" name="submit" value="cancel">
       </form>
 {{ end}}
       {{ range $ci, $child := .C }}{{ template "comment.html" $child }}{{end}}

@@ -1,8 +1,10 @@
-function request(url, params, callback, errorcallback) {
+function request(url, params, callback, errorcallback = function(){}) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+    if (xmlHttp.readyState != 4 ) { return }
+    if (xmlHttp.status == 200) {
       return callback(xmlHttp.responseText);
+    }
     errorcallback(xmlHttp.responseText);
   }
   var method = "GET"
@@ -41,7 +43,11 @@ function commentClick(e) {
     var form = e.target.parentNode
     if (form) {
       data = new FormData(form)
-      if (("c"+data.get("commentid")) != targ.id) { return }
+      if (("c"+data.get("commentid")) == targ.id) {
+        
+      } else if (("c"+data.get("parentid")) == targ.id) {
+        targ = form
+      } else { return }
       params = new URLSearchParams(data).toString()
       params += "&" + e.target.name + "=" + e.target.value
       params += "&xhr=1"
@@ -114,6 +120,8 @@ function loadMore(e) {
             toggle_images(true)
           }
         }
+        var loadmore = document.getElementById("loadmore")
+        if (loadmore) loadmore.className = "show"
       }
       else {
         e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
@@ -165,6 +173,47 @@ function formSubmit(e) {
     }
   )
   return false
+}
+
+function open_settings(e) {
+  e.preventDefault()
+  var settings = document.getElementById("settings")
+  settings.className = "open"
+  request(e.target.href + "?xhr=1", "", function(res) {
+    settings.innerHTML = res
+    var options = document.getElementsByClassName("scripting")
+    for (var i = 0; i < options.length; i++) {
+      var input = options[i].getElementsByTagName('input')
+      if (!input.length) { continue }
+      if (localStorage.getItem(input[0].name) == "true") {
+        input[0].checked = "checked"
+      }
+    }
+  })
+  return false
+}
+
+function close_settings(e) {
+  e.preventDefault()
+  var settings = document.getElementById("settings")
+  settings.className = ""
+  return false
+}
+
+function save_settings(e) {
+  e = e || window.event;
+  var targ = e.currentTarget || e.srcElement || e;
+  var data = new FormData(targ)
+  console.log(data)
+  e.preventDefault()
+  var params = new URLSearchParams(data).toString()
+  request(targ.target, params, function(res) {
+    ["endlessScrolling", "autoLoad"].map(function(x) {
+      localStorage.setItem(x, data.get(x)=="on")
+    })
+    window.location.reload()
+  })
+  return false;
 }
 
 function parse_youtube(url){
@@ -227,12 +276,22 @@ for (var i = 0; i < posts.length; i++) {
   }
 }
 
-window.onscroll = function(ev) {
-    if ((window.innerHeight + window.pageYOffset) >= document.body.offsetHeight) {
-      var loadmore = document.getElementById("loadmore")
-      if (loadmore) {
-        loadmore.click()
+if (localStorage.getItem("endlessScrolling") == "true") {
+  var pager = document.getElementsByClassName("pager")
+  if (pager.length) pager[0].className = "pager hidden"
+  var loadmore = document.getElementById("loadmore")
+  if (loadmore) loadmore.className = "show"
+
+  if (localStorage.getItem("autoLoad") == "true") {
+    window.onscroll = function(e) {
+      if ((window.innerHeight + Math.round(window.scrollY)) >= document.body.offsetHeight) {
+        var loadmore = document.getElementById("loadmore")
+        if (loadmore) {
+          loadmore.click()
+        }
       }
-    }
-};
+    };
+  }
+}
+
 
