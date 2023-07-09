@@ -129,7 +129,8 @@ function loadMore(e) {
       }
     },
     function(res) {
-      e.target.outerHTML = '<input id="end" type="submit" value="loading failed" onclick="loadMore(event)">'
+      e.target.outerHTML = '<input id="loadmore" type="submit" data-page="'+parseInt(page)+'" value="loading failed" onclick="loadMore(event)">'
+      document.getElementById("loadmore").className = "show"
     }
   )
   return false;

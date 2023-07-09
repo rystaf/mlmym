@@ -21,7 +21,11 @@
 {{ end }}
 {{ if ne .State.Op "vote_post" }}
         </div>
-        <div class="thumb"><div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{thumbnail .Post}})"></div></div>
+        <div class="thumb">
+          <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">
+            <div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{thumbnail .Post}})"></div>
+          </a>
+        </div>
         <div class="entry">
           <div class="title">
             <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ rmmarkdown .Post.Name }}</a>
