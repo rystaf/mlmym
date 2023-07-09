@@ -122,6 +122,7 @@ function loadMore(e) {
         }
         var loadmore = document.getElementById("loadmore")
         if (loadmore) loadmore.className = "show"
+        insert_youtube()
       }
       else {
         e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
@@ -263,18 +264,21 @@ function toggle_images(open) {
   }
 }
 
-var posts = document.getElementsByClassName("post")
-for (var i = 0; i < posts.length; i++) {
-  var url = posts[i].getElementsByClassName("url")[0].href
-  if (id = parse_youtube(url)) {
-    var btn = posts[i].getElementsByClassName("expando-button")[0]
-    if (btn.className.indexOf("open") > -1) {
-      posts[i].getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
-    } else {
-      btn.className = "expando-button"
+function insert_youtube() {
+  var posts = document.getElementsByClassName("post")
+  for (var i = 0; i < posts.length; i++) {
+    var url = posts[i].getElementsByClassName("url")[0].href
+    if (id = parse_youtube(url)) {
+      var btn = posts[i].getElementsByClassName("expando-button")[0]
+      if (btn.className.indexOf("open") > -1) {
+        posts[i].getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
+      } else {
+        btn.className = "expando-button"
+      }
     }
   }
 }
+insert_youtube()
 
 if (localStorage.getItem("endlessScrolling") == "true") {
   var pager = document.getElementsByClassName("pager")

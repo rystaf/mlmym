@@ -86,10 +86,10 @@ summary {
   visibility: hidden;
 }
 .score form.link-btn input {
-  display: block;
+  display: inline-block;
   color: #b7b7b7;
   font-size: 20px;
-  line-height: 16px;
+  line-height: 15px;
 }
 .dark .score form.link-btn input {
   color: #646464;
@@ -104,10 +104,6 @@ summary {
   color: #eb445a;
 }
 
-.score form div {
-  position: relative;
-  top: 2px;
-}
 .title a {
   font-size: medium;
   text-decoration: none;
@@ -174,7 +170,7 @@ summary {
   margin: 0px 0px 5px 15px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
-  padding: 5px 10px 5px 5px;
+  padding: 5px 10px 5px 7px;
 }
 .dark .comment {
   border-color: #333;
@@ -395,8 +391,8 @@ form.nsfw div {
 #loadmore.show {
   display: block;
 }
-#loadmore[disabled] {
-  visibility: visible;
+#end {
+  visibility: hidden;
 }
 .buttons li {
   display: inline;
@@ -504,6 +500,9 @@ form.nsfw div {
 }
 .expando.open{
   display: block;
+}
+.expando .embed {
+  text-align: center;
 }
 .expando .image {
   display: block;
