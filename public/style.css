@@ -167,10 +167,10 @@ summary {
 
 .comment {
   font-size: 14px;
-  margin: 0px 0px 5px 15px;
+  margin: 0px 0px 5px 0px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
-  padding: 5px 10px 5px 7px;
+  padding: 10px 10px 0px 7px;
 }
 .dark .comment {
   border-color: #333;
@@ -182,7 +182,6 @@ summary {
   max-height: 300px;
 }
 .comment .comment {
-  margin-left: 15px;
 }
 .comment .comment,
 .comment .comment .comment .comment,
@@ -243,17 +242,20 @@ summary {
 }
 .commentmenu {
   font-size: 16px;
-  margin: 0px 0px 10px 10px;
+  margin: 0px 0px 10px 0px;
 }
 .commentmenu div {
   border-top: 1px dotted gray;
   font-size: 12px;
 }
 form.savecomment {
-  margin: 0px 0px 10px 10px;
+  margin: 0px 0px 10px 0px;
 }
 .comment > .children > form.savecomment {
   margin: 0px 0px 10px 20px;
+}
+.comment .children {
+  margin: 5px 0px 10px 15px;
 }
 .savecomment textarea {
   width: 500px;
@@ -275,11 +277,13 @@ form.savecomment {
   font-style: italic;
   font-weight: 700;
 }
-.comment.hidden .content, .comment.hidden .children {
+.comment.hidden .content, .comment.hidden .children, .comment.hidden .morecomments {
   display: none;
 }
+.children .morecomments {
+}
 .morecomments {
-  margin: 10px 0px;
+  margin: 0px 0px 10px 0px;
   font-size: 10px;
 }
 .morecomments a {
@@ -406,7 +410,7 @@ form.nsfw div {
   width: 100%;
 }
 .comment .buttons {
-  margin: 3px 0px 10px 0px;
+  margin: 3px 0px 0px 0px;
 }
 .comment.hidden .buttons {
   display: none;
@@ -481,7 +485,7 @@ form.nsfw div {
   position: relative;
   color: #000;
 }
-#settings {
+#settingspopup {
   background-color: white;
   border: 1px solid #888;
   display: none;
@@ -489,13 +493,13 @@ form.nsfw div {
   right: 10px;
   top: 45px;
 }
-#settings form {
+#settingspopup form {
   margin: 0px;
 }
-.dark #settings {
+.dark #settingspopup {
   background-color: #262626;
 }
-#settings.open {
+#settingspopup.open {
   display: inline-block;
 }
 .expando.open{
@@ -585,6 +589,7 @@ form.nsfw div {
 }
 main {
   position: relative;
+  margin: 0px 10px;
 }
 @media (min-width: 900px) {
   .side {
@@ -594,8 +599,8 @@ main {
     right: 0;
   }
   main {
-    padding-right: 310px;
-    margin-left: 10px;
+    padding-right: 316px;
+    margin-right: 0px;
   }
 }
 .side form {

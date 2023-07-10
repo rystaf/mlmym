@@ -1,12 +1,12 @@
 {{ if ne .State.Op "vote_post" }}
-<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if or .Post.FeaturedCommunity .Post.FeaturedLocal }} distinguished{{end}}" onclick="postClick(event)">
+<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if or .Post.FeaturedCommunity .Post.FeaturedLocal }} distinguished{{end}}">
   {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{ end }}
           <div class="score">
 {{ end }}
 {{ if .State.Session }}
-          <form class="link-btn {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}" method="POST" onsubmit="formSubmit(event)">
+          <form class="link-btn {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}" method="POST">
             <input type="submit" name="vote" value="▲"> 
             {{ if .MyVote.IsValid}}
             <input type="hidden" name="undo" value="{{.MyVote.String}}">
@@ -71,7 +71,7 @@
             </form>
           {{end}}
           {{ if .State.PostID }}
-            <a class="hidechildren" onclick="hideAllChildComments(event)" href="">hide all child comments</a>
+            <a id="hidechildren" class="scripting" href="">hide all child comments</a>
           {{ end }}
           </div>
         </div>

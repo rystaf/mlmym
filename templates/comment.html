@@ -1,5 +1,4 @@
-<div class="comment{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }} hidden{{end}}" id="c{{.P.Comment.ID}}" onclick="commentClick(event)">
-    <div class="meta">
+<div class="comment{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }} hidden{{end}}" id="c{{.P.Comment.ID}}">
 {{ if .State.Session }}
       <div class="score">
       <form class="link-btn{{ if eq .P.MyVote.String "1"}} like{{ else if eq .P.MyVote.String "-1"}} dislike{{end}}" method="POST">
@@ -14,6 +13,7 @@
       </form>
       </div>
 {{ end }}
+    <div class="meta">
       <a class="minimize" href="" for="c{{.P.Comment.ID}}">
 {{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }}
         [+]
@@ -105,11 +105,11 @@
       </form>
 {{ end}}
       {{ range $ci, $child := .C }}{{ template "comment.html" $child }}{{end}}
-    </div>
 {{ if ne .P.Counts.ChildCount .ChildCount}}
-    <div class="morecomments">
-      <a class="loadmore" for="c{{ .P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">load more comments</a>
-      <span class="gray">({{ sub .P.Counts.ChildCount .ChildCount}} replies)</span>
-    </div>
+      <div class="morecomments">
+        <a class="loadmore" for="c{{ .P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">load more comments</a>
+        <span class="gray">({{ sub .P.Counts.ChildCount .ChildCount}} replies)</span>
+      </div>
 {{end}}
+    </div>
   </div>

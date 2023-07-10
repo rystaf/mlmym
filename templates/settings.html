@@ -61,7 +61,7 @@
     <div class="error">{{.Error}}</div>
 {{ end }}
 {{ end }}
-<form class="preferences" method="POST" target="/{{.Host}}/settings" onsubmit="save_settings(event)" >
+<form id="settings" class="preferences" method="POST" target="/{{.Host}}/settings">
       <div>
         <label>
           default listing
@@ -114,7 +114,7 @@
       <div>
         <label></label>
         <input type="submit" value="save">
-        {{ if .XHR }}<input type="submit" value="close" onclick="close_settings(event)">{{ end }}
+        {{ if .XHR }}<input id="closesettings" type="submit" value="close">{{ end }}
       </div>
     </form>
 {{ if not .XHR}}

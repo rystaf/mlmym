@@ -194,7 +194,7 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	token := getCookie(r, "jwt")
 	user := getCookie(r, "user")
 	parts := strings.Split(user, ":")
-	if len(parts) == 2 {
+	if len(parts) == 2 && token != "" {
 		if id, err := strconv.Atoi(parts[1]); err == nil {
 			state.Client.Token = token
 			sess := Session{
@@ -248,6 +248,8 @@ func Render(w http.ResponseWriter, templateName string, state State) {
 	if state.Status != http.StatusOK {
 		w.WriteHeader(state.Status)
 	}
+	header := w.Header()
+	header.Set("Content-Security-Policy", "script-src 'self'")
 	err = tmpl.Execute(w, state)
 	if err != nil {
 		fmt.Println("execute fail", err)
@@ -504,10 +506,13 @@ func setCookie(w http.ResponseWriter, host string, name string, value string) {
 		host = ""
 	}
 	cookie := http.Cookie{
-		Name:   name,
-		Value:  value,
-		MaxAge: 86400 * 30,
-		Path:   "/" + host,
+		Name:     name,
+		Value:    value,
+		MaxAge:   86400 * 30,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
+		Path:     "/" + host,
 	}
 	http.SetCookie(w, &cookie)
 }

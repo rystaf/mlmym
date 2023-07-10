@@ -29,8 +29,8 @@ function postClick(e) {
     bdy.className = 'expando open';
     btn.className = "expando-button open"
     var url = targ.getElementsByClassName("url")[0].href
-    if (id = parse_youtube(url)) {
-      targ.getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
+    if (id = parseYoutube(url)) {
+      targ.getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
     }
   }
 }
@@ -114,23 +114,26 @@ function loadMore(e) {
   request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "",
     function(res){
       if (res.trim()) {
-        e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more" onclick="loadMore(event)">'
+        e.target.outerHTML = res + '<input id="loadmore" type="submit" data-page="'+(parseInt(page)+1)+'" value="load more">'
         if (showimages = document.getElementById("showimages")) {
           if (showimages.className == "selected") {
-            toggle_images(true)
+            toggleImages(true)
           }
         }
         var loadmore = document.getElementById("loadmore")
-        if (loadmore) loadmore.className = "show"
-        insert_youtube()
+        loadmore.className = "show"
+        loadmore.addEventListener("click", loadMore)
+        setup()
       }
       else {
         e.target.outerHTML = '<input id="end" type="submit" value="" disabled>'
       }
     },
     function(res) {
-      e.target.outerHTML = '<input id="loadmore" type="submit" data-page="'+parseInt(page)+'" value="loading failed" onclick="loadMore(event)">'
-      document.getElementById("loadmore").className = "show"
+      e.target.outerHTML = '<input id="loadmore" type="submit" data-page="'+parseInt(page)+'" value="loading failed">'
+      var loadmore = document.getElementById("loadmore")
+      loadmore.className = "show"
+      loadmore.addEventListener("click", loadMore)
     }
   )
   return false;
@@ -177,9 +180,9 @@ function formSubmit(e) {
   return false
 }
 
-function open_settings(e) {
+function openSettings(e) {
   e.preventDefault()
-  var settings = document.getElementById("settings")
+  var settings = document.getElementById("settingspopup")
   settings.className = "open"
   request(e.target.href + "?xhr=1", "", function(res) {
     settings.innerHTML = res
@@ -191,22 +194,23 @@ function open_settings(e) {
         input[0].checked = "checked"
       }
     }
+    document.getElementById("settings").addEventListener("submit", saveSettings)
+    document.getElementById("closesettings").addEventListener("click", closeSettings)
   })
   return false
 }
 
-function close_settings(e) {
+function closeSettings(e) {
   e.preventDefault()
-  var settings = document.getElementById("settings")
+  var settings = document.getElementById("settingspopup")
   settings.className = ""
   return false
 }
 
-function save_settings(e) {
+function saveSettings(e) {
   e = e || window.event;
   var targ = e.currentTarget || e.srcElement || e;
   var data = new FormData(targ)
-  console.log(data)
   e.preventDefault()
   var params = new URLSearchParams(data).toString()
   request(targ.target, params, function(res) {
@@ -218,7 +222,7 @@ function save_settings(e) {
   return false;
 }
 
-function parse_youtube(url){
+function parseYoutube(url){
   if (url.indexOf("youtu") == -1) return false
   var regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
   var match = url.match(regExp);
@@ -227,27 +231,26 @@ function parse_youtube(url){
   }
   return false
 }
-function youtube_iframe(id) {
+function youtubeIframe(id) {
   return '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+id+'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>'
 }
 
-function show_images(e) {
+function showImages(e) {
   e = e || window.event;
   e.preventDefault()
   var targ = e.currentTarget || e.srcElement || e;
-  console.log(targ)
   var parent = targ.parentNode
   if (parent.className == "") {
     parent.className = "selected"
-    toggle_images(true)
+    toggleImages(true)
   } else {
     parent.className = ""
-    toggle_images(false)
+    toggleImages(false)
   }
   return false
 }
 
-function toggle_images(open) {
+function toggleImages(open) {
   var posts = document.getElementsByClassName("post")
   for (var i = 0; i < posts.length; i++) {
     var btn = posts[i].getElementsByClassName("expando-button")[0]
@@ -265,27 +268,48 @@ function toggle_images(open) {
   }
 }
 
-function insert_youtube() {
+function setup() {
+  if (showimages = document.getElementById("se")) {
+    showimages.addEventListener("click", showImages)
+  }
+  if (settings = document.getElementById("opensettings")) {
+    settings.addEventListener("click", openSettings)
+  }
+  if (hidechildren = document.getElementById("hidechildren")){
+    hidechildren.addEventListener("click", hideAllChildComments)
+  }
   var posts = document.getElementsByClassName("post")
   for (var i = 0; i < posts.length; i++) {
+    posts[i].addEventListener("click", postClick)
+    var voteForm = posts[i].getElementsByClassName("link-btn")
+    if (voteForm.length) {
+      voteForm[0].addEventListener("submit", formSubmit)
+    }
     var url = posts[i].getElementsByClassName("url")[0].href
-    if (id = parse_youtube(url)) {
+    if (id = parseYoutube(url)) {
       var btn = posts[i].getElementsByClassName("expando-button")[0]
       if (btn.className.indexOf("open") > -1) {
-        posts[i].getElementsByClassName("embed")[0].innerHTML = youtube_iframe(id)
+        posts[i].getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
       } else {
         btn.className = "expando-button"
       }
     }
   }
+  var comments = document.getElementsByClassName("comment")
+  for (var i = 0; i < comments.length; i++) {
+    comments[i].addEventListener("click", commentClick)
+  }
 }
-insert_youtube()
+setup()
 
 if (localStorage.getItem("endlessScrolling") == "true") {
   var pager = document.getElementsByClassName("pager")
   if (pager.length) pager[0].className = "pager hidden"
   var loadmore = document.getElementById("loadmore")
-  if (loadmore) loadmore.className = "show"
+  if (loadmore) {
+    loadmore.className = "show"
+    loadmore.addEventListener("click", loadMore)
+  }
 
   if (localStorage.getItem("autoLoad") == "true") {
     window.onscroll = function(e) {
@@ -299,4 +323,11 @@ if (localStorage.getItem("endlessScrolling") == "true") {
   }
 }
 
-
+// delete cookies without HTTPOnly
+var cookies = document.cookie.split(";");
+for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i];
+    var eqPos = cookie.indexOf("=");
+    var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;SameSite=None;Secure";
+}

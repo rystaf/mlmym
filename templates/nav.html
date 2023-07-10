@@ -17,16 +17,16 @@
         |
         <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>
         |
-        <a href="/{{.Host}}/settings" onclick="open_settings(event)">settings</a>
+        <a id="opensettings" href="/{{.Host}}/settings">settings</a>
         | 
         <form method="POST"><input type="submit" name="op" value="logout"></form>
 {{else}}
          <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
         | 
-        <a href="/{{.Host}}/settings" onclick="open_settings(event)">settings</a>
+        <a id="opensettings" href="/{{.Host}}/settings">settings</a>
 {{end}}
       </div>
-      <div id="settings"></div>
+      <div id="settingspopup"></div>
       <div class="spacer">
         <a href="/{{ .Host}}/">
           <img class="icon" src="{{ if .Site }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
@@ -66,7 +66,7 @@
         <li{{ if eq .Sort "NewComments" }} class="selected"{{end}}><a href="{{ .SortBy "NewComments" }}">new comments</a></li>
         <li{{ if contains .Sort "Top" }} class="selected"{{end}}><a href="{{ .SortBy "TopDay" }}">top</a></li>
           {{ if .Posts }}
-        <li id="showimages"><a href="" onclick="show_images(event)">show images</a></li>
+        <li id="showimages"><a id="se" href="">show images</a></li>
           {{ end }}
         {{ end }}
       </ul>
