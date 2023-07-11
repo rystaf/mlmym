@@ -105,6 +105,28 @@ function commentClick(e) {
     return false
   }
 }
+
+function loadMoreComments(e) {
+  e.preventDefault()
+  page = e.target.getAttribute("data-page")
+  var urlParams = new URLSearchParams(window.location.search);
+  urlParams.set("xhr", "1")
+  urlParams.set("page", page)
+  e.target.innerHTML = "loading"
+  e.target.className = "loading"
+  request(window.location.origin+window.location.pathname+"?"+urlParams.toString(), "",
+    function(res){
+      if (res.trim()) {
+        e.target.parentNode.outerHTML = res + '<div class="morecomments"><a id="lmc" href="" data-page="'+(parseInt(page)+1)+'">load more comments</a></div>'
+        setup()
+      } else {
+        e.target.parentNode.outerHTML = ""
+      }
+    }, function() {
+      e.target.innerHTML = "loading failed"
+    })
+  return false;
+}
 function loadMore(e) {
   e.preventDefault()
   page = e.target.getAttribute("data-page")
@@ -281,6 +303,9 @@ function setup() {
   if (hidechildren = document.getElementById("hidechildren")){
     hidechildren.addEventListener("click", hideAllChildComments)
   }
+  if (lmc = document.getElementById("lmc")){
+    lmc.addEventListener("click", loadMoreComments)
+  }
   var posts = document.getElementsByClassName("post")
   for (var i = 0; i < posts.length; i++) {
     posts[i].addEventListener("click", postClick)
@@ -313,17 +338,20 @@ if (localStorage.getItem("endlessScrolling") == "true") {
     loadmore.className = "show"
     loadmore.addEventListener("click", loadMore)
   }
-
-  if (localStorage.getItem("autoLoad") == "true") {
-    window.onscroll = function(e) {
-      if ((window.innerHeight + Math.round(window.scrollY)) >= document.body.offsetHeight) {
-        var loadmore = document.getElementById("loadmore")
-        if (loadmore) {
+}
+if (localStorage.getItem("autoLoad") == "true") {
+  window.onscroll = function(e) {
+    if ((window.innerHeight + Math.round(window.scrollY)) >= document.body.offsetHeight) {
+      if (localStorage.getItem("endlessScrolling") == "true") {
+        if (loadmore = document.getElementById("loadmore")) {
           loadmore.click()
         }
       }
-    };
-  }
+      if (lmc = document.getElementById("lmc")) {
+        lmc.click()
+      }
+    }
+  };
 }
 
 // delete cookies without HTTPOnly

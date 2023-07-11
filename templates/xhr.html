@@ -2,6 +2,8 @@
   {{ range $i, $comment := .Comments }}
       {{ template "comment.html" $comment }}
   {{ end }}
+{{ else if .Activities }}
+  {{ template "activities.html" . }}
 {{ else }}
   {{ range $post := .Posts }}
 

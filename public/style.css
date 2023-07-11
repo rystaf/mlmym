@@ -352,6 +352,9 @@ form.nsfw div {
 .gray {
   color: #808080;
 }
+.loading {
+  color: red !important;
+}
 .error {
   color: red;
   font-size: 13px;

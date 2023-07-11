@@ -3,7 +3,7 @@
     <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ host .Host }}{{end}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?v=19">
+    <link rel="stylesheet" href="/_/static/style.css?v=20">
   </head>
   <body{{ if .Dark }} class="dark"{{end}}>
     <noscript>
@@ -107,6 +107,12 @@
     {{ template "comment.html" $comment }}
   {{ end }}
 
+  {{ if (and .Comments (gt (index .Posts 0).Counts.Comments .CommentCount)) }}
+    <div class="morecomments">
+      <a id="lmc" href="" data-page="2">load more comments</a>
+    </div>
+  {{ end }}
+
   {{ if eq .Op "send_message" }}
     {{ template "send_message.html" . }}
   {{ else }}
@@ -117,15 +123,14 @@
   <div class="error">there doesn't seem to be anything here</div>
   {{ end }}
 
-
-  {{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (gt (index .Posts 0).Counts.Comments .CommentCount) (not .CommentID)) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
+  {{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
     <div class="pager">
       view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
     </div>
     <input id="loadmore" type="submit" value="load more" data-page="2">
   {{ end }}
 
-    <script src="/_/static/utils.js?v=13"></script>
+    <script src="/_/static/utils.js?v=14"></script>
     {{ template "sidebar.html" . }}
     </main>
 {{ end }}
