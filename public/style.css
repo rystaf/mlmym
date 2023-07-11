@@ -74,6 +74,7 @@ summary {
   color: #646464;
 }
 .comment .score {
+  clear:left;
   margin-right: 4px;
   overflow:hidden;
 }
@@ -81,6 +82,9 @@ summary {
   line-height: 20px;
   overflow:hidden;
   max-width: 840px;
+}
+.comment.hidden {
+  padding-bottom:5px;
 }
 .comment.hidden .score {
   visibility: hidden;
@@ -266,9 +270,6 @@ form.savecomment {
   font-size: 10px;
   margin-right: 2px;
 }
-.comment.hidden {
-  margin-bottom: 10px;
-}
 .comment.hidden .meta a {
   color: gray;
   font-weight: 400;
@@ -283,6 +284,7 @@ form.savecomment {
 .children .morecomments {
 }
 .morecomments {
+  clear: left;
   margin: 0px 0px 10px 0px;
   font-size: 10px;
 }

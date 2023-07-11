@@ -55,6 +55,7 @@ function commentClick(e) {
       request(targ.target || "", params,
         function(res){
           targ.outerHTML = res
+          setup()
         },
         function(res){
           e.target.disabled = ""
@@ -99,6 +100,7 @@ function commentClick(e) {
     e.preventDefault()
     request(e.target.href+"&xhr",false, function(res){
       targ.outerHTML = res
+      setup()
     })
     return false
   }
@@ -172,6 +174,7 @@ function formSubmit(e) {
   request(targ.target, params,
     function(res){
       targ.outerHTML = res
+      setup()
     },
     function(res){
       e.submitter.disabled = ""

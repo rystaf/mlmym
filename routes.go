@@ -643,10 +643,14 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			q.Add("alert", alert)
 			r.URL.RawQuery = q.Encode()
 			http.Redirect(w, r, r.URL.String(), 301)
+			return
 		}
 	}
 	if token != "" {
 		state.GetUser(username)
+		if state.User == nil {
+			return
+		}
 		setCookie(w, state.Host, "jwt", token)
 		userid := strconv.Itoa(state.User.PersonView.Person.ID)
 		setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
@@ -663,7 +667,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 	state.GetSite()
-	if state.Site.SiteView.LocalSite.CaptchaEnabled {
+	if state.Site != nil && state.Site.SiteView.LocalSite.CaptchaEnabled {
 		state.GetCaptcha()
 	}
 	m, _ := url.ParseQuery(r.URL.RawQuery)

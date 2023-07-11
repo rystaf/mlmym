@@ -219,7 +219,8 @@ func (state *State) GetSite() {
 	resp, err := state.Client.Site(context.Background(), types.GetSite{})
 	if err != nil {
 		state.Status = http.StatusInternalServerError
-		state.Host = ""
+		state.Host = "."
+		state.Error = errors.New("site unreachable")
 		return
 	}
 	state.Client.Token = token
