@@ -480,6 +480,9 @@ form.nsfw div {
 .hidechildren.hidden .hide {
   display: none;
 }
+.hidechildren span {
+  pointer-events: none;
+}
 .expando {
   display: none;
   max-width: 870px;
