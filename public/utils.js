@@ -165,6 +165,11 @@ function loadMore(e) {
 function hideAllChildComments(e) {
   e.preventDefault()
   var comments = document.getElementsByClassName("comment")
+  if (e.target.innerHTML == "hide all child comments") {
+    e.target.innerHTML = "show all child comments"
+  } else {
+    e.target.innerHTML = "hide all child comments"
+  }
   for (var i = 0; i < comments.length; i++) {
     var comment = comments[i]
     var btn = comment.getElementsByClassName("hidechildren")
@@ -172,14 +177,12 @@ function hideAllChildComments(e) {
     btn = btn[0]
     if (btn.getAttribute("for") != comment.id) { continue }
     var children = comment.getElementsByClassName("children")[0]
-    if (children.className.indexOf("hidden") == -1) {
+    if (e.target.innerHTML == "show all child comments") {
       children.className = "children hidden"
       btn.className = "hidechildren hidden"
-      e.target.innerHTML = "show all child comments"
     } else {
       children.className = "children"
       btn.className = "hidechildren"
-      e.target.innerHTML = "hide all child comments"
     }
   }
   return false
