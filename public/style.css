@@ -377,7 +377,7 @@ form.nsfw div {
   top: 1px;
 }
 .pager {
-  margin: 10px;
+  margin: 20px 0px;
 }
 .pager a {
   padding: 1px 4px;
@@ -471,7 +471,7 @@ form.nsfw div {
 .expando-button:hover{
   background-color: #466599;
 }
-.expando-button.hidden, .children.hidden {
+.expando-button.hidden, .children.hidden .comment {
   display: none;
 }
 .hidechildren .show {

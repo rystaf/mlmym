@@ -304,6 +304,9 @@ function setup() {
     hidechildren.addEventListener("click", hideAllChildComments)
   }
   if (lmc = document.getElementById("lmc")){
+    if (pager = document.getElementsByClassName("pager")){
+      pager[0].style.display = "none";
+    }
     lmc.addEventListener("click", loadMoreComments)
   }
   var posts = document.getElementsByClassName("post")
