@@ -924,6 +924,14 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			fmt.Println(err)
 		}
+		if r.FormValue("xhr") != "" {
+			state.GetPost(postid)
+			state.PostID = 0
+			state.Op = "save_post"
+			state.XHR = true
+			Render(w, "index.html", state)
+			return
+		}
 	case "save_comment":
 		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
 		_, err := state.Client.SaveComment(context.Background(), types.SaveComment{

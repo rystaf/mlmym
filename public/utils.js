@@ -315,9 +315,9 @@ function setup() {
   var posts = document.getElementsByClassName("post")
   for (var i = 0; i < posts.length; i++) {
     posts[i].addEventListener("click", postClick)
-    var voteForm = posts[i].getElementsByClassName("link-btn")
-    if (voteForm.length) {
-      voteForm[0].addEventListener("submit", formSubmit)
+    var forms = posts[i].getElementsByClassName("link-btn")
+    for (var f = 0; f < forms.length; f++) {
+      forms[f].addEventListener("submit", formSubmit)
     }
     var url = posts[i].getElementsByClassName("url")[0].href
     if (id = parseYoutube(url)) {

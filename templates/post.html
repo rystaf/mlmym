@@ -1,10 +1,11 @@
-{{ if ne .State.Op "vote_post" }}
+{{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
 <div class="post{{if .Post.Deleted}} deleted{{end}}{{ if or .Post.FeaturedCommunity .Post.FeaturedLocal }} distinguished{{end}}">
   {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{ end }}
           <div class="score">
 {{ end }}
+{{ if or (ne .State.Op "save_post") (eq .State.Op "vote_post") }}
 {{ if .State.Session }}
           <form class="link-btn {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}" method="POST">
             <input type="submit" name="vote" value="▲"> 
@@ -19,7 +20,8 @@
 {{ else }}
           <div style="margin-top: 19px;">{{ .Counts.Score }}</div>
 {{ end }}
-{{ if ne .State.Op "vote_post" }}
+{{ end }}
+{{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
         </div>
         <div class="thumb">
           <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">
@@ -59,6 +61,8 @@
               {{ end }}
             </form>
           {{ end}}
+{{ end }}
+{{ if or (ne .State.Op "vote_post") (eq .State.Op "save_post") }}
           {{ if .State.Session }}
             <form class="link-btn" method="POST">
               <input type="hidden" name="postid" value="{{.Post.ID }}">
@@ -70,6 +74,8 @@
               {{ end }}
             </form>
           {{end}}
+{{ end }}
+{{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
           {{ if .State.PostID }}
             <a id="hidechildren" class="scripting" href="">hide all child comments</a>
           {{ end }}

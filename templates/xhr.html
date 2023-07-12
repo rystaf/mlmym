@@ -6,7 +6,6 @@
   {{ template "activities.html" . }}
 {{ else }}
   {{ range $post := .Posts }}
-
     {{ template "post.html" $post }}
   {{ end }}
 {{ end }}
