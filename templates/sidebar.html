@@ -7,7 +7,7 @@
   {{ if .User }}
         <input type="hidden" name="username" value="{{.UserName}}">
   {{ else if .Community }}
-        <input type="hidden" name="communityname" value="{{.CommunityName}}">
+        <input type="hidden" name="communityname" value="{{fullcname .Community.CommunityView.Community}}">
   {{ end }}
       </form>
 {{ end }}

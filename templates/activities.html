@@ -13,7 +13,7 @@
       <a href="">{{$state.User.PersonView.Person.Name }}</a>
       {{ end }}
       in
-      <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">/c/{{ $activity.Comment.P.Community.Name }}</a>
+      <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">c/{{ $activity.Comment.P.Community.Name }}</a>
       </span>
     </div>
         {{ template "comment.html" $activity.Comment }}

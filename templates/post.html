@@ -43,7 +43,7 @@
             by
             <a href="/{{ .State.Host }}/u/{{ fullname .Creator }}">{{ fullname .Creator }}</a>
             to
-            <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">{{ fullcname .Community}}</a>
+            <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">c/{{ fullcname .Community}}</a>
           </div>
           <div class="buttons">
             {{ if .Post.NSFW }}<span class="nsfw">NSFW</span>{{end}}
