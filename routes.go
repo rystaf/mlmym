@@ -414,6 +414,10 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if len(m["source"]) > 0 {
 		state.Op = "source"
 	}
+	if len(m["context"]) > 0 {
+		ctx, _ := strconv.Atoi(m["context"][0])
+		state.Context = ctx
+	}
 	commentid, _ := strconv.Atoi(ps.ByName("commentid"))
 	state.GetComment(commentid)
 	state.GetPost(state.PostID)

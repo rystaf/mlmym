@@ -87,6 +87,16 @@
           </a>
         </li>
 {{ end }}
+{{ if and .ParentID .State.CommentID }}
+        <li>
+          <a href="/{{.State.Host}}/comment/{{.ParentID}}">parent</a>
+        </li>
+{{ end }}
+{{ if and .ParentID (or .State.Activities .State.Query) }}
+        <li>
+          <a href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?context=3">context</a>
+        </li>
+{{ end }}
 {{ if gt .ChildCount 0 }}
         <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{ .ChildCount }}</span> child comments</a></li>
 {{ end }}
@@ -105,7 +115,7 @@
       </form>
 {{ end}}
       {{ range $ci, $child := .C }}{{ template "comment.html" $child }}{{end}}
-{{ if ne .P.Counts.ChildCount .ChildCount}}
+{{ if and (ne .P.Counts.ChildCount .ChildCount) (not .State.Activities) (not .State.Query) }}
       <div class="morecomments">
         <a class="loadmore" for="c{{ .P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?">load more comments</a>
         <span class="gray">({{ sub .P.Counts.ChildCount .ChildCount}} replies)</span>

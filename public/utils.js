@@ -307,7 +307,8 @@ function setup() {
     hidechildren.addEventListener("click", hideAllChildComments)
   }
   if (lmc = document.getElementById("lmc")){
-    if (pager = document.getElementsByClassName("pager")){
+    var pager = document.getElementsByClassName("pager")
+    if (pager.length) {
       pager[0].style.display = "none";
     }
     lmc.addEventListener("click", loadMoreComments)

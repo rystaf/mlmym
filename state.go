@@ -33,6 +33,12 @@ func (c *Comment) Submitter() bool {
 	return c.P.Comment.CreatorID == c.P.Post.CreatorID
 }
 
+func (c *Comment) ParentID() int {
+	path := strings.Split(c.P.Comment.Path, ".")
+	id, _ := strconv.Atoi(path[len(path)-2])
+	return id
+}
+
 type Person struct {
 	types.PersonViewSafe
 }
@@ -78,6 +84,7 @@ type State struct {
 	CommentCount   int
 	PostID         int
 	CommentID      int
+	Context        int
 	UserName       string
 	User           *types.GetPersonDetailsResponse
 	Now            int64
@@ -258,6 +265,30 @@ func (state *State) GetComment(commentid int) {
 			state.Comments = append(state.Comments, comment)
 		}
 	}
+	ctx, err := state.GetContext(state.Context, state.Comments[0])
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		state.Comments = []Comment{ctx}
+	}
+}
+func (state *State) GetContext(depth int, comment Comment) (ctx Comment, err error) {
+	if depth < 1 || comment.ParentID() == 0 {
+		return comment, nil
+	}
+	cresp, err := state.Client.Comment(context.Background(), types.GetComment{
+		ID: comment.ParentID(),
+	})
+	if err != nil {
+		return
+	}
+	ctx, err = state.GetContext(depth-1, Comment{
+		P:          cresp.CommentView,
+		State:      state,
+		C:          []Comment{comment},
+		ChildCount: comment.ChildCount + 1,
+	})
+	return
 }
 func (state *State) GetComments() {
 	if state.Sort != "Hot" && state.Sort != "Top" && state.Sort != "Old" && state.Sort != "New" {
@@ -504,9 +535,13 @@ func (state *State) Search(searchtype string) {
 			})
 		}
 		for _, c := range resp.Comments {
-			state.Comments = append(state.Comments, Comment{
+			comment := Comment{
 				P:     c,
 				State: state,
+			}
+			state.Activities = append(state.Activities, Activity{
+				Timestamp: c.Comment.Published.Time,
+				Comment:   &comment,
 			})
 		}
 		state.Communities = resp.Communities

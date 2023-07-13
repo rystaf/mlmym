@@ -115,7 +115,8 @@ summary {
 .title a p {
   display: inline;
 }
-.post.distinguished .title a {
+.post.distinguished .title a,
+.dark .post.distinguished .title a:visited {
   color: #228822;
   font-weight: bold;
 }
@@ -218,7 +219,7 @@ summary {
   font-size: 10px;
   margin-bottom: 6px;
 }
-.meta a {
+.meta a, .activity .meta a {
   color: #369;
   text-decoration: none;
   font-size: 10px;

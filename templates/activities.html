@@ -3,16 +3,18 @@
       <div class="activity">
     {{ if $activity.Comment }}
     <div class="title{{ if eq $activity.Comment.Op "unread"}} orangered{{end}}">
-      {{ if not $state.User }}
+      {{ if and (not $state.User) (not $state.Query) }}
       <b>comment</b> on
       {{ end }}
       <a href="/{{$state.Host}}/post/{{ $activity.Comment.P.Post.ID}}">{{ $activity.Comment.P.Post.Name}}</a>
+      <span class="meta">
       {{ if $state.User}}
       by
       <a href="">{{$state.User.PersonView.Person.Name }}</a>
       {{ end }}
       in
       <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">/c/{{ $activity.Comment.P.Community.Name }}</a>
+      </span>
     </div>
         {{ template "comment.html" $activity.Comment }}
     {{ else if $activity.Post }}

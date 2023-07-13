@@ -108,7 +108,7 @@
     {{ template "comment.html" $comment }}
   {{ end }}
 
-  {{ if (and .Comments (gt (index .Posts 0).Counts.Comments .CommentCount)) }}
+  {{ if and .Comments .Posts (gt (index .Posts 0).Counts.Comments .CommentCount) (not .CommentID)}}
     <div class="morecomments">
       <a id="lmc" href="" data-page="2">load more comments</a>
     </div>
