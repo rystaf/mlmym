@@ -1,5 +1,5 @@
 {{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
-<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if or .Post.FeaturedCommunity .Post.FeaturedLocal }} distinguished{{end}}">
+<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if .Post.FeaturedCommunity }} distinguished{{end}}{{if .Post.FeaturedLocal }} announcement{{end}}">
   {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{ end }}
@@ -41,7 +41,7 @@
             * (last edited <span title="{{.Post.Updated.Time}}">{{ humanize .Post.Updated.Time }}</span>)
             {{ end }}
             by
-            <a href="/{{ .State.Host }}/u/{{ fullname .Creator }}">{{ fullname .Creator }}</a>
+            <a class="submitter{{ if .Creator.Admin}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">{{ fullname .Creator }}</a>
             to
             <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">c/{{ fullcname .Community}}</a>
           </div>

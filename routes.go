@@ -165,6 +165,9 @@ var funcMap = template.FuncMap{
 	"sub": func(a int32, b int) int {
 		return int(a) - b
 	},
+	"add": func(a int32, b int) int {
+		return int(a) + b
+	},
 }
 
 func Initialize(Host string, r *http.Request) (State, error) {

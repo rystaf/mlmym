@@ -627,19 +627,19 @@ func (state *State) UploadImage(file multipart.File, header *multipart.FileHeade
 
 func getChildren(parent *Comment, pool []types.CommentView, postCreatorID int) {
 	var children []Comment
-	total := -1
+	total := int32(0)
 	for _, c := range pool {
 		levels := strings.Split(c.Comment.Path, ".")
 		for i, l := range levels {
 			id, _ := strconv.Atoi(l)
 			if id == parent.P.Comment.ID {
-				total = total + 1
 				if i == (len(levels) - 2) {
 					children = append(children, Comment{
 						P:     c,
 						C:     children,
 						State: parent.State,
 					})
+					total += c.Counts.ChildCount
 				}
 			}
 
@@ -647,7 +647,8 @@ func getChildren(parent *Comment, pool []types.CommentView, postCreatorID int) {
 	}
 	for i, _ := range children {
 		getChildren(&children[i], pool, postCreatorID)
+		parent.ChildCount += 1
 	}
 	parent.C = children
-	parent.ChildCount = total
+	parent.P.Counts.ChildCount -= total
 }

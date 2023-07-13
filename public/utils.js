@@ -91,8 +91,7 @@ function commentClick(e) {
     }
     return false
   }
-  if ((e.target.className.indexOf("loadmore") != -1) ||
-    (e.target.className.indexOf("edit") != -1) ||
+  if ((e.target.className.indexOf("edit") != -1) ||
     (e.target.className.indexOf("source") != -1) ||
     (e.target.className.indexOf("reply") != -1)) {
     var id = targ.id
@@ -100,6 +99,32 @@ function commentClick(e) {
     e.preventDefault()
     request(e.target.href+"&xhr",false, function(res){
       targ.outerHTML = res
+      setup()
+    })
+    return false
+  }
+  if (e.target.className.indexOf("loadmore") != -1) {
+    var id = targ.id
+    if (e.target.getAttribute("for") != id) { return }
+    e.preventDefault()
+    var comments = targ.getElementsByClassName("comment")
+    var skip = []
+    for (var i = 0; i < comments.length; i++) {
+      skip.push(comments[i].id)
+    }
+    request(e.target.href+"&xhr",false, function(res){
+      var parent = e.target.parentNode
+      parent.innerHTML = res
+      parent.innerHTML = parent.getElementsByClassName("children")[0].innerHTML
+      var comments = parent.getElementsByClassName("comment")
+      for (var i = 0; i < skip.length; i++) {
+        for (var c = 0; c < comments.length; c++) {
+          if (skip[i] == comments[c].id) {
+            comments[c].remove()
+          }
+        }
+      }
+      parent.outerHTML = parent.innerHTML
       setup()
     })
     return false

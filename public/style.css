@@ -115,8 +115,8 @@ summary {
 .title a p {
   display: inline;
 }
-.post.distinguished .title a,
-.dark .post.distinguished .title a:visited {
+.post.distinguished .title a, .post.announcement .title a,
+.dark .post.distinguished .title a:visited, .post.announcement .title a:visited {
   color: #228822;
   font-weight: bold;
 }
@@ -227,6 +227,13 @@ summary {
 }
 .dark .meta a {
   color: #6a98af;
+}
+.comment .meta a.distinguished.admin, .post.distinguished a.admin, .post.announcement a.admin {
+  background-color: #ff0011;
+  color: white;
+  font-weight: bold;
+  border-radius: 3px;
+  padding: 0px 2px;
 }
 .meta a:hover {
   text-decoration: underline;
@@ -472,7 +479,7 @@ form.nsfw div {
 .expando-button:hover{
   background-color: #466599;
 }
-.expando-button.hidden, .children.hidden .comment {
+.expando-button.hidden, .children.hidden .comment, .children.hidden .morecomments {
   display: none;
 }
 .hidechildren .show {

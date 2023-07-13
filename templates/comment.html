@@ -21,7 +21,7 @@
         [-]
 {{ end }}
       </a>
-      <a {{ if .P.Comment.Distinguished}}class="distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">{{fullname .P.Creator}}</a>
+      <a {{ if .P.Comment.Distinguished}}class="{{if .P.Creator.Admin}}admin {{end}}distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">{{fullname .P.Creator}}</a>
       <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
             {{- if gt .P.Comment.Updated.Time.Unix .P.Comment.Published.Time.Unix -}}
             * (last edited <span title="{{.P.Comment.Updated.Time}}">{{ humanize .P.Comment.Updated.Time }}</span>)
@@ -97,8 +97,8 @@
           <a href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?context=3">context</a>
         </li>
 {{ end }}
-{{ if gt .ChildCount 0 }}
-        <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{ .ChildCount }}</span> child comments</a></li>
+{{ if and .State.PostID (gt (add .P.Counts.ChildCount .ChildCount) 0) }}
+        <li><a class="hidechildren" for="c{{.P.Comment.ID}}" href=""><span class="hide">hide</span><span class="show">show {{add .P.Counts.ChildCount .ChildCount }}</span> child comments</a></li>
 {{ end }}
       </ul>
     </div>
