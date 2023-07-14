@@ -41,9 +41,21 @@
             * (last edited <span title="{{.Post.Updated.Time}}">{{ humanize .Post.Updated.Time }}</span>)
             {{ end }}
             by
-            <a class="submitter{{ if .Creator.Admin}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">{{ fullname .Creator }}</a>
+            <a class="submitter{{ if .Creator.Admin}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">
+              {{- if .State.HideInstanceNames -}}
+              {{ .Creator.Name }}
+              {{- else -}}
+              {{ fullname .Creator }}
+              {{- end -}}
+            </a>
             to
-            <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">c/{{ fullcname .Community}}</a>
+            <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">
+              c/{{ if .State.HideInstanceNames -}}
+              {{ .Community.Name }}
+              {{ else -}}
+              {{ fullcname .Community }}
+              {{ end }}
+            </a>
           </div>
           <div class="buttons">
             {{ if .Post.NSFW }}<span class="nsfw">NSFW</span>{{end}}

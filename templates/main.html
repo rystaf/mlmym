@@ -3,7 +3,7 @@
     <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ host .Host }}{{end}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?v=23">
+    <link rel="stylesheet" href="/_/static/style.css?v=24">
   </head>
   <body{{ if .Dark }} class="dark"{{end}}>
     <noscript>
@@ -85,10 +85,10 @@
         {{if .Comments}}{{if gt .Page 1}}(page {{ .Page }}) {{else if lt (index .Posts 0).Counts.Comments .CommentCount }}all{{else}}top{{end}} {{.CommentCount}} comments{{else}} no comments (yet){{end}}
         <div>
           sorted by:
-          <a {{ if eq .Sort "Hot"}}class="selected"{{end}} href="{{ .SortBy "Hot"}}">hot</a>
-          <a {{ if eq .Sort "Top"}}class="selected"{{end}} href="{{ .SortBy "Top"}}">top</a>
-          <a {{ if eq .Sort "New"}}class="selected"{{end}} href="{{ .SortBy "New"}}">new</a>
-          <a {{ if eq .Sort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
+          <a {{ if eq .CommentSort "Hot"}}class="selected"{{end}} href="{{ .SortBy "Hot"}}">hot</a>
+          <a {{ if eq .CommentSort "Top"}}class="selected"{{end}} href="{{ .SortBy "Top"}}">top</a>
+          <a {{ if eq .CommentSort "New"}}class="selected"{{end}} href="{{ .SortBy "New"}}">new</a>
+          <a {{ if eq .CommentSort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
         </div>
       </div>
       {{ if and .Session (ne .Op "edit_post") }}

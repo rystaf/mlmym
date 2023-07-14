@@ -21,7 +21,13 @@
         [-]
 {{ end }}
       </a>
-      <a {{ if .P.Comment.Distinguished}}class="{{if .P.Creator.Admin}}admin {{end}}distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">{{fullname .P.Creator}}</a>
+      <a {{ if .P.Comment.Distinguished}}class="{{if .P.Creator.Admin}}admin {{end}}distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
+        {{- if .State.HideInstanceNames -}}
+        {{ .P.Creator.Name }}
+        {{- else -}}
+        {{ fullname .P.Creator }}
+        {{- end -}}
+      </a>
       <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
             {{- if gt .P.Comment.Updated.Time.Unix .P.Comment.Published.Time.Unix -}}
             * (last edited <span title="{{.P.Comment.Updated.Time}}">{{ humanize .P.Comment.Updated.Time }}</span>)

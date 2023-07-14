@@ -62,40 +62,42 @@ type Session struct {
 }
 
 type State struct {
-	Client         *lemmy.Client
-	HTTPClient     *http.Client
-	Session        *Session
-	Status         int
-	Error          error
-	Alert          string
-	Host           string
-	CommunityName  string
-	Community      *types.GetCommunityResponse
-	TopCommunities []types.CommunityView
-	Communities    []types.CommunityView
-	UnreadCount    int64
-	Sort           string
-	Listing        string
-	Page           int
-	Parts          []string
-	Posts          []Post
-	Comments       []Comment
-	Activities     []Activity
-	CommentCount   int
-	PostID         int
-	CommentID      int
-	Context        int
-	UserName       string
-	User           *types.GetPersonDetailsResponse
-	Now            int64
-	XHR            bool
-	Op             string
-	Site           *types.GetSiteResponse
-	Query          string
-	SearchType     string
-	Captcha        *types.CaptchaResponse
-	Dark           bool
-	ShowNSFW       bool
+	Client            *lemmy.Client
+	HTTPClient        *http.Client
+	Session           *Session
+	Status            int
+	Error             error
+	Alert             string
+	Host              string
+	CommunityName     string
+	Community         *types.GetCommunityResponse
+	TopCommunities    []types.CommunityView
+	Communities       []types.CommunityView
+	UnreadCount       int64
+	Sort              string
+	CommentSort       string
+	Listing           string
+	Page              int
+	Parts             []string
+	Posts             []Post
+	Comments          []Comment
+	Activities        []Activity
+	CommentCount      int
+	PostID            int
+	CommentID         int
+	Context           int
+	UserName          string
+	User              *types.GetPersonDetailsResponse
+	Now               int64
+	XHR               bool
+	Op                string
+	Site              *types.GetSiteResponse
+	Query             string
+	SearchType        string
+	Captcha           *types.CaptchaResponse
+	Dark              bool
+	ShowNSFW          bool
+	HideInstanceNames bool
 }
 
 func (p State) SortBy(v string) string {
@@ -163,6 +165,7 @@ func (state *State) ParseQuery(RawQuery string) {
 	}
 	if len(m["sort"]) > 0 {
 		state.Sort = m["sort"][0]
+		state.CommentSort = m["sort"][0]
 	}
 	if len(m["communityname"]) > 0 {
 		state.CommunityName = m["communityname"][0]
@@ -241,7 +244,7 @@ func (state *State) GetComment(commentid int) {
 	state.CommentID = commentid
 	cresp, err := state.Client.Comments(context.Background(), types.GetComments{
 		ParentID: types.NewOptional(state.CommentID),
-		Sort:     types.NewOptional(types.CommentSortType(state.Sort)),
+		Sort:     types.NewOptional(types.CommentSortType(state.CommentSort)),
 		Type:     types.NewOptional(types.ListingType("All")),
 		Limit:    types.NewOptional(int64(50)),
 	})
@@ -296,7 +299,7 @@ func (state *State) GetComments() {
 	}
 	cresp, err := state.Client.Comments(context.Background(), types.GetComments{
 		PostID: types.NewOptional(state.PostID),
-		Sort:   types.NewOptional(types.CommentSortType(state.Sort)),
+		Sort:   types.NewOptional(types.CommentSortType(state.CommentSort)),
 		Type:   types.NewOptional(types.ListingType("All")),
 		Limit:  types.NewOptional(int64(50)),
 		Page:   types.NewOptional(int64(state.Page)),

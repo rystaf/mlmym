@@ -74,7 +74,7 @@
       </div>
       <div>
         <label>
-          default sort
+          default post sort
         </label>
         <select name="DefaultSortType">
           <option value="Hot"{{ if eq .Sort "Hot"}} selected{{end}}>Hot</option>
@@ -95,6 +95,17 @@
       </div>
       <div>
         <label>
+          default comment sort
+        </label>
+        <select name="DefaultCommentSortType">
+          <option value="Hot"{{ if eq .CommentSort "Hot"}} selected{{end}}>Hot</option>
+          <option value="New"{{ if eq .CommentSort "New"}} selected{{end}}>New</option>
+          <option value="Old"{{ if eq .CommentSort "Old"}} selected{{end}}>Old</option>
+          <option value="Top"{{ if eq .CommentSort "Top"}} selected{{end}}>Top</option>
+        </select>
+      </div>
+      <div>
+        <label>
           dark mode
         </label>
         <input type="checkbox" name="darkmode" {{ if .Dark }}checked{{end}}>
@@ -110,6 +121,12 @@
           auto load more
         </label>
         <input type="checkbox" name="autoLoad">
+      </div>
+      <div>
+        <label>
+          hide instance names
+        </label>
+        <input type="checkbox" name="hideInstanceNames" {{ if .HideInstanceNames }}checked{{end}}>
       </div>
       <div>
         <label></label>

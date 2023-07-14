@@ -9,11 +9,17 @@
       {{ end }}
       {{ if contains .Sort "Top" }}
       links from past:
+      <a {{ if eq .Sort "TopHour"}}class="selected"{{end}} href="{{ .SortBy "TopHour"}}">1h</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopSixHour"}}class="selected"{{end}} href="{{ .SortBy "TopSixHour"}}">6h</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopTwelveHour"}}class="selected"{{end}} href="{{ .SortBy "TopTwelveHour"}}">12h</a>
+      <span>-</span>
       <a {{ if eq .Sort "TopDay"}}class="selected"{{end}} href="{{ .SortBy "TopDay"}}">day</a>
       <span>-</span>
-      <a {{ if eq .Sort "TopMonth"}}class="selected"{{end}} href="{{ .SortBy "TopMonth"}}">month</a>
-      <span>-</span>
       <a {{ if eq .Sort "TopWeek"}}class="selected"{{end}} href="{{ .SortBy "TopWeek"}}">week</a>
+      <span>-</span>
+      <a {{ if eq .Sort "TopMonth"}}class="selected"{{end}} href="{{ .SortBy "TopMonth"}}">month</a>
       <span>-</span>
       <a {{ if eq .Sort "TopYear"}}class="selected"{{end}} href="{{ .SortBy "TopYear"}}">year</a>
       <span>-</span>

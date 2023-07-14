@@ -13,7 +13,12 @@
       <a href="">{{$state.User.PersonView.Person.Name }}</a>
       {{ end }}
       in
-      <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">c/{{ $activity.Comment.P.Community.Name }}</a>
+      <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">
+        c/{{ if $state.HideInstanceNames -}}
+        {{ $activity.Comment.P.Community.Name }}</a>
+        {{ else -}}
+        {{ fullcname $activity.Comment.P.Community }}
+        {{ end }}
       </span>
     </div>
         {{ template "comment.html" $activity.Comment }}
@@ -25,10 +30,22 @@
         <b>message</b>
     {{ if eq $activity.Message.Creator.ID $state.Session.UserID }}
         to
-        <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Recipient}}">{{ $activity.Message.Recipient.Name }}</a>
+        <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Recipient}}">
+          {{- if $state.HideInstanceNames -}}
+          {{ $activity.Message.Recipient.Name }}
+          {{- else -}}
+          {{ fullname $activity.Message.Recipient }}
+          {{- end -}}
+        </a>
     {{ else }}
         from
-        <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Creator}}">{{ $activity.Message.Creator.Name }}</a>
+        <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Creator}}">
+          {{- if $state.HideInstanceNames -}}
+          {{ $activity.Message.Creator.Name }}
+          {{- else -}}
+          {{ fullname $activity.Message.Creator }}
+          {{- end -}}
+        </a>
     {{end}}
       sent {{ humanize $activity.Message.PrivateMessage.Published.Time }}
       </span>

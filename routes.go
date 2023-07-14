@@ -209,11 +209,16 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	}
 	state.Listing = getCookie(r, "DefaultListingType")
 	state.Sort = getCookie(r, "DefaultSortType")
+	state.CommentSort = getCookie(r, "DefaultCommentSortType")
 	state.Dark = getCookie(r, "Dark") != ""
 	state.ShowNSFW = getCookie(r, "ShowNSFW") != ""
+	state.HideInstanceNames = getCookie(r, "HideInstanceNames") != ""
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
 		state.Sort = "Hot"
+	}
+	if state.CommentSort == "" {
+		state.CommentSort = "Hot"
 	}
 	if state.Listing == "" || state.Session == nil && state.Listing == "Subscribed" {
 		state.Listing = "All"
@@ -542,7 +547,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	switch r.Method {
 	case "POST":
-		for _, name := range []string{"DefaultSortType", "DefaultListingType"} {
+		for _, name := range []string{"DefaultSortType", "DefaultListingType", "DefaultCommentSortType"} {
 			deleteCookie(w, state.Host, name)
 			setCookie(w, "", name, r.FormValue(name))
 		}
@@ -562,8 +567,16 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			deleteCookie(w, "", "ShowNSFW")
 			state.ShowNSFW = false
 		}
+		if r.FormValue("hideInstanceNames") != "" {
+			setCookie(w, "", "HideInstanceNames", "1")
+			state.HideInstanceNames = true
+		} else {
+			deleteCookie(w, "", "HideInstanceNames")
+			state.HideInstanceNames = false
+		}
 		state.Listing = r.FormValue("DefaultListingType")
 		state.Sort = r.FormValue("DefaultSortType")
+		state.CommentSort = r.FormValue("DefaultCommentSortType")
 		// TODO save user settings
 	case "GET":
 		if state.Session != nil {
