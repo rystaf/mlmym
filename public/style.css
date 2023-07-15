@@ -304,11 +304,11 @@ form.savecomment {
 .morecomments a:hover {
   text-decoration: underline;
 }
-.member {
+.member, .block {
   display: inline-block;
   margin-bottom:3px;
 }
-.member input {
+.member input, .block input {
   font-size: 10px;
   font-weight: bold;
   display: inline-block;
@@ -320,10 +320,10 @@ form.savecomment {
   bottom: 1px;
   cursor: pointer;
 }
-.join input {
+.join input, .block input {
   background-color: green;
 }
-.leave input {
+.leave input, .block.unblock input {
   background-color: #cf6165;
 }
 .pending input {

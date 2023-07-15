@@ -91,8 +91,14 @@
         <input name="op" type="submit" value="{{ membership .Community.CommunityView.Subscribed}}">
         <input name="communityid" type="hidden" value="{{ .Community.CommunityView.Community.ID }}">
       </form>
+      <form method="POST" class="block {{ if .Community.CommunityView.Blocked }}unblock{{end}}">
+        <input name="op" type="submit" value="{{ if .Community.CommunityView.Blocked}}unblock{{else}}block{{end}}">
+        <input name="communityid" type="hidden" value="{{ .Community.CommunityView.Community.ID }}">
+      </form>
   {{ end }}
-      {{ .Community.CommunityView.Counts.Subscribers }} readers <br>
+  <div>
+    {{ .Community.CommunityView.Counts.Subscribers }} readers
+  </div>
       <span class="green" title="Users active in the last day"></span>
       {{ .Community.CommunityView.Counts.UsersActiveDay }} users here now
   {{ if and .Session (isMod .Community .Session.UserName) }}

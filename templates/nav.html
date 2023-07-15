@@ -55,7 +55,7 @@
           {{ end }}
         {{ else if .Comments -}}
         <li class="selected"><a href="">comments</a></li>
-        {{ else if .Activities }}
+        {{ else if and .Activities (not .Query) }}
         <li class="selected"><a href="">mailbox</a></li>
         {{ else }}
         <li{{ if eq .Sort "Hot" }} class="selected"{{end}}><a href="{{ .SortBy "Hot" }}">hot</a></li>

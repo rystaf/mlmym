@@ -119,9 +119,9 @@ var funcMap = template.FuncMap{
 		if re.MatchString(p.URL.String()) {
 			return p.URL.String() + "?format=jpg&thumbnail=96"
 		}
-		re = regexp.MustCompile(`^https:\/\/i.imgur.com\/([a-zA-Z0-9]+)\.([a-z]+)$`)
+		re = regexp.MustCompile(`^https:\/\/(i\.)?imgur.com\/([a-zA-Z0-9]{5,})(\.[a-zA-Z0-9]+)?`)
 		if re.MatchString(p.URL.String()) {
-			return re.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${1}s.$2")
+			return re.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${2}s.jpg")
 		}
 		if p.URL.IsValid() {
 			return "/_/static/link.png"
@@ -139,14 +139,17 @@ var funcMap = template.FuncMap{
 		}
 		converted := buf.String()
 		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
+		re = regexp.MustCompile(`!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)[ $]?`)
+		converted = re.ReplaceAllString(converted, `<a href="https://$2/c/$1">!$1@$2</a> `)
 		if os.Getenv("LEMMY_DOMAIN") == "" {
+			re = regexp.MustCompile(`href="\/(c\/[a-zA-Z0-9\-]+|(post|comment)\/\d+)`)
+			converted = re.ReplaceAllString(converted, `href="https://`+host+`/$1`)
 			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.\-]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
 			converted = re.ReplaceAllString(converted, `href="/$1`)
+		} else {
+			re := regexp.MustCompile(`href="https:\/\/` + os.Getenv("LEMMY_DOMAIN") + `\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+)`)
+			converted = re.ReplaceAllString(converted, `href="/$1`)
 		}
-		re = regexp.MustCompile(`href="\/(c\/[a-zA-Z0-9\-]+|(post|comment)\/\d+)`)
-		converted = re.ReplaceAllString(converted, `href="/`+host+`/$1`)
-		re = regexp.MustCompile(` !([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+) `)
-		converted = re.ReplaceAllString(converted, ` <a href="/$2/c/$1">!$1@$2</a> `)
 		re = regexp.MustCompile(`::: spoiler (.*?)\n([\S\s]*?):::`)
 		converted = re.ReplaceAllString(converted, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(converted)
@@ -752,6 +755,18 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.Client.FollowCommunity(context.Background(), types.FollowCommunity{
 			CommunityID: communityid,
 			Follow:      true,
+		})
+	case "block":
+		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
+		state.Client.BlockCommunity(context.Background(), types.BlockCommunity{
+			CommunityID: communityid,
+			Block:       true,
+		})
+	case "unblock":
+		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
+		state.Client.BlockCommunity(context.Background(), types.BlockCommunity{
+			CommunityID: communityid,
+			Block:       false,
 		})
 	case "logout":
 		deleteCookie(w, state.Host, "jwt")
