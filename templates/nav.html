@@ -9,7 +9,7 @@
         <a href="/{{$host}}/c/{{fullcname $c.Community}}">{{$c.Community.Name}}</a>
         <span> - </span>
         {{ end }}
-        <a href="/{{$host}}/search?searchtype=Communities" class="more">more »</a>
+        <a href="/{{$host}}/search?searchtype=Communities&sort=TopAll" class="more">more »</a>
       </div>
       <div class="right">
 {{ if .Session }}
@@ -48,7 +48,7 @@
       <span>: search</span>
       {{ end }}
       <ul>
-        {{ if .User }}
+        {{ if and .User (not .Query)}}
         <li {{if eq .Op "" }}class="selected"{{end}}><a href="?">overview</a></li>
           {{ if and .Session (eq .User.PersonView.Person.ID .Session.UserID) }}
           <li {{if eq .Op "Saved"}}class="selected"{{end}}><a href="?view=Saved">saved</a></li>

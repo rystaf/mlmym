@@ -29,9 +29,7 @@
   {{ template "nsfw.html" }}
 {{ else }}
     <main>
-  {{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
-      {{ template "menu.html" . }}
-  {{ end}}
+    {{ template "menu.html" . }}
 
   {{ if .Error }}
       <div class="error">

@@ -544,7 +544,7 @@ func (state *State) Search(searchtype string) {
 	search := types.Search{
 		Q:           state.Query,
 		Sort:        types.NewOptional(types.SortType(state.Sort)),
-		ListingType: types.NewOptional(types.ListingType("All")),
+		ListingType: types.NewOptional(types.ListingType(state.Listing)),
 		Type:        types.NewOptional(types.SearchType(searchtype)),
 		Limit:       types.NewOptional(int64(25)),
 		Page:        types.NewOptional(int64(state.Page)),

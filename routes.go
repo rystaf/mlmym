@@ -140,7 +140,7 @@ var funcMap = template.FuncMap{
 		body = buf.String()
 		body = strings.Replace(body, `<img `, `<img loading="lazy" `, -1)
 		body = LemmyLinkRewrite(body, host, os.Getenv("LEMMY_DOMAIN"))
-		body = RegReplace(body, `::: spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
+		body = RegReplace(body, `::: ?spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(body)
 	},
 	"rmmarkdown": func(body string) string {

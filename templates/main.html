@@ -27,12 +27,13 @@
   {{ template "nsfw.html" }}
 {{ else }}
     <main>
-  {{ if or (contains .Sort "Top") (and (not .PostID) (not .User) (not .Community) (not .Activities) (eq .Op ""))}}
+  {{ if or (.Query) (.SearchType) (and (not .PostID) (not .User) (not .Activities) (eq .Op ""))}}
     {{ template "menu.html" . }}
   {{ end}}
 
   {{ if or (ne .Query "") .Communities }}
       <form class="search" method="GET">
+        <input type="hidden" name="sort" value="{{.Sort}}">
         <div>search</div>
         <div class="query">
           <input type="text" name="q" value="{{.Query}}">

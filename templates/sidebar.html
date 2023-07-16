@@ -9,6 +9,7 @@
   {{ else if .Community }}
         <input type="hidden" name="communityname" value="{{fullcname .Community.CommunityView.Community}}">
   {{ end }}
+        <input type="hidden" name="sort" value="New">
       </form>
 {{ end }}
 
