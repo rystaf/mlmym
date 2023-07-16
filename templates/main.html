@@ -56,7 +56,12 @@
   {{ end}}
 
   {{ if .Error }}
-      <div class="error">{{.Error}}</div>
+      <div class="error">
+        {{.Error}}.
+      {{ if .Unknown }}
+      try remote instance: <a href="{{ .Unknown }}">{{ .Unknown }}</a>
+      {{ end }}
+      </div>
   {{ end }}
 
   {{ range .Communities }}

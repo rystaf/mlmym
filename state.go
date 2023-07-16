@@ -11,6 +11,8 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -100,6 +102,37 @@ type State struct {
 	HideInstanceNames bool
 }
 
+func (s State) Unknown() string {
+	fmt.Println(fmt.Sprintf("%v", s.Error))
+	re := regexp.MustCompile(`(.*?)@(.*?)@`)
+	if strings.Contains(fmt.Sprintf("%v", s.Error), "couldnt_find_community") {
+		matches := re.FindAllStringSubmatch(s.CommunityName+"@", -1)
+		if len(matches) < 1 || len(matches[0]) < 3 {
+			return ""
+		}
+		if matches[0][2] != s.Host {
+			remote := "/" + matches[0][2] + "/c/" + matches[0][1]
+			if os.Getenv("LEMMY_DOMAIN") != "" {
+				remote = "https:/" + remote
+			}
+			return remote
+		}
+	}
+	if strings.Contains(fmt.Sprintf("%v", s.Error), "couldnt_find_that_username_or_email") {
+		matches := re.FindAllStringSubmatch(s.UserName+"@", -1)
+		if len(matches) < 1 || len(matches[0]) < 3 {
+			return ""
+		}
+		if matches[0][2] != s.Host {
+			remote := "/" + matches[0][2] + "/u/" + matches[0][1]
+			if os.Getenv("LEMMY_DOMAIN") != "" {
+				remote = "https:/" + remote
+			}
+			return remote
+		}
+	}
+	return ""
+}
 func (p State) SortBy(v string) string {
 	var q string
 	if p.Query != "" || p.SearchType == "Communities" {
@@ -411,6 +444,7 @@ func (state *State) GetUser(username string) {
 	})
 	if err != nil {
 		fmt.Println(err)
+		state.Error = err
 		state.Status = http.StatusInternalServerError
 		return
 	}
