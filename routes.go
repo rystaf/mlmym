@@ -167,21 +167,21 @@ func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body stri
 	// community bangs
 	body = RegReplace(body, `!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)([ \n\r]+|<\/p>)`, `<a href="/c/$1@$2">!$1@$2</a> `)
 	// localize community and user links
-	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u)\/.*?)"`, `href="/$2@$1"`)
+	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u|comment|post)\/.*?)"`, `href="/$2@$1"`)
 	// remove extra instance tag
 	body = RegReplace(body, `href="(https:\/)?(\/[a-zA-Z0-9\.\-]+)?\/((c|u)\/[a-zA-Z0-9]+@[a-zA-Z0-9\.\-]+)@([a-zA-Z0-9\.\-]+)"`, `href="/$3"`)
 	if lemmy_domain == "" {
 		// add domain to relative links
-		body = RegReplace(body, `href="\/(c\/[a-zA-Z0-9\-]+"|(post|comment)\/\d+"|(c|u)\/(.*?)")`, `href="/`+host+`/$1`)
+		body = RegReplace(body, `href="\/((c|u|post|comment)\/(.*?)")`, `href="/`+host+`/$1`)
 		// convert links to relative
-		body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+\/(c\/[a-zA-Z0-9]+"|(post|comment)\/\d+"|u\/(.*?)"))`, `href="/$1`)
+		body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+\/((c|u|post|comment)\/[a-zA-Z0-9]+"))`, `href="/$1`)
 	} else {
 		// convert local links to relative
-		body = RegReplace(body, `href="https:\/\/`+lemmy_domain+`\/(c\/[a-zA-Z0-9]+"|(post|comment)\/\d+"|u\/(.*?)")`, `href="/$1`)
+		body = RegReplace(body, `href="https:\/\/`+lemmy_domain+`\/(c\/[a-zA-Z0-9]+"|(c|u|post|comment)\/(.*?)")`, `href="/$1`)
 		body = RegReplace(body, `href="(.*)@`+lemmy_domain+`"`, `href="$1"`)
 	}
 	// remove redundant instance tag
-	re := regexp.MustCompile(`href="\/([a-zA-Z0-9\.\-]+)\/(c|u)\/(.*?)@(.*?)"`)
+	re := regexp.MustCompile(`href="\/([a-zA-Z0-9\.\-]+)\/(c|u|post|comment)\/(.*?)@(.*?)"`)
 	matches := re.FindAllStringSubmatch(body, -1)
 	for _, match := range matches {
 		if match[1] == match[4] {
@@ -416,11 +416,66 @@ func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	}
 }
 
+func ResolveId(r *http.Request, class string, id string, host string) string {
+	remoteAddr := r.RemoteAddr
+	if r.Header.Get("CF-Connecting-IP") != "" {
+		remoteAddr = r.Header.Get("CF-Connecting-IP")
+	}
+	client := http.Client{Transport: NewAddHeaderTransport(remoteAddr)}
+	c, err := lemmy.NewWithClient("https://"+host, &client)
+	if err != nil {
+		return ""
+	}
+	idn, _ := strconv.Atoi(id)
+	if class == "post" {
+		resp, err := c.Post(context.Background(), types.GetPost{
+			ID: types.NewOptional(idn),
+		})
+		if err != nil {
+			return ""
+		}
+		return resp.PostView.Post.ApID
+	}
+	resp, err := c.Comment(context.Background(), types.GetComment{
+		ID: idn,
+	})
+	if err != nil {
+		return ""
+	}
+	return resp.CommentView.Comment.ApID
+}
+
 func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
+	}
+	if path := strings.Split(ps.ByName("postid"), "@"); len(path) > 1 {
+		apid := ResolveId(r, "post", path[0], path[1])
+		if apid != "" {
+			resp, err := state.Client.ResolveObject(context.Background(), types.ResolveObject{
+				Q: apid,
+			})
+			if err != nil {
+				dest := apid
+				if os.Getenv("LEMMY_DOMAIN") == "" {
+					dest = RegReplace(dest, `https:\/\/([a-zA-Z0-9\.\-]+\/post\/\d+)`, `/$1`)
+				}
+				http.Redirect(w, r, dest, 302)
+				return
+			}
+			post, _ := resp.Post.Value()
+			if post.Post.ID > 0 {
+				dest := RegReplace(r.URL.String(), `(([a-zA-Z0-9\.\-]+)?/post/)([a-zA-Z0-9\-\.@]+)`, `$1`)
+				dest += strconv.Itoa(post.Post.ID)
+				http.Redirect(w, r, dest, 302)
+				return
+			} else {
+				http.Redirect(w, r, apid, 302)
+				return
+			}
+		}
 	}
 	m, _ := url.ParseQuery(r.URL.RawQuery)
 	if len(m["edit"]) > 0 {
@@ -437,6 +492,32 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if err != nil {
 		Render(w, "index.html", state)
 		return
+	}
+	if path := strings.Split(ps.ByName("commentid"), "@"); len(path) > 1 {
+		apid := ResolveId(r, "comment", path[0], path[1])
+		if apid != "" {
+			resp, err := state.Client.ResolveObject(context.Background(), types.ResolveObject{
+				Q: apid,
+			})
+			if err != nil {
+				dest := apid
+				if os.Getenv("LEMMY_DOMAIN") == "" {
+					dest = RegReplace(dest, `https:\/\/([a-zA-Z0-9\.\-]+\/comment\/\d+)`, `/$1`)
+				}
+				http.Redirect(w, r, dest, 302)
+				return
+			}
+			comment, _ := resp.Comment.Value()
+			if comment.Comment.ID > 0 {
+				dest := RegReplace(r.URL.String(), `(([a-zA-Z0-9\.\-]+)?/comment/)([a-zA-Z0-9\-\.@]+)`, `$1`)
+				dest += strconv.Itoa(comment.Comment.ID)
+				http.Redirect(w, r, dest, 302)
+				return
+			} else {
+				http.Redirect(w, r, apid, 302)
+				return
+			}
+		}
 	}
 	m, _ := url.ParseQuery(r.URL.RawQuery)
 	if len(m["reply"]) > 0 {

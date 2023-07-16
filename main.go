@@ -79,7 +79,7 @@ func test() {
 		[]string{"https://lemmy.world/c/dude", "/lemmy.local/c/dude@lemmy.world", "/c/dude@lemmy.world"},
 		[]string{"https://lemmy.world/u/dude", "/lemmy.local/u/dude@lemmy.world", "/u/dude@lemmy.world"},
 		[]string{"https://lemmy.world/u/dude@lemmy.world", "/lemmy.local/u/dude@lemmy.world", "/u/dude@lemmy.world"},
-		[]string{"https://lemmy.world/post/123", "/lemmy.world/post/123", "https://lemmy.world/post/123"},
+		[]string{"https://lemmy.world/post/123", "/lemmy.local/post/123@lemmy.world", "/post/123@lemmy.world"},
 		[]string{"/post/123", "/lemmy.local/post/123", "/post/123"},
 		[]string{"/comment/123", "/lemmy.local/comment/123", "/comment/123"},
 		[]string{"https://lemmy.local/comment/123", "/lemmy.local/comment/123", "/comment/123"},
@@ -88,7 +88,7 @@ func test() {
 		output := LemmyLinkRewrite(`href="`+url[0]+`"`, "lemmy.local", "")
 		success := (output == (`href="` + url[1] + `"`))
 		if !success {
-			fmt.Println("\n!!!! Link rewrite failure !!!!")
+			fmt.Println("\n!!!! multi instance link rewrite failure !!!!")
 			fmt.Println(url)
 			fmt.Println(output)
 			fmt.Println("")
@@ -96,6 +96,7 @@ func test() {
 		output = LemmyLinkRewrite(`href="`+url[0]+`"`, ".", "lemmy.local")
 		success = (output == (`href="` + url[2] + `"`))
 		if !success {
+			fmt.Println("\n!!!! single instance link rewrite failure !!!!")
 			fmt.Println(success, url)
 			fmt.Println(output)
 			fmt.Println("")

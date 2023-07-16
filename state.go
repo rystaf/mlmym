@@ -596,22 +596,22 @@ func (state *State) GetPost(postid int) {
 	})
 	if err != nil {
 		state.Status = http.StatusInternalServerError
+		state.Error = err
 		return
-	} else {
-		state.Posts = []Post{Post{
-			PostView: resp.PostView,
-			State:    state,
-		}}
-		if state.CommentID > 0 && len(state.Posts) > 0 {
-			state.Posts[0].Rank = -1
-		}
-		state.CommunityName = resp.PostView.Community.Name
-		cresp := types.GetCommunityResponse{
-			CommunityView: resp.CommunityView,
-			Moderators:    resp.Moderators,
-		}
-		state.Community = &cresp
 	}
+	state.Posts = []Post{Post{
+		PostView: resp.PostView,
+		State:    state,
+	}}
+	if state.CommentID > 0 && len(state.Posts) > 0 {
+		state.Posts[0].Rank = -1
+	}
+	state.CommunityName = resp.PostView.Community.Name
+	cresp := types.GetCommunityResponse{
+		CommunityView: resp.CommunityView,
+		Moderators:    resp.Moderators,
+	}
+	state.Community = &cresp
 }
 
 func (state *State) GetCommunity(communityName string) {
