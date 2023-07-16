@@ -165,11 +165,11 @@ var funcMap = template.FuncMap{
 func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body string) {
 	body = input
 	// community bangs
-	body = RegReplace(body, `!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)[ $]?`, `<a href="/c/$1">!$1@$2</a> `)
+	body = RegReplace(body, `!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)([ \n\r]+|<\/p>)`, `<a href="/c/$1@$2">!$1@$2</a> `)
 	// localize community and user links
 	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u)\/.*?)"`, `href="/$2@$1"`)
 	// remove extra instance tag
-	body = RegReplace(body, `href="\/((c|u)\/.*@.*?)@(.*?)"`, `href="/$1"`)
+	body = RegReplace(body, `href="(https:\/)?(\/[a-zA-Z0-9\.\-]+)?\/((c|u)\/[a-zA-Z0-9]+@[a-zA-Z0-9\.\-]+)@([a-zA-Z0-9\.\-]+)"`, `href="/$3"`)
 	if lemmy_domain == "" {
 		// add domain to relative links
 		body = RegReplace(body, `href="\/(c\/[a-zA-Z0-9\-]+"|(post|comment)\/\d+"|(c|u)\/(.*?)")`, `href="/`+host+`/$1`)
