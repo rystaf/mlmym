@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/yuin/goldmark"
@@ -62,6 +63,40 @@ func init() {
 				continue
 			}
 			templates[name] = glob
+		}
+	}
+	if os.Getenv("DEBUG") != "" {
+		test()
+	}
+}
+func test() {
+	links := [][]string{
+		[]string{"https://lemmy.local/u/dude", "/lemmy.local/u/dude", "/u/dude"},
+		[]string{"https://lemmy.local/u/dude@lemmy.local", "/lemmy.local/u/dude", "/u/dude"},
+		[]string{"/u/dude", "/lemmy.local/u/dude", "/u/dude"},
+		[]string{"https://lemmy.world/c/dude", "/lemmy.local/c/dude@lemmy.world", "/c/dude@lemmy.world"},
+		[]string{"https://lemmy.world/u/dude", "/lemmy.local/u/dude@lemmy.world", "/u/dude@lemmy.world"},
+		[]string{"https://lemmy.world/u/dude@lemmy.world", "/lemmy.local/u/dude@lemmy.world", "/u/dude@lemmy.world"},
+		[]string{"https://lemmy.world/post/123", "/lemmy.world/post/123", "https://lemmy.world/post/123"},
+		[]string{"/post/123", "/lemmy.local/post/123", "/post/123"},
+		[]string{"/comment/123", "/lemmy.local/comment/123", "/comment/123"},
+		[]string{"https://lemmy.local/comment/123", "/lemmy.local/comment/123", "/comment/123"},
+	}
+	for _, url := range links {
+		output := LemmyLinkRewrite(`href="`+url[0]+`"`, "lemmy.local", "")
+		success := (output == (`href="` + url[1] + `"`))
+		if !success {
+			fmt.Println("\n!!!! Link rewrite failure !!!!")
+			fmt.Println(url)
+			fmt.Println(output)
+			fmt.Println("")
+		}
+		output = LemmyLinkRewrite(`href="`+url[0]+`"`, ".", "lemmy.local")
+		success = (output == (`href="` + url[2] + `"`))
+		if !success {
+			fmt.Println(success, url)
+			fmt.Println(output)
+			fmt.Println("")
 		}
 	}
 }

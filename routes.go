@@ -32,12 +32,12 @@ var funcMap = template.FuncMap{
 		}
 		return host
 	},
-	"proxy": func(s string) string {
+	"localize": func(s string) string {
 		u, err := url.Parse(s)
 		if err != nil {
 			return s
 		}
-		return "/" + u.Host + u.Path
+		return "." + u.Path + "@" + u.Host
 	},
 	"printer": func(n any) string {
 		p := message.NewPrinter(language.English)
@@ -137,22 +137,11 @@ var funcMap = template.FuncMap{
 			fmt.Println(err)
 			return template.HTML(body)
 		}
-		converted := buf.String()
-		converted = strings.Replace(converted, `<img `, `<img loading="lazy" `, -1)
-		re = regexp.MustCompile(`!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)[ $]?`)
-		converted = re.ReplaceAllString(converted, `<a href="https://$2/c/$1">!$1@$2</a> `)
-		if os.Getenv("LEMMY_DOMAIN") == "" {
-			re = regexp.MustCompile(`href="\/(c\/[a-zA-Z0-9\-]+|(post|comment)\/\d+)`)
-			converted = re.ReplaceAllString(converted, `href="https://`+host+`/$1`)
-			re := regexp.MustCompile(`href="https:\/\/([a-zA-Z0-9\.\-]+\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+))`)
-			converted = re.ReplaceAllString(converted, `href="/$1`)
-		} else {
-			re := regexp.MustCompile(`href="https:\/\/` + os.Getenv("LEMMY_DOMAIN") + `\/(c\/[a-zA-Z0-9]+|(post|comment)\/\d+)`)
-			converted = re.ReplaceAllString(converted, `href="/$1`)
-		}
-		re = regexp.MustCompile(`::: spoiler (.*?)\n([\S\s]*?):::`)
-		converted = re.ReplaceAllString(converted, "<details><summary>$1</summary>$2</details>")
-		return template.HTML(converted)
+		body = buf.String()
+		body = strings.Replace(body, `<img `, `<img loading="lazy" `, -1)
+		body = LemmyLinkRewrite(body, host, os.Getenv("LEMMY_DOMAIN"))
+		body = RegReplace(body, `::: spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
+		return template.HTML(body)
 	},
 	"rmmarkdown": func(body string) string {
 		var buf bytes.Buffer
@@ -171,6 +160,40 @@ var funcMap = template.FuncMap{
 	"add": func(a int32, b int) int {
 		return int(a) + b
 	},
+}
+
+func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body string) {
+	body = input
+	// community bangs
+	body = RegReplace(body, `!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)[ $]?`, `<a href="/c/$1">!$1@$2</a> `)
+	// localize community and user links
+	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u)\/.*?)"`, `href="/$2@$1"`)
+	// remove extra instance tag
+	body = RegReplace(body, `href="\/((c|u)\/.*@.*?)@(.*?)"`, `href="/$1"`)
+	if lemmy_domain == "" {
+		// add domain to relative links
+		body = RegReplace(body, `href="\/(c\/[a-zA-Z0-9\-]+"|(post|comment)\/\d+"|(c|u)\/(.*?)")`, `href="/`+host+`/$1`)
+		// convert links to relative
+		body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+\/(c\/[a-zA-Z0-9]+"|(post|comment)\/\d+"|u\/(.*?)"))`, `href="/$1`)
+	} else {
+		// convert local links to relative
+		body = RegReplace(body, `href="https:\/\/`+lemmy_domain+`\/(c\/[a-zA-Z0-9]+"|(post|comment)\/\d+"|u\/(.*?)")`, `href="/$1`)
+		body = RegReplace(body, `href="(.*)@`+lemmy_domain+`"`, `href="$1"`)
+	}
+	// remove redundant instance tag
+	re := regexp.MustCompile(`href="\/([a-zA-Z0-9\.\-]+)\/(c|u)\/(.*?)@(.*?)"`)
+	matches := re.FindAllStringSubmatch(body, -1)
+	for _, match := range matches {
+		if match[1] == match[4] {
+			body = strings.Replace(body, match[0], `href="/`+strings.Join(match[1:4], "/")+`"`, -1)
+		}
+	}
+	return body
+}
+
+func RegReplace(input string, match string, replace string) string {
+	re := regexp.MustCompile(match)
+	return re.ReplaceAllString(input, replace)
 }
 
 func Initialize(Host string, r *http.Request) (State, error) {

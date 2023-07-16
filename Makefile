@@ -11,7 +11,7 @@ reload:
 
 serve:
 	#python  -m http.server --directory ./public 8081 &>/dev/null
-	watchexec -e go -r "go run . --addr 0.0.0.0:8008 -w"
+	DEBUG=true watchexec -e go -r "go run . --addr 0.0.0.0:8008 -w"
 
 style:
 	npm run watchcss > /dev/null 2>&1
