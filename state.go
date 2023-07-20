@@ -257,16 +257,14 @@ func (state *State) GetCaptcha() {
 	}
 }
 func (state *State) GetSite() {
-	token := state.Client.Token
-	state.Client.Token = ""
 	resp, err := state.Client.Site(context.Background(), types.GetSite{})
 	if err != nil {
+		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
 		state.Host = "."
-		state.Error = errors.New("site unreachable")
+		state.Error = errors.New("unable to retrieve site")
 		return
 	}
-	state.Client.Token = token
 	state.Site = resp
 }
 
