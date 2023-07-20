@@ -223,6 +223,10 @@ function formSubmit(e) {
   e.submitter.disabled = "disabled"
   request(targ.target, params,
     function(res){
+      if (data.get("op") == "read_post") {
+        document.getElementById("p"+data.get("postid")).remove()
+        return
+      }
       targ.outerHTML = res
       setup()
     },

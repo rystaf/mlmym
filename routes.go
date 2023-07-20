@@ -1102,6 +1102,22 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.Path = "/" + state.Host + "/c/" + resp.PostView.Community.Name
 			r.URL.RawQuery = ""
 		}
+	case "read_post":
+		postid, _ := strconv.Atoi(r.FormValue("postid"))
+		post := types.MarkPostAsRead{
+			PostID: postid,
+			Read:   true,
+		}
+		if r.FormValue("submit") == "mark unread" {
+			post.Read = false
+		}
+		_, err := state.Client.MarkPostAsRead(context.Background(), post)
+		if err != nil {
+			fmt.Println(err)
+		} else if r.FormValue("xhr") != "" {
+			w.Write([]byte{})
+			return
+		}
 	case "vote_post":
 		var score int16
 		score = 1

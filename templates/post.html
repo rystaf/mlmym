@@ -1,5 +1,5 @@
 {{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
-<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if .Post.FeaturedCommunity }} distinguished{{end}}{{if .Post.FeaturedLocal }} announcement{{end}}">
+<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if .Post.FeaturedCommunity }} distinguished{{end}}{{if .Post.FeaturedLocal }} announcement{{end}}" id="p{{.Post.ID}}">
   {{ if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{ end }}
@@ -90,6 +90,17 @@
 {{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
           {{ if .State.PostID }}
             <a id="hidechildren" class="scripting" href="">hide all child comments</a>
+          {{ end }}
+          {{ if and .State.Site .State.Site.MyUser.IsValid (not .State.Site.MyUser.MustValue.LocalUserView.LocalUser.ShowReadPosts) }}
+            <form class="link-btn" method="POST">
+              <input type="hidden" name="postid" value="{{.Post.ID }}">
+              <input type="hidden" name="op" value="read_post">
+              {{ if .Post.Deleted }}
+              <input type="submit" name="submit" value="mark unread">
+              {{ else }}
+              <input type="submit" name="submit" value="mark read">
+              {{ end }}
+            </form>
           {{ end }}
           </div>
         </div>
