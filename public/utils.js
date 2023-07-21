@@ -145,7 +145,7 @@ function loadMoreComments(e) {
         e.target.parentNode.outerHTML = res + '<div class="morecomments"><a id="lmc" href="" data-page="'+(parseInt(page)+1)+'">load more comments</a></div>'
         setup()
       } else {
-        e.target.parentNode.outerHTML = ""
+        e.target.parentNode.innerHTML = ""
       }
     }, function() {
       e.target.innerHTML = "loading failed"
