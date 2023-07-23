@@ -1,9 +1,8 @@
 {{ $host := .Host }}
     <div class="{{ if .User }}user {{end}}side">
 
-{{ if not .SearchType }}
       <form method="GET" action="/{{.Host}}/search">
-        <input type="text" placeholder="search" name="q" value="{{.Query}}">
+        <input type="text" placeholder="search" name="q" value="">
   {{ if .User }}
         <input type="hidden" name="username" value="{{.UserName}}">
   {{ else if .Community }}
@@ -11,7 +10,6 @@
   {{ end }}
         <input type="hidden" name="sort" value="New">
       </form>
-{{ end }}
 
 {{ if .User }}
       <h1>{{ .User.PersonView.Person.Name }}</h1>

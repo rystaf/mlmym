@@ -416,6 +416,12 @@ func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	}
 }
 
+func GetCommunities(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	r.URL.Path = "/search"
+	r.URL.RawQuery = "searchtype=Communities"
+	http.Redirect(w, r, r.URL.String(), 301)
+}
+
 func ResolveId(r *http.Request, class string, id string, host string) string {
 	remoteAddr := r.RemoteAddr
 	if r.Header.Get("CF-Connecting-IP") != "" {
@@ -1284,6 +1290,7 @@ func GetRouter() *httprouter.Router {
 		router.POST("/:host/create_post", middleware(UserOp))
 		router.GET("/:host/create_community", middleware(GetCreateCommunity))
 		router.POST("/:host/create_community", middleware(UserOp))
+		router.GET("/:host/communities", middleware(GetCommunities))
 	} else {
 		router.ServeFiles("/_/static/*filepath", http.Dir("public"))
 		router.GET("/", middleware(GetFrontpage))
@@ -1315,6 +1322,7 @@ func GetRouter() *httprouter.Router {
 		router.POST("/create_post", middleware(UserOp))
 		router.GET("/create_community", middleware(GetCreateCommunity))
 		router.POST("/create_community", middleware(UserOp))
+		router.GET("/communities", middleware(GetCommunities))
 	}
 	return router
 }

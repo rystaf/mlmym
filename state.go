@@ -527,7 +527,24 @@ func (state *State) GetPosts() {
 
 func (state *State) Search(searchtype string) {
 	if state.Query == "" && searchtype == "Communities" {
+		if state.Listing == "Subscribed" {
+			if state.Page > 1 {
+				return
+			}
+			state.GetSite()
+			for _, c := range state.Site.MyUser.MustValue().Follows {
+				state.Communities = append(state.Communities, types.CommunityView{
+					Community:  c.Community,
+					Subscribed: "Subscribed",
+				})
+			}
+			sort.Slice(state.Communities, func(a, b int) bool {
+				return state.Communities[a].Community.Name < state.Communities[b].Community.Name
+			})
+			return
+		}
 		resp, err := state.Client.Communities(context.Background(), types.ListCommunities{
+			Type:  types.NewOptional(types.ListingType(state.Listing)),
 			Sort:  types.NewOptional(types.SortType(state.Sort)),
 			Limit: types.NewOptional(int64(25)),
 			Page:  types.NewOptional(int64(state.Page)),

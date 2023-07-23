@@ -1,17 +1,17 @@
 <div class="community">
     <form method="POST" class="member {{ membership .Subscribed }}">
       <input name="op" type="submit" value="{{ membership .Subscribed}}">
-      <input type="hidden" name="communityid" value ="{{.Community.ID}}">
+      <input type="hidden" name="communityid" value ="{{ .Community.ID }}">
     </form>
-    <span class="title"><a href="{{localize .Community.ActorID}}">c/{{fullcname .Community}}: {{.Community.Title}}</a></span>
+    <span class="title"><a href="{{ if .Community.Local }}./c/{{.Community.Name}}{{else}}{{ localize .Community.ActorID }}{{end}}">c/{{fullcname .Community}}: {{.Community.Title}}</a></span>
   <div class="details">
 {{ if .Community.Description.IsValid }}
     <div class="description">
-      {{markdown "" .Community.Description.String}}
+      {{ markdown "" .Community.Description.String }}
     </div>
 {{ end }}
     <div class="gray">
-      {{printer .Counts.Subscribers}} subscribers,
+      {{ if .Counts.Subscribers }}{{ printer .Counts.Subscribers }} subscribers,{{end}}
       a community founded {{ humanize .Community.Published.Time }}
     </div>
   </div>

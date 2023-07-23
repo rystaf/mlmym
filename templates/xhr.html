@@ -1,11 +1,21 @@
+{{ $state := . }}
 {{ if or .PostID .CommentID }}
   {{ range $i, $comment := .Comments }}
       {{ template "comment.html" $comment }}
   {{ end }}
 {{ else if .Activities }}
   {{ template "activities.html" . }}
-{{ else }}
+{{ else if .Posts }}
   {{ range $post := .Posts }}
     {{ template "post.html" $post }}
   {{ end }}
+{{ else if .Communities }}
+  {{ range .Communities }}
+    {{ if not $state.Page }}
+<a href="/{{ $state.Host}}/{{ if .Community.Local }}c/{{.Community.Name}}{{else}}{{ localize .Community.ActorID }}{{end}}">{{fullcname .Community }}</a>
+    {{ else }}
+    {{ template "community.html" . }}
+    {{ end }}
+  {{ end }}
+{{ else }}
 {{ end }}

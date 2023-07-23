@@ -1,5 +1,8 @@
 <nav>
       <div class="communities">
+        {{ if .Session }}
+        <a id="openmycommunities" href="/{{.Host}}/search?searchtype=Communities&listingType=Subscribed&sort=TopMonth&page=0">my communities ▼</a>
+        {{ end }}
         <a href="/{{.Host}}">home</a>
         <span> - </span>
         <a href="/{{.Host}}?listingType=All">all</a>
@@ -9,8 +12,9 @@
         <a href="/{{$host}}/c/{{fullcname $c.Community}}">{{$c.Community.Name}}</a>
         <span> - </span>
         {{ end }}
-        <a href="/{{$host}}/search?searchtype=Communities&sort=TopAll" class="more">more »</a>
+        <a href="/{{$host}}/search?searchtype=Communities&sort=TopMonth" class="more">more »</a>
       </div>
+      <div id="mycommunities"></div>
       <div class="right">
 {{ if .Session }}
         <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>

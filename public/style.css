@@ -502,21 +502,52 @@ form.nsfw div {
   position: relative;
   color: #000;
 }
-#settingspopup {
+#mycommunities, #settingspopup {
   background-color: white;
   border: 1px solid #888;
   display: none;
   position: absolute;
+  z-index: 100;
+}
+#mycommunities {
+  top: 17px;
+  padding: 5px 0px;
+  border-width: 0px 1px 1px 0px;
+}
+#mycommunities div {
+  margin: 0px 5px;
+}
+#mycommunities a:first-child {
+  text-align: right;
+}
+#mycommunities a {
+  text-decoration: none;
+  color: #369;
+  text-transform: uppercase;
+  font-size: 9px;
+  display: block;
+  padding: 0px 3px;
+}
+.dark #mycommunities a {
+  color: #8cb3d9;
+}
+.dark #mycommunities a:hover {
+  background-color: #3e3e3e;
+}
+#mycommunities a:hover {
+  background-color: #c7def7;
+}
+#settingspopup {
   right: 10px;
   top: 45px;
 }
 #settingspopup form {
   margin: 0px;
 }
-.dark #settingspopup {
+.dark #settingspopup, .dark #mycommunities {
   background-color: #262626;
 }
-#settingspopup.open {
+#settingspopup.open, #mycommunities.open {
   display: inline-block;
 }
 .expando.open{
@@ -807,11 +838,11 @@ nav .communities a.more {
   color: orangered !important;
 }
 
-nav  a {
+nav .communities a {
   text-decoration: none;
   color: black;
 }
-nav > a:hover {
+nav .title a:hover {
   text-decoration: underline;
 }
 

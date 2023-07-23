@@ -237,6 +237,24 @@ function formSubmit(e) {
   return false
 }
 
+function toggleMyCommunities(e) {
+  e.preventDefault()
+  var mycommunities = document.getElementById("mycommunities")
+  if (mycommunities.className.indexOf("open") > -1) {
+    mycommunities.className = ""
+    return false
+  }
+  mycommunities.className = "open"
+  mycommunities.innerHTML = "<div>loading</div>"
+  request(e.target.href + "&xhr=1", "", function(res) {
+    mycommunities.innerHTML = '<div><a href="'+e.target.href+'">view all »</a>'
+    mycommunities.innerHTML += res
+  }, function() {
+    mycommunities.className = ""
+  })
+  return false
+}
+
 function openSettings(e) {
   e.preventDefault()
   var settings = document.getElementById("settingspopup")
@@ -331,6 +349,9 @@ function setup() {
   }
   if (settings = document.getElementById("opensettings")) {
     settings.addEventListener("click", openSettings)
+  }
+  if (settings = document.getElementById("openmycommunities")) {
+    settings.addEventListener("click", toggleMyCommunities)
   }
   if (hidechildren = document.getElementById("hidechildren")){
     hidechildren.addEventListener("click", hideAllChildComments)
