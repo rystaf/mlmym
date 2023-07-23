@@ -79,7 +79,7 @@ summary {
   overflow:hidden;
 }
 .comment .content {
-  line-height: 20px;
+  line-height: 1.4286em;
   overflow:hidden;
   max-width: 840px;
 }
@@ -592,8 +592,8 @@ form.nsfw div {
   border-color: #666;
 }
 .expando p, .comment p, .message p {
-  margin-top: 0;
-  margin-bottom: 2px;
+  margin-top: .357em;
+  margin-bottom: .357em;
 }
 .search {
   font-size: 13px;
