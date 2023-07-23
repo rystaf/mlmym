@@ -14,6 +14,7 @@ import (
 	"github.com/yuin/goldmark/extension"
 )
 
+var version string
 var watch = flag.Bool("w", false, "watch for file changes")
 var addr = flag.String("addr", ":80", "http service address")
 var md goldmark.Markdown
@@ -67,6 +68,9 @@ func init() {
 	}
 	if os.Getenv("DEBUG") != "" {
 		test()
+	}
+	if data, err := os.ReadFile("VERSION"); err == nil {
+		version = string(data)
 	}
 }
 func test() {

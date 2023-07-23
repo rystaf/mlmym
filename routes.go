@@ -198,9 +198,10 @@ func RegReplace(input string, match string, replace string) string {
 
 func Initialize(Host string, r *http.Request) (State, error) {
 	state := State{
-		Host:   Host,
-		Page:   1,
-		Status: http.StatusOK,
+		Host:    Host,
+		Page:    1,
+		Status:  http.StatusOK,
+		Version: version,
 	}
 	lemmyDomain := os.Getenv("LEMMY_DOMAIN")
 	if lemmyDomain != "" {

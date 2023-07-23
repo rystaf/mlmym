@@ -1,17 +1,18 @@
-.PHONY: dev reload serve style
+.PHONY: dev reload serve VERSION
 
-all: 
-	$(MAKE) -j3 --no-print-directory dev
+all: mlmym
 
-dev: reload serve style
+mlmym:
+	go build -v -o mlmym
+
+dev:
+	$(MAKE) -j2 --no-print-directory reload serve
 
 reload:
-	#websocketd --port=8080 watchexec -w public echo reload &>/dev/null
-	websocketd --loglevel=fatal --port=8009 watchexec --no-vcs-ignore -e html,css,js -d 500 -w public 'echo "$$WATCHEXEC_WRITTEN_PATH"'
+	websocketd --loglevel=fatal --port=8009 watchexec -e html,css,js -d 500 'echo "$$WATCHEXEC_WRITTEN_PATH"'
 
-serve:
-	#python  -m http.server --directory ./public 8081 &>/dev/null
-	DEBUG=true watchexec -e go -r "go run . --addr 0.0.0.0:8008 -w"
+VERSION:
+	git describe --tag > $@
 
-style:
-	npm run watchcss > /dev/null 2>&1
+serve: VERSION
+	DEBUG=true watchexec --no-vcs-ignore -e go -r "go run . --addr 0.0.0.0:8008 -w"

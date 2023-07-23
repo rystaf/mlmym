@@ -64,6 +64,7 @@ type Session struct {
 }
 
 type State struct {
+	Version           string
 	Client            *lemmy.Client
 	HTTPClient        *http.Client
 	Session           *Session
