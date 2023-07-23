@@ -38,7 +38,7 @@
 {{ if ne .Op "2fa" }}
     <div>
       <h2>create a new account</h2>
-      <form method="POST">
+      <form method="POST" action="/{{ .Host}}/login">
         <label>
           username
           <div><input required name="username" type="text"></div>

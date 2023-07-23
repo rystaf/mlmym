@@ -893,10 +893,15 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			if strings.Contains(fmt.Sprintf("%v", err), "missing_totp_token") {
 				state.Op = "2fa"
-				Render(w, "login.html", state)
-				return
+			}
+			state.GetSite()
+			if state.Site != nil && state.Site.SiteView.LocalSite.CaptchaEnabled {
+				state.GetCaptcha()
 			}
 			state.Status = http.StatusUnauthorized
+			state.Error = err
+			Render(w, "login.html", state)
+			return
 		} else if resp.JWT.IsValid() {
 			state.GetUser(r.FormValue("username"))
 			if state.User != nil {
