@@ -418,7 +418,10 @@ func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 func GetCommunities(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	r.URL.Path = "/search"
-	r.URL.RawQuery = "searchtype=Communities"
+	if ps.ByName("host") != "" {
+		r.URL.Path = "/" + ps.ByName("host") + "/search"
+	}
+	r.URL.RawQuery = "searchtype=Communities&sort=TopMonth"
 	http.Redirect(w, r, r.URL.String(), 301)
 }
 
