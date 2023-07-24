@@ -245,19 +245,25 @@ function toggleMyCommunities(e) {
     return false
   }
   mycommunities.className = "open"
-  mycommunities.innerHTML = "<div>loading</div>"
-  request(e.target.href + "&xhr=1", "", function(res) {
-    mycommunities.innerHTML = '<div><a href="'+e.target.href+'">view all »</a>'
-    mycommunities.innerHTML += res
-  }, function() {
-    mycommunities.className = ""
-  })
+  if (mycommunities.innerHTML == "") {
+    mycommunities.innerHTML = "<div>loading</div>"
+    request(e.target.href + "&xhr=1", "", function(res) {
+      mycommunities.innerHTML = '<div><a href="'+e.target.href+'">view all »</a>'
+      mycommunities.innerHTML += res
+    }, function() {
+      mycommunities.className = ""
+    })
+  }
   return false
 }
 
 function openSettings(e) {
   e.preventDefault()
   var settings = document.getElementById("settingspopup")
+  if (settings.className == "open") {
+    settings.className = ""
+    return false
+  }
   settings.className = "open"
   request(e.target.href + "?xhr=1", "", function(res) {
     settings.innerHTML = res
