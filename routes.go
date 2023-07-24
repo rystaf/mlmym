@@ -165,7 +165,7 @@ var funcMap = template.FuncMap{
 func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body string) {
 	body = input
 	// community bangs
-	body = RegReplace(body, `!([a-zA-Z0-9]+)@([a-zA-Z0-9\.\-]+)([ \n\r]+|<\/p>)`, `<a href="/c/$1@$2">!$1@$2</a> `)
+	body = RegReplace(body, `!([a-zA-Z0-9_]+)@([a-zA-Z0-9\.\-]+)([ \n\r]+|<\/p>)`, `<a href="/c/$1@$2">!$1@$2</a> `)
 	// localize community and user links
 	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u|comment|post)\/.*?)"`, `href="/$2@$1"`)
 	// remove extra instance tag
@@ -180,9 +180,21 @@ func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body stri
 		body = RegReplace(body, `href="https:\/\/`+lemmy_domain+`\/(c\/[a-zA-Z0-9]+"|(c|u|post|comment)\/(.*?)")`, `href="/$1`)
 		body = RegReplace(body, `href="(.*)@`+lemmy_domain+`"`, `href="$1"`)
 	}
-	// remove redundant instance tag
-	re := regexp.MustCompile(`href="\/([a-zA-Z0-9\.\-]+)\/(c|u|post|comment)\/(.*?)@(.*?)"`)
+
+	re := regexp.MustCompile(`href="\/?([a-zA-Z0-9\.\-]*)\/(c|u|post|comment)\/(.*?)@(.*?)"`)
+	// assume "old." subdomain is mlmym and remove
 	matches := re.FindAllStringSubmatch(body, -1)
+	for _, match := range matches {
+		if match[4][0:4] == "old." {
+			s := 1
+			if match[1] == "" {
+				s += 1
+			}
+			body = strings.Replace(body, match[0], `href="/`+strings.Join(match[s:4], "/")+"@"+match[4][4:]+`"`, -1)
+		}
+	}
+	// remove redundant instance tag
+	matches = re.FindAllStringSubmatch(body, -1)
 	for _, match := range matches {
 		if match[1] == match[4] {
 			body = strings.Replace(body, match[0], `href="/`+strings.Join(match[1:4], "/")+`"`, -1)
