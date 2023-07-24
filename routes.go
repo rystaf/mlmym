@@ -134,7 +134,7 @@ var funcMap = template.FuncMap{
 		re := regexp.MustCompile(`\s---\s`)
 		body = re.ReplaceAllString(body, "\n***\n")
 		// community bangs
-		body = RegReplace(body, `!([a-zA-Z0-9_]+)@([a-zA-Z0-9\.\-]+)`, `[!$1@$2](/c/$1@$2)`)
+		body = RegReplace(body, `([^\[])!([a-zA-Z0-9_]+)@([a-zA-Z0-9\-]+(\.[a-zA-Z0-9\-]+)+)`, `$1[!$2@$3](/c/$2@$3)`)
 		if err := md.Convert([]byte(body), &buf); err != nil {
 			fmt.Println(err)
 			return template.HTML(body)
