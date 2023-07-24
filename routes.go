@@ -133,6 +133,8 @@ var funcMap = template.FuncMap{
 		var buf bytes.Buffer
 		re := regexp.MustCompile(`\s---\s`)
 		body = re.ReplaceAllString(body, "\n***\n")
+		// community bangs
+		body = RegReplace(body, `!([a-zA-Z0-9_]+)@([a-zA-Z0-9\.\-]+)`, `[!$1@$2](/c/$1@$2)`)
 		if err := md.Convert([]byte(body), &buf); err != nil {
 			fmt.Println(err)
 			return template.HTML(body)
@@ -164,8 +166,6 @@ var funcMap = template.FuncMap{
 
 func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body string) {
 	body = input
-	// community bangs
-	body = RegReplace(body, `!([a-zA-Z0-9_]+)@([a-zA-Z0-9\.\-]+)([ \n\r]+|<\/p>)`, `<a href="/c/$1@$2">!$1@$2</a> `)
 	// localize community and user links
 	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u|comment|post)\/.*?)"`, `href="/$2@$1"`)
 	// remove extra instance tag
