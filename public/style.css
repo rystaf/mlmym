@@ -577,7 +577,8 @@ form.nsfw div {
   padding: 5px 10px;
   margin: 5px auto;
   max-width: 578px;
-  font-size: 14px;
+  font-size: 1.0em;
+  line-height: 1.4286em;
   overflow: auto;
 }
 .expando .md img {
@@ -590,6 +591,13 @@ form.nsfw div {
   background-color: #262626;
   color: #ddd;
   border-color: #666;
+}
+
+.md a {
+	
+  color: #0079d3;
+  text-decoration: none;
+  
 }
 .expando p, .comment p, .message p {
   margin-top: .357em;
