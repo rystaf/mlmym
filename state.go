@@ -59,11 +59,13 @@ type Post struct {
 }
 
 type Session struct {
-	UserName string
-	UserID   int
+	UserName    string
+	UserID      int
+	Communities []types.CommunityView
 }
 
 type State struct {
+	Version           string
 	Client            *lemmy.Client
 	HTTPClient        *http.Client
 	Session           *Session
@@ -266,6 +268,18 @@ func (state *State) GetSite() {
 		return
 	}
 	state.Site = resp
+	if !state.Site.MyUser.IsValid() {
+		return
+	}
+	for _, c := range state.Site.MyUser.MustValue().Follows {
+		state.Session.Communities = append(state.Session.Communities, types.CommunityView{
+			Community:  c.Community,
+			Subscribed: "Subscribed",
+		})
+	}
+	sort.Slice(state.Session.Communities, func(a, b int) bool {
+		return state.Session.Communities[a].Community.Name < state.Session.Communities[b].Community.Name
+	})
 }
 
 func (state *State) GetComment(commentid int) {
@@ -531,16 +545,10 @@ func (state *State) Search(searchtype string) {
 			if state.Page > 1 {
 				return
 			}
-			state.GetSite()
-			for _, c := range state.Site.MyUser.MustValue().Follows {
-				state.Communities = append(state.Communities, types.CommunityView{
-					Community:  c.Community,
-					Subscribed: "Subscribed",
-				})
+			if state.Site == nil {
+				state.GetSite()
 			}
-			sort.Slice(state.Communities, func(a, b int) bool {
-				return state.Communities[a].Community.Name < state.Communities[b].Community.Name
-			})
+			state.Communities = state.Session.Communities
 			return
 		}
 		resp, err := state.Client.Communities(context.Background(), types.ListCommunities{

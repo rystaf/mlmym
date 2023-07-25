@@ -1,3 +1,4 @@
+{{ $state := . }}
 <nav>
       <div class="communities">
         {{ if .Session }}
@@ -14,7 +15,14 @@
         {{ end }}
         <a href="/{{$host}}/search?searchtype=Communities&sort=TopMonth" class="more">more »</a>
       </div>
-      <div id="mycommunities"></div>
+      <div id="mycommunities">
+{{- if and .Session .Session.Communities }}
+<a href="/{{.Host}}/search?searchtype=Communities&listingType=Subscribed&sort=TopMonth&page=0">view all »</a>
+  {{ range .Session.Communities }}
+<a href="/{{ $state.Host}}/{{ if .Community.Local }}c/{{.Community.Name}}{{else}}{{ localize .Community.ActorID }}{{end}}">{{fullcname .Community }}</a>
+  {{ end }}
+{{ end -}}
+      </div>
       <div class="right">
 {{ if .Session }}
         <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>

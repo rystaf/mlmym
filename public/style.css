@@ -1085,6 +1085,10 @@ form.create input[type=file], form.create select {
   font-size: 13px;
   margin: 10px;
 }
+.preferences div:last-child label {
+  text-align: left;
+  font-size: 10px;
+}
 .preferences label{
   display: inline-block;
   width: 130px;
