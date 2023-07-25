@@ -83,6 +83,7 @@ summary {
   overflow:hidden;
   max-width: 840px;
 }
+
 .comment.hidden {
   padding-bottom:5px;
 }
@@ -219,6 +220,8 @@ summary {
   font-size: 10px;
   margin-bottom: 6px;
 }
+
+
 .meta a, .activity .meta a {
   color: #369;
   text-decoration: none;
@@ -576,11 +579,14 @@ form.nsfw div {
   border-radius: 7px;
   padding: 5px 10px;
   margin: 5px auto;
-  max-width: 578px;
-  font-size: 1.0em;
+  margin-left: 120px;
+  width: 60em;
+  max-width: 60em;
+  font-size: 14px;
   line-height: 1.4286em;
   overflow: auto;
 }
+
 .expando .md img {
   max-width: 100%;
 }
@@ -599,10 +605,24 @@ form.nsfw div {
   text-decoration: none;
   
 }
+
+.content p {
+	margin-top: 0;
+}
+
+.content div > :first-child {
+  margin-top: 0;
+}
+
+.content div > :last-child {
+  margin-bottom: 0;
+}
+
 .expando p, .comment p, .message p {
   margin-top: .357em;
   margin-bottom: .357em;
 }
+
 .search {
   font-size: 13px;
   color: gray;
