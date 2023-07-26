@@ -215,6 +215,9 @@ func Initialize(Host string, r *http.Request) (State, error) {
 		Status:  http.StatusOK,
 		Version: version,
 	}
+	if watch != nil {
+		state.Watch = *watch
+	}
 	lemmyDomain := os.Getenv("LEMMY_DOMAIN")
 	if lemmyDomain != "" {
 		state.Host = "."

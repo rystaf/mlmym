@@ -141,6 +141,9 @@
   {{ end }}
 
     <script src="/_/static/utils.js?v=22"></script>
+    {{ if .Watch }}
+    <script src="/_/static/ws.js"></script>
+    {{ end }}
     {{ template "sidebar.html" . }}
     </main>
 {{ end }}

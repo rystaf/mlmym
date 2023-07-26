@@ -9,7 +9,7 @@ dev:
 	$(MAKE) -j2 --no-print-directory reload serve
 
 reload:
-	websocketd --loglevel=fatal --port=8009 watchexec -e html,css,js -d 500 'echo "$$WATCHEXEC_WRITTEN_PATH"'
+	websocketd --loglevel=fatal --port=8009 watchexec --no-vcs-ignore -e html,css,js 'echo "$$WATCHEXEC_WRITTEN_PATH"'
 
 VERSION:
 	git describe --tag > $@

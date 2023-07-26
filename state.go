@@ -65,6 +65,7 @@ type Session struct {
 }
 
 type State struct {
+	Watch             bool
 	Version           string
 	Client            *lemmy.Client
 	HTTPClient        *http.Client
