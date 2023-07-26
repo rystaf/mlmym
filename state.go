@@ -314,6 +314,9 @@ func (state *State) GetComment(commentid int) {
 			state.Comments = append(state.Comments, comment)
 		}
 	}
+	if len(state.Comments) == 0 {
+		return
+	}
 	ctx, err := state.GetContext(state.Context, state.Comments[0])
 	if err != nil {
 		fmt.Println(err)

@@ -167,7 +167,7 @@ var funcMap = template.FuncMap{
 func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body string) {
 	body = input
 	// localize community and user links
-	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u|comment|post)\/.*?)"`, `href="/$2@$1"`)
+	body = RegReplace(body, `href="https:\/\/([a-zA-Z0-9\.\-]+)\/((c|u|comment|post)\/[^#\?]*?)"`, `href="/$2@$1"`)
 	// remove extra instance tag
 	body = RegReplace(body, `href="(https:\/)?(\/[a-zA-Z0-9\.\-]+)?\/((c|u)\/[a-zA-Z0-9]+@[a-zA-Z0-9\.\-]+)@([a-zA-Z0-9\.\-]+)"`, `href="/$3"`)
 	if lemmy_domain == "" {

@@ -84,6 +84,7 @@ func test() {
 		[]string{"https://lemmy.world/u/dude", "/lemmy.local/u/dude@lemmy.world", "/u/dude@lemmy.world"},
 		[]string{"https://lemmy.world/u/dude@lemmy.world", "/lemmy.local/u/dude@lemmy.world", "/u/dude@lemmy.world"},
 		[]string{"https://lemmy.world/post/123", "/lemmy.local/post/123@lemmy.world", "/post/123@lemmy.world"},
+		[]string{"https://lemmy.world/post/123#123", "https://lemmy.world/post/123#123", "https://lemmy.world/post/123#123"},
 		[]string{"/post/123", "/lemmy.local/post/123", "/post/123"},
 		[]string{"/comment/123", "/lemmy.local/comment/123", "/comment/123"},
 		[]string{"https://lemmy.local/comment/123", "/lemmy.local/comment/123", "/comment/123"},
