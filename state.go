@@ -98,6 +98,7 @@ type State struct {
 	Op                string
 	Site              *types.GetSiteResponse
 	Query             string
+	Content           string
 	SearchType        string
 	Captcha           *types.CaptchaResponse
 	Dark              bool

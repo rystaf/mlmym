@@ -2,26 +2,12 @@
   <head>
     <title>{{ if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ host .Host }}{{end}}</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?v=28">
+    <link rel="stylesheet" href="/_/static/style.css?v={{ .Version }}">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body {{ if .Dark }}class="dark"{{end}}>
     <noscript>
-      <style>
-      .expando-button,
-      .minimize,
-      #loadmore,
-      #showimages,
-      .hidechildren {
-        display: none;
-      }
-      div.pager {
-        display: block;
-      }
-      .post .expando .image img {
-        visibility: visible;
-      }
-      </style>
+      <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
 
     {{ template "nav.html" . -}}
@@ -59,6 +45,6 @@
       {{ template "sidebar.html" . }}
     </main>
 {{ end }}
-    <script src="/_/static/utils.js?v=22"></script>
+    <script src="/_/static/utils.js?v={{ .Version }}"></script>
   </body>
 </html>

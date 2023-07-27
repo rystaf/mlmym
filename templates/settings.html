@@ -3,16 +3,12 @@
   <head>
     <title>{{  host .Host }}: preferences</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?v=28">
+    <link rel="stylesheet" href="/_/static/style.css?v={{ .Version }}">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body {{ if .Dark}}class="dark"{{end}}>
     <noscript>
-      <style>
-      .scripting {
-        display: none;
-      }
-      </style>
+      <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
     <nav>
       <div class="communities">
@@ -135,7 +131,7 @@
       </div>
     </form>
 {{ if not .XHR}}
-    <script src="/_/static/utils.js?v=8"></script>
+    <script src="/_/static/utils.js?v={{ .Version }}"></script>
   </body>
 </html>
 {{ end }}

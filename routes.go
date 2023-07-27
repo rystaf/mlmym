@@ -507,6 +507,9 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.Op = "edit_post"
 		state.GetSite()
 	}
+	if len(m["content"]) > 0 {
+		state.Content = m["content"][0]
+	}
 	postid, _ := strconv.Atoi(ps.ByName("postid"))
 	state.GetPost(postid)
 	state.GetComments()
@@ -551,6 +554,9 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if len(m["edit"]) > 0 {
 		state.Op = "edit"
 	}
+	if r.Method == "POST" && len(m["content"]) > 0 {
+		state.Content = m["content"][0]
+	}
 	if len(m["source"]) > 0 {
 		state.Op = "source"
 	}
@@ -560,6 +566,10 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	commentid, _ := strconv.Atoi(ps.ByName("commentid"))
 	state.GetComment(commentid)
+	if state.XHR && len(m["content"]) > 0 {
+		Render(w, "create_comment.html", state)
+		return
+	}
 	state.GetPost(state.PostID)
 	Render(w, "index.html", state)
 }
@@ -1201,9 +1211,20 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			parentid, _ := strconv.Atoi(r.FormValue("parentid"))
 			state.GetComment(parentid)
 		}
+		content := r.FormValue("content")
+		file, handler, err := r.FormFile("file")
+		if err == nil {
+			pres, err := state.UploadImage(file, handler)
+			if err != nil {
+				state.Error = err
+				Render(w, "index.html", state)
+				return
+			}
+			content += ("![](https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename + ")")
+		}
 		if r.FormValue("submit") == "save" {
 			createComment := types.CreateComment{
-				Content: r.FormValue("content"),
+				Content: content,
 				PostID:  state.PostID,
 			}
 			if state.CommentID > 0 {
@@ -1225,6 +1246,22 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			} else {
 				fmt.Println(err)
 			}
+		} else if r.FormValue("submit") == "preview" {
+			q := r.URL.Query()
+			q.Set("content", content)
+			q.Set("reply", "")
+			if r.FormValue("xhr") != "" {
+				q.Set("xhr", "1")
+			}
+			r.URL.RawQuery = q.Encode()
+			if ps.ByName("postid") != "" {
+				GetPost(w, r, ps)
+				return
+			}
+			if ps.ByName("commentid") != "" {
+				GetComment(w, r, ps)
+				return
+			}
 		} else if r.FormValue("xhr") != "" {
 			w.Write([]byte{})
 			return
@@ -1234,10 +1271,23 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	case "edit_comment":
 		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
+		q := r.URL.Query()
+		content := r.FormValue("content")
+		file, handler, err := r.FormFile("file")
+		if err == nil {
+			pres, err := state.UploadImage(file, handler)
+			if err != nil {
+				state.Error = err
+				Render(w, "index.html", state)
+				return
+			}
+			content += ("![](https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename + ")")
+		}
+
 		if r.FormValue("submit") == "save" {
 			resp, err := state.Client.EditComment(context.Background(), types.EditComment{
 				CommentID: commentid,
-				Content:   types.NewOptional(r.FormValue("content")),
+				Content:   types.NewOptional(content),
 			})
 			if err != nil {
 				fmt.Println(err)
@@ -1246,6 +1296,29 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				r.URL.Fragment = "c" + commentid
 				r.URL.RawQuery = ""
 			}
+		} else if r.FormValue("submit") == "preview" {
+			q.Set("content", content)
+			q.Set("edit", "")
+			if r.FormValue("xhr") != "" {
+				q.Set("xhr", "1")
+			}
+			r.URL.RawQuery = q.Encode()
+			if ps.ByName("commentid") != "" {
+				GetComment(w, r, ps)
+				return
+			}
+		} else if r.FormValue("submit") == "cancel" {
+			if ps.ByName("commentid") != "" {
+				if r.FormValue("xhr") != "" {
+					q.Set("xhr", "1")
+				}
+				r.URL.RawQuery = q.Encode()
+				GetComment(w, r, ps)
+				return
+			}
+		} else if r.FormValue("xhr") != "" {
+			w.Write([]byte{})
+			return
 		}
 		if r.FormValue("xhr") != "" {
 			state.XHR = true

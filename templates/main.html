@@ -3,23 +3,11 @@
     <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ host .Host }}{{end}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
-    <link rel="stylesheet" href="/_/static/style.css?v=28">
+    <link rel="stylesheet" href="/_/static/style.css?v={{ .Version }}">
   </head>
   <body{{ if .Dark }} class="dark"{{end}}>
     <noscript>
-      <style>
-      .scripting,
-      .expando-button,
-      .minimize,
-      #showimages,
-      #lmc,
-      .hidechildren {
-        display: none !important;
-      }
-      .post .expando .image img {
-        visibility: visible;
-      }
-      </style>
+      <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
 
     {{ template "nav.html" . -}}
@@ -99,13 +87,9 @@
         </div>
       </div>
       {{ if and .Session (ne .Op "edit_post") }}
-      <form class="savecomment" method="POST">
-        <div>
-          <textarea required name="content" {{ if (index .Posts 0).Post.Deleted }} disabled {{end}}></textarea>
-        </div>
-        <input type="hidden" name="op" value="create_comment">
-        <input type="submit" name="submit" value="save"{{ if (index .Posts 0).Post.Deleted }} disabled {{end}}>
-      </form>
+      <div class="create_comment">
+        {{ template "create_comment.html" .}}
+      </div>
       {{ end }}
     {{ end }}
   {{ end}}
@@ -140,7 +124,7 @@
     {{ end }}
   {{ end }}
 
-    <script src="/_/static/utils.js?v=22"></script>
+    <script src="/_/static/utils.js?v={{ .Version }}"></script>
     {{ if .Watch }}
     <script src="/_/static/ws.js"></script>
     {{ end }}

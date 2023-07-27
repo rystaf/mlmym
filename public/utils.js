@@ -10,8 +10,6 @@ function request(url, params, callback, errorcallback = function(){}) {
   var method = "GET"
   if (params) method = "POST"
   xmlHttp.open(method, url, true);
-  if (method = "POST")
-    xmlHttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   xmlHttp.send(params);
 }
 function postClick(e) {
@@ -34,25 +32,31 @@ function postClick(e) {
     }
   }
 }
+function uptil (el, f) { 
+  if (el) return f(el) ? el : uptil(el.parentNode, f) 
+}
 function commentClick(e) {
   e = e || window.event;
   var targ = e.currentTarget || e.srcElement || e;
   if (targ.nodeType == 3) targ = targ.parentNode;
   if (e.target.name=="submit") {
     e.preventDefault()
-    var form = e.target.parentNode
+    var form = uptil(e.target, function(el){ return el.tagName == "FORM" })
     if (form) {
       data = new FormData(form)
+      data.set(e.target.name, e.target.value)
+      data.set("xhr", 1)
       if (("c"+data.get("commentid")) == targ.id) {
-        
+        targ.action = form.action
+        if (e.target.value == "preview") {
+          targ = form
+        }
+        console.log("ok")
       } else if (("c"+data.get("parentid")) == targ.id) {
         targ = form
       } else { return }
-      params = new URLSearchParams(data).toString()
-      params += "&" + e.target.name + "=" + e.target.value
-      params += "&xhr=1"
       e.target.disabled = "disabled"
-      request(targ.target || "", params,
+      request(targ.action || "", data,
         function(res){
           targ.outerHTML = res
           setup()
@@ -217,11 +221,10 @@ function formSubmit(e) {
   var targ = e.currentTarget || e.srcElement || e;
   e.preventDefault()
   var data = new FormData(targ)
-  params = new URLSearchParams(data).toString()
-  params += "&" + e.submitter.name + "=" + e.submitter.value
-  params += "&xhr=1"
+  data.set(e.submitter.name, e.submitter.value)
+  data.set("xhr", "1")
   e.submitter.disabled = "disabled"
-  request(targ.target, params,
+  request(targ.target, data,
     function(res){
       if (data.get("op") == "read_post") {
         document.getElementById("p"+data.get("postid")).remove()
@@ -349,6 +352,16 @@ function toggleImages(open) {
   }
 }
 
+function insertImg(e) {
+  e = e || window.event;
+  var form = uptil(e.target, function(el){ return el.tagName == "FORM" })
+  form.querySelector("input[value=preview]").click()
+  var inputs = form.getElementsByTagName("input")
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].disabled = "disabled"
+  }
+}
+
 function setup() {
   if (showimages = document.getElementById("se")) {
     showimages.addEventListener("click", showImages)
@@ -368,6 +381,10 @@ function setup() {
       pager[0].style.display = "none";
     }
     lmc.addEventListener("click", loadMoreComments)
+  }
+  var imgUpload = document.getElementsByClassName("imgupload")
+  for (var i = 0; i < imgUpload.length; i++) {
+    imgUpload[i].addEventListener("change", insertImg)
   }
   var posts = document.getElementsByClassName("post")
   for (var i = 0; i < posts.length; i++) {

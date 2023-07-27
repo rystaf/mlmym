@@ -219,6 +219,27 @@ summary {
   font-size: 10px;
   margin-bottom: 6px;
 }
+.preview h3 {
+  background-color: #f0f3fc;
+  border: 0px solid #e6e6e6;
+  border-bottom-width: 1px;
+  color: black;
+  margin: 0px;
+  padding: 10px;
+  font-size: 14px;
+}
+.dark .preview h3 {
+  background-color: #333;
+  border-color: #333;
+  color: #ccc;
+}
+.preview .comment {
+  margin-top: 5px;
+  padding: 0px;
+}
+.preview .comment .content {
+  padding: 5px 10px;
+}
 .meta a, .activity .meta a {
   color: #369;
   text-decoration: none;
@@ -262,6 +283,7 @@ summary {
 }
 form.savecomment {
   margin: 0px 0px 10px 0px;
+  width: 500px;
 }
 .comment > .children > form.savecomment {
   margin: 0px 0px 10px 20px;
@@ -270,9 +292,34 @@ form.savecomment {
   margin: 5px 0px 10px 15px;
 }
 .savecomment textarea {
-  width: 500px;
+  margin: 5px 0px;
+  width: 100%;
   height: 100px;
 }
+
+.savecomment .upload label div {
+  display: inline-block;
+  border: 1px solid #ccc;
+  height: 20px;
+  line-height: 20px;
+  width: 32px;
+  position: relative;
+  background-color: #999;
+  color: #000;
+  text-align: center;
+  cursor: pointer;
+}
+.savecomment .upload input {
+  display: none;
+}
+.savecomment .right {
+  float:right;
+}
+.savecomment .right a {
+  line-height: 28px;
+  font-size: 10px;
+}
+
 .comment .meta a.minimize {
   color: #369;
   font-size: 10px;
@@ -956,11 +1003,11 @@ nav .right a.mailbox {
   top: 4px;
   color: gray;
 }
-nav .right a, .right input[type=submit] {
+nav .right a, nav .right input[type=submit] {
   color: #369;
   text-decoration: none;
 }
-.dark nav .right a, .dark .right input[type=submit]{
+.dark nav .right a, .dark nav .right input[type=submit]{
   color: #dadada;
 }
 nav .right form, .comment form, form.link-btn {

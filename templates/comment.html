@@ -15,11 +15,11 @@
 {{ end }}
     <div class="meta">
       <a class="minimize" href="" for="c{{.P.Comment.ID}}">
-{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }}
+{{- if or (lt .P.Counts.Score -5) .P.Comment.Deleted -}}
         [+]
-{{ else }}
+{{- else -}}
         [-]
-{{ end }}
+{{- end -}}
       </a>
       <a {{ if .P.Comment.Distinguished}}class="{{if .P.Creator.Admin}}admin {{end}}distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
         {{- if .State.HideInstanceNames -}}
@@ -33,26 +33,17 @@
             * (last edited <span title="{{.P.Comment.Updated.Time}}">{{ humanize .P.Comment.Updated.Time }}</span>)
             {{ end }}
     </div>
+    <div class="content">
 {{ if eq .Op "edit" }}
-    <div class="content">
-      <form class="savecomment" method="POST">
-        <div>
-          <textarea required name="content">{{ .P.Comment.Content }}</textarea>
-        </div>
-        <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
-        <input type="hidden" name="op" value="edit_comment">
-        <input name="submit" type="submit" value="save">
-        <input name="submit" type="submit" value="cancel">
-      </form>
+  {{ template "create_comment.html" .State }}
 {{ else }}
-    <div class="content">
-      {{if .P.Comment.Deleted}}
+    {{if .P.Comment.Deleted}}
       [removed]
-      {{else}}
+    {{else}}
       <div {{ if and .Selected (not .State.XHR) (ne .State.Op "reply")}}class="highlight" {{end}}>
         {{ markdown .State.Host .P.Comment.Content }}
       </div>
-      {{end}}
+    {{end}}
   {{ if eq .Op "source" }}
       <div><textarea>{{.P.Comment.Content}}</textarea></div>
   {{end}}
@@ -93,7 +84,7 @@
           </a>
         </li>
 {{ end }}
-{{ if and .ParentID .State.CommentID }}
+{{ if and .ParentID .State.CommentID (not .State.XHR) }}
         <li>
           <a href="/{{.State.Host}}/comment/{{.ParentID}}">parent</a>
         </li>
@@ -110,15 +101,7 @@
     </div>
     <div class="children">
 {{ if and (eq .State.Op "reply") (eq .State.CommentID .P.Comment.ID)}}
-      <form class="savecomment" method="POST">
-        <div>
-          <textarea name="content"></textarea>
-        </div>
-        <input type="hidden" name="parentid" value="{{.P.Comment.ID}}">
-        <input type="hidden" name="op" value="create_comment">
-        <input type="submit" name="submit" value="save">
-        <input type="submit" name="submit" value="cancel">
-      </form>
+  {{ template "create_comment.html" .State }}
 {{ end}}
       {{ range $ci, $child := .C }}{{ template "comment.html" $child }}{{end}}
 {{ if and (ne .P.Counts.ChildCount .ChildCount) (not .State.Activities) (not .State.Query) }}
@@ -128,4 +111,4 @@
       </div>
 {{end}}
     </div>
-  </div>
+</div>
