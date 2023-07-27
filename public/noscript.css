@@ -1,0 +1,17 @@
+.scripting,
+.expando-button,
+.minimize,
+#showimages,
+#lmc,
+.hidechildren {
+  display: none !important;
+}
+.post .expando .image img {
+  visibility: visible;
+}
+div.pager {
+  display: block;
+}
+.savecomment input[type=file] {
+  display: inline-block;
+}

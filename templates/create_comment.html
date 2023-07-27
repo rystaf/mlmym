@@ -1,0 +1,45 @@
+      <form class="savecomment" method="POST" enctype="multipart/form-data"
+        {{- if .CommentID }} action="/{{.Host}}/comment/{{.CommentID}}"
+        {{- else }} action="/{{.Host}}/post/{{.PostID}}"
+        {{- end -}}
+        >
+        <div class="upload">
+          <label title="upload photo"><div>📷</div>
+          <input class="imgupload" type="file" name="file" accept="image/*">
+          </label>
+        </div>
+        <div>
+          <textarea name="content">
+          {{- if .Content }}
+          {{- .Content -}}
+          {{ else if and (eq .Op "edit") .Comments }}
+          {{- (index .Comments 0).P.Comment.Content -}}
+          {{ end -}}
+          </textarea>
+        </div>
+      {{ if eq .Op "edit" }}
+        <input type="hidden" name="op" value="edit_comment">
+        <input type="hidden" name="commentid" value="{{.CommentID}}">
+      {{ else }}
+        <input type="hidden" name="op" value="create_comment">
+      {{ end }}
+        <input type="hidden" name="parentid" value="{{.CommentID}}">
+        <input type="submit" name="submit" value="save">
+        {{ if or .Op .Content }}
+        <input type="submit" name="submit" value="cancel">
+        {{ end }}
+        <div class="right">
+          <a href="https://join-lemmy.org/docs/users/02-media.html" target="_blank">formatting help</a>
+          <input name="submit" type="submit" value="preview">
+        </div>
+        {{ if .Content }}
+        <div class="preview">
+          <div class="comment">
+            <h3>Preview</h3>
+            <div class="content">
+              {{ markdown .Host .Content }}
+            </div>
+          </div>
+        </div>
+        {{ end }}
+      </form>
