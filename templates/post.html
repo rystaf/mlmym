@@ -33,7 +33,7 @@
             <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ rmmarkdown .Post.Name }}</a>
             ({{ domain . }})
           </div>
-          <div class="expando-button {{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }}hidden{{else if eq .Rank 0}}open{{ end }}"></div>
+          <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
           <div class="meta">
             submitted
             <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span>
@@ -106,7 +106,7 @@
         </div>
         <div></div>
         <div class="clearleft"></div>
-          <div class="expando {{ if eq .Rank 0 }}open{{ end}}">
+          <div class="expando{{ if eq .Rank 0 }} open{{ end}}">
 {{ if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
             <div class="md">{{ markdown .State.Host .Post.Body.String }}</div>
 {{ end }}
