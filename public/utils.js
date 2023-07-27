@@ -296,8 +296,7 @@ function saveSettings(e) {
   var targ = e.currentTarget || e.srcElement || e;
   var data = new FormData(targ)
   e.preventDefault()
-  var params = new URLSearchParams(data).toString()
-  request(targ.target, params, function(res) {
+  request(targ.target, data, function(res) {
     ["endlessScrolling", "autoLoad"].map(function(x) {
       localStorage.setItem(x, data.get(x)=="on")
     })
