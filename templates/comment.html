@@ -1,4 +1,4 @@
-<div class="comment{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted }} hidden{{end}}" id="c{{.P.Comment.ID}}">
+<div class="comment{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted .P.Comment.Removed }} hidden{{end}}" id="c{{.P.Comment.ID}}">
 {{ if .State.Session }}
       <div class="score">
       <form class="link-btn{{ if eq .P.MyVote.String "1"}} like{{ else if eq .P.MyVote.String "-1"}} dislike{{end}}" method="POST">
@@ -38,7 +38,9 @@
   {{ template "create_comment.html" .State }}
 {{ else }}
     {{if .P.Comment.Deleted}}
-      [removed]
+      [deleted]
+    {{else if .P.Comment.Removed }}
+      [removed by mod]
     {{else}}
       <div {{ if and .Selected (not .State.XHR) (ne .State.Op "reply")}}class="highlight" {{end}}>
         {{ markdown .State.Host .P.Comment.Content }}
