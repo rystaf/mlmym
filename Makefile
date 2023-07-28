@@ -2,7 +2,7 @@
 
 all: mlmym
 
-mlmym:
+mlmym: VERSION
 	go build -v -o mlmym
 
 dev:
