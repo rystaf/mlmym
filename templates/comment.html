@@ -52,6 +52,7 @@
 {{ end }}
       <ul class="buttons">
         <li><a href="/{{.State.Host}}/comment/{{.P.Comment.ID}}">permalink</a></li>
+        <li><a href="{{.P.Comment.ApID}}">fedilink</a></li>
 {{ if ne .Op "source"}}
         <li><a class="source" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?source">source</a></li>
 {{ else }}

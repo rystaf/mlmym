@@ -60,6 +60,7 @@
           <div class="buttons">
             {{ if .Post.NSFW }}<span class="nsfw">NSFW</span>{{end}}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}">{{ .Counts.Comments }} comments</a>
+            <a href="{{ .Post.ApID}}">fedilink</a>
           {{ if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
             {{ if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
             <form class="link-btn" method="POST">
