@@ -687,6 +687,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		Render(w, "index.html", state)
 		return
 	}
+	state.GetSite()
 	switch r.Method {
 	case "POST":
 		for _, name := range []string{"DefaultSortType", "DefaultListingType", "DefaultCommentSortType"} {

@@ -125,7 +125,7 @@
         <input type="checkbox" name="hideInstanceNames" {{ if .HideInstanceNames }}checked{{end}}>
       </div>
       <div>
-        <label>mlmym: {{ .Version }}</label>
+        <label>lemmy: {{ .Site.Version }}<br>mlmym: {{ .Version }}</label>
         <input type="submit" value="save">
         {{ if .XHR }}<input id="closesettings" type="submit" value="close">{{ end }}
       </div>
