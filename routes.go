@@ -270,7 +270,7 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	if hide := getCookie(r, "HideThumbnails"); hide != "" {
 		state.HideThumbnails = hide != "0"
 	} else {
-		state.HideThumbnails = os.Getenv("HIDE_THUMBNAILS") != "0"
+		state.HideThumbnails = os.Getenv("HIDE_THUMBNAILS") != ""
 	}
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
