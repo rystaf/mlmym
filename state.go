@@ -104,6 +104,7 @@ type State struct {
 	Dark              bool
 	ShowNSFW          bool
 	HideInstanceNames bool
+	HideThumbnails    bool
 }
 
 func (s State) Unknown() string {

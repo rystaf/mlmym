@@ -1110,7 +1110,7 @@ form.create input[type=file], form.create select {
 }
 .preferences label{
   display: inline-block;
-  width: 130px;
+  width: 150px;
   margin-right: 5px;
   text-align: right;
  

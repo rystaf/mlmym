@@ -23,11 +23,13 @@
 {{ end }}
 {{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
         </div>
+        {{ if not .State.HideThumbnails }}
         <div class="thumb">
           <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">
             <div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{thumbnail .Post}})"></div>
           </a>
         </div>
+        {{ end }}
         <div class="entry">
           <div class="title">
             <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}">{{ rmmarkdown .Post.Name }}</a>

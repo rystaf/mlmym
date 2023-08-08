@@ -208,6 +208,14 @@ func RegReplace(input string, match string, replace string) string {
 	return re.ReplaceAllString(input, replace)
 }
 
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
+}
+
 func Initialize(Host string, r *http.Request) (State, error) {
 	state := State{
 		Host:    Host,
@@ -252,18 +260,27 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	state.Listing = getCookie(r, "DefaultListingType")
 	state.Sort = getCookie(r, "DefaultSortType")
 	state.CommentSort = getCookie(r, "DefaultCommentSortType")
-	state.Dark = getCookie(r, "Dark") != ""
+	if dark := getCookie(r, "Dark"); dark != "" {
+		state.Dark = dark != "0"
+	} else {
+		state.Dark = os.Getenv("DARK") != "0"
+	}
 	state.ShowNSFW = getCookie(r, "ShowNSFW") != ""
 	state.HideInstanceNames = getCookie(r, "HideInstanceNames") != ""
+	if hide := getCookie(r, "HideThumbnails"); hide != "" {
+		state.HideThumbnails = hide != "0"
+	} else {
+		state.HideThumbnails = os.Getenv("HIDE_THUMBNAILS") != "0"
+	}
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
-		state.Sort = "Hot"
+		state.Sort = getenv("SORT", "Hot")
 	}
 	if state.CommentSort == "" {
-		state.CommentSort = "Hot"
+		state.CommentSort = getenv("COMMENT_SORT", "Hot")
 	}
 	if state.Listing == "" || state.Session == nil && state.Listing == "Subscribed" {
-		state.Listing = "All"
+		state.Listing = getenv("LISTING", "All")
 	}
 	return state, nil
 }
@@ -698,8 +715,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			setCookie(w, "", "Dark", "1")
 			state.Dark = true
 		} else {
-			deleteCookie(w, state.Host, "Dark")
-			deleteCookie(w, "", "Dark")
+			setCookie(w, "", "Dark", "0")
 			state.Dark = false
 		}
 		if r.FormValue("shownsfw") != "" {
@@ -715,6 +731,13 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.HideInstanceNames = true
 		} else {
 			deleteCookie(w, "", "HideInstanceNames")
+			state.HideInstanceNames = false
+		}
+		if r.FormValue("hideThumbnails") != "" {
+			setCookie(w, "", "HideThumbnails", "1")
+			state.HideInstanceNames = true
+		} else {
+			setCookie(w, "", "HideThumbnails", "0")
 			state.HideInstanceNames = false
 		}
 		state.Listing = r.FormValue("DefaultListingType")
