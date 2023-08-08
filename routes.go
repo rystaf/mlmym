@@ -263,7 +263,7 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	if dark := getCookie(r, "Dark"); dark != "" {
 		state.Dark = dark != "0"
 	} else {
-		state.Dark = os.Getenv("DARK") != "0"
+		state.Dark = os.Getenv("DARK") != ""
 	}
 	state.ShowNSFW = getCookie(r, "ShowNSFW") != ""
 	state.HideInstanceNames = getCookie(r, "HideInstanceNames") != ""
