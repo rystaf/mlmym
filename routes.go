@@ -327,6 +327,11 @@ func Render(w http.ResponseWriter, templateName string, state State) {
 func GetRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	data := make(map[string]any)
 	data["Title"] = r.Host
+	if dark := getCookie(r, "Dark"); dark != "" {
+		data["Dark"] = dark != "0"
+	} else {
+		data["Dark"] = os.Getenv("DARK") != ""
+	}
 	tmpl, err := GetTemplate("root.html")
 	if err != nil {
 		fmt.Println("execute fail", err)

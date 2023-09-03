@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/_/static/style.css?v=7">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
-  <body>
+  <body{{ if .Dark }} class="dark"{{end}}>
     <nav>
       <div class="spacer"></div>
       <span class="title">{{ .Title }}</span>
