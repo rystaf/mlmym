@@ -648,6 +648,17 @@ func GetCreatePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		Render(w, "index.html", state)
 		return
 	}
+	m, _ := url.ParseQuery(r.URL.RawQuery)
+
+	if len(m["url"]) > 0 {
+		state.SubmitURL = m["url"][0]
+	}
+	if len(m["title"]) > 0 {
+		state.SubmitTitle = m["title"][0]
+	}
+	if len(m["body"]) > 0 {
+		state.SubmitBody = m["body"][0]
+	}
 	state.GetSite()
 	state.GetCommunity("")
 	state.Op = "create_post"

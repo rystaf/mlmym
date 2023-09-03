@@ -3,17 +3,18 @@
   <div>
     <label for="url">url</label>
     <input type="text" name="url" id="url" 
-    {{- if and $p (index $p 0).Post.URL.IsValid }} value="{{(index $p 0).Post.URL.String}}"{{end -}}
+    {{- if and $p (index $p 0).Post.URL.IsValid }} value="{{(index $p 0).Post.URL.String}}"
+    {{- else if .SubmitURL }} value="{{ .SubmitURL}}"{{end -}}
     >
     <input type="file" name="file" accept="image/*">
   </div>
   <div>
     <label class="required" for="title">title</label>
-    <textarea required name="name" id="title">{{ if $p }}{{ (index $p 0).Post.Name }}{{end}}</textarea>
+    <textarea required name="name" id="title">{{ if $p }}{{ (index $p 0).Post.Name }}{{ else if .SubmitTitle}}{{.SubmitTitle}}{{end}}</textarea>
   </div>
   <div>
     <label for="body">body</label>
-    <textarea name="body" id="body">{{ if and $p (index $p 0).Post.Body.IsValid }}{{ (index $p 0).Post.Body.String }}{{end}}</textarea>
+    <textarea name="body" id="body">{{ if and $p (index $p 0).Post.Body.IsValid }}{{ (index $p 0).Post.Body.String }}{{ else if .SubmitBody }}{{.SubmitBody}}{{end}}</textarea>
   </div>
   <div>
     <label for="language">language</label>

@@ -105,6 +105,9 @@ type State struct {
 	ShowNSFW          bool
 	HideInstanceNames bool
 	HideThumbnails    bool
+	SubmitURL         string
+	SubmitTitle       string
+	SubmitBody        string
 }
 
 func (s State) UserBlocked() bool {
