@@ -141,7 +141,7 @@ var funcMap = template.FuncMap{
 		}
 		body = buf.String()
 		body = strings.Replace(body, `<img `, `<img loading="lazy" `, -1)
-		body = LemmyLinkRewrite(body, host, os.Getenv("LEMMY_DOMAIN"))
+		body = RegReplace(body, `href="(https:\/\/[a-zA-Z0-9\.\-]+\/(c|u|comment|post)\/[^#\?]*?)"`, `href="/`+host+`/link?url=$1"`)
 		body = RegReplace(body, `::: ?spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(body)
 	},
@@ -1429,6 +1429,33 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	http.Redirect(w, r, r.URL.String(), 301)
 }
+func GetLink(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var dest *url.URL
+	m, _ := url.ParseQuery(r.URL.RawQuery)
+	if len(m["url"]) > 0 {
+		dest, _ = url.Parse(m["url"][0])
+	}
+	if dest.Host == r.Host || !IsLemmy(dest.Host, RemoteAddr(r)) {
+		http.Redirect(w, r, dest.String(), 302)
+		return
+	}
+	if host := ps.ByName("host"); host != "" {
+		redirect := "/" + host + dest.Path
+		if host != dest.Host && !strings.Contains(redirect, "@") {
+			redirect += ("@" + dest.Host)
+		}
+		http.Redirect(w, r, redirect, 302)
+		return
+	}
+	if host := os.Getenv("LEMMY_DOMAIN"); host != "" {
+		redirect := dest.Path
+		if host != dest.Host && !strings.Contains(redirect, "@") {
+			redirect += ("@" + dest.Host)
+		}
+		http.Redirect(w, r, redirect, 302)
+		return
+	}
+}
 func GetRouter() *httprouter.Router {
 	host := os.Getenv("LEMMY_DOMAIN")
 	router := httprouter.New()
@@ -1467,6 +1494,7 @@ func GetRouter() *httprouter.Router {
 		router.GET("/:host/create_community", middleware(GetCreateCommunity))
 		router.POST("/:host/create_community", middleware(UserOp))
 		router.GET("/:host/communities", middleware(GetCommunities))
+		router.GET("/:host/link", middleware(GetLink))
 	} else {
 		router.ServeFiles("/_/static/*filepath", http.Dir("public"))
 		router.GET("/", middleware(GetFrontpage))
@@ -1499,6 +1527,7 @@ func GetRouter() *httprouter.Router {
 		router.GET("/create_community", middleware(GetCreateCommunity))
 		router.POST("/create_community", middleware(UserOp))
 		router.GET("/communities", middleware(GetCommunities))
+		router.GET("/link", middleware(GetLink))
 	}
 	return router
 }

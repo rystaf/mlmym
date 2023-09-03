@@ -108,6 +108,12 @@ func test() {
 		}
 	}
 }
+func RemoteAddr(r *http.Request) string {
+	if r.Header.Get("CF-Connecting-IP") != "" {
+		return r.Header.Get("CF-Connecting-IP")
+	}
+	return r.RemoteAddr
+}
 func middleware(n httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		//remoteAddr := r.RemoteAddr
