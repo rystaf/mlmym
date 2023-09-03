@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+  <head>
+    <title>{{if and .Posts .PostID }}{{ (index .Posts 0).Post.Name}} : {{.CommunityName}}{{else if and .Community (ne .Community.CommunityView.Community.Title "")}}{{.Community.CommunityView.Community.Title}}{{else if ne .CommunityName ""}}/c/{{.CommunityName}}{{ else if .User}}overview for {{.User.PersonView.Person.Name}}{{else}}{{ host .Host }}{{end}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
+    <link rel="stylesheet" href="/_/static/style.css?v={{ .Version }}">
+  </head>
+  <body{{ if .Dark }} class="dark"{{end}}>
+    <noscript>
+      <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
+    </noscript>

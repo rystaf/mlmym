@@ -56,7 +56,7 @@ func init() {
 	))
 	templates = make(map[string]*template.Template)
 	if !*watch {
-		for _, name := range []string{"index.html", "login.html", "frontpage.html", "root.html", "settings.html", "xhr.html", "create_comment.html"} {
+		for _, name := range []string{"index.html", "login.html", "frontpage.html", "root.html", "settings.html", "xhr.html", "create_comment.html", "block.html"} {
 			t := template.New(name).Funcs(funcMap)
 			glob, err := t.ParseGlob("templates/*")
 			if err != nil {

@@ -33,7 +33,7 @@
         | 
         <form method="POST"><input type="submit" name="op" value="logout"></form>
 {{else}}
-         <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
+        <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
         | 
         <a id="opensettings" href="/{{.Host}}/settings">settings</a>
 {{end}}
@@ -41,11 +41,11 @@
       <div id="settingspopup"></div>
       <div class="spacer">
         <a href="/{{ .Host}}/">
-          <img class="icon" src="{{ if .Site }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
+          <img class="icon" src="{{ if and .Site .Site.SiteView.Site.Icon.IsValid }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
         </a>
       </div>
       {{- if .Community }}
-      <a class="title" href="/{{ .Host}}//c/{{fullcname .Community.CommunityView.Community}}">{{fullcname .Community.CommunityView.Community}}</a>
+      <a class="title" href="/{{ .Host}}/c/{{fullcname .Community.CommunityView.Community}}">{{fullcname .Community.CommunityView.Community}}</a>
       {{ else if .User }}
       <a class="title" href="/{{ .Host}}/u/{{fullname .User.PersonView.Person}}">{{fullname .User.PersonView.Person}}</a>
       {{ else }}
@@ -60,7 +60,8 @@
       <span>: search</span>
       {{ end }}
       <ul>
-        {{ if and .User (not .Query)}}
+        {{- if eq .Op "block" }}<li class="selected"><a href="/{{ .Host }}/post/{{ (index .Posts 0).Post.ID}}">block</a></li>
+        {{ else if and .User (not .Query)}}
         <li {{if eq .Op "" }}class="selected"{{end}}><a href="?">overview</a></li>
           {{ if and .Session (eq .User.PersonView.Person.ID .Session.UserID) }}
           <li {{if eq .Op "Saved"}}class="selected"{{end}}><a href="?view=Saved">saved</a></li>

@@ -51,7 +51,7 @@
               {{- end -}}
             </a>
             to
-            <a href="/{{ .State.Host }}/c/{{ fullcname .Community }}">
+            <a class="community" href="/{{ .State.Host }}/c/{{ fullcname .Community }}">
               c/{{ if .State.HideInstanceNames -}}
               {{ .Community.Name }}
               {{ else -}}
@@ -63,6 +63,10 @@
             {{ if .Post.NSFW }}<span class="nsfw">NSFW</span>{{end}}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}">{{ .Counts.Comments }} comments</a>
             <a href="{{ .Post.ApID}}">fedilink</a>
+            {{ if .State.Session }}
+            <a href="/{{ .State.Host }}/post/{{ .Post.ID }}/block" rel="xhr" target="block{{ .Post.ID }}">block</a>
+            {{ end }}
+            <span class="blockpopup" name="block{{.Post.ID}}"></span>
           {{ if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
             {{ if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
             <form class="link-btn" method="POST">

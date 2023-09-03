@@ -51,13 +51,23 @@ function commentClick(e) {
         if (e.target.value == "preview") {
           targ = form
         }
-        console.log("ok")
       } else if (("c"+data.get("parentid")) == targ.id) {
         targ = form
       } else { return }
       e.target.disabled = "disabled"
       request(targ.action || "", data,
         function(res){
+          if (data.get("op") == "block_user") {
+            var submitter = targ.getElementsByClassName("creator")[0].href
+            var comments = Array.prototype.slice.call(document.getElementsByClassName("comment"))
+            for (var i = 0; i < comments.length; i++) {
+              var submitter2 = comments[i].getElementsByClassName("creator")[0].href
+              if (submitter2 == submitter) {
+                comments[i].remove()
+              }
+            }
+            return
+          }
           targ.outerHTML = res
           setup()
         },
@@ -223,11 +233,33 @@ function formSubmit(e) {
   var data = new FormData(targ)
   data.set(e.submitter.name, e.submitter.value)
   data.set("xhr", "1")
+  if (data.get("submit") == "cancel") {
+    targ.remove()
+    return
+  }
   e.submitter.disabled = "disabled"
   request(targ.target, data,
     function(res){
       if (data.get("op") == "read_post") {
         document.getElementById("p"+data.get("postid")).remove()
+        return
+      }
+      if (data.get("op") == "block_post") {
+        var post = document.getElementById("p"+data.get("postid"))
+        var user = post.getElementsByClassName("submitter")[0].href
+        var community = post.getElementsByClassName("community")[0].href
+        var posts = Array.prototype.slice.call(document.getElementsByClassName("post"))
+        for (var i = 0; i < posts.length; i++) {
+          var user2 = posts[i].getElementsByClassName("submitter")[0].href
+          var community2 = posts[i].getElementsByClassName("community")[0].href
+          if (data.get("blockcommunity") != null && community2 == community) {
+            posts[i].remove()
+          }
+          if (data.get("blockuser") != null && user2 == user) {
+            posts[i].remove()
+          }
+        }
+        targ.remove()
         return
       }
       targ.outerHTML = res
@@ -388,7 +420,7 @@ function setup() {
   var posts = document.getElementsByClassName("post")
   for (var i = 0; i < posts.length; i++) {
     posts[i].addEventListener("click", postClick)
-    var forms = posts[i].getElementsByClassName("link-btn")
+    var forms = posts[i].getElementsByTagName("form")
     for (var f = 0; f < forms.length; f++) {
       forms[f].addEventListener("submit", formSubmit)
     }
@@ -406,6 +438,34 @@ function setup() {
   for (var i = 0; i < comments.length; i++) {
     comments[i].addEventListener("click", commentClick)
   }
+  var links = document.getElementsByTagName("a")
+  for (var i = 0; i < links.length; i++) {
+    if (links[i].rel == "xhr") {
+      links[i].addEventListener("click", xhrLink)
+    }
+  }
+}
+function xhrLink(e) {
+  e = e || window.event;
+  e.preventDefault();
+  var targ = e.currentTarget || e.srcElement || e;
+  var t = []
+  if (targ.target != "") {
+    t = document.getElementsByName(targ.target)
+  }
+  if (t.length) {
+    t[0].innerHTML = '<div class="loading">loading</div>'
+  }
+  request(targ.href+"?xhr", "",
+    function(res){
+      if (t.length) {
+        t[0].innerHTML = res
+      }
+      setup()
+    },
+    function(res){
+    })
+  return false;
 }
 setup()
 

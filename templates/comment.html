@@ -21,7 +21,7 @@
         [-]
 {{- end -}}
       </a>
-      <a {{ if .P.Comment.Distinguished}}class="{{if .P.Creator.Admin}}admin {{end}}distinguished"{{ else if .Submitter }}class="submitter"{{end}} href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
+      <a class="creator{{ if .P.Comment.Distinguished}}{{if .P.Creator.Admin}} admin{{end}} distinguished{{ else if .Submitter }} submitter{{end}}" href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
         {{- if .State.HideInstanceNames -}}
         {{ .P.Creator.Name }}
         {{- else -}}
@@ -77,8 +77,15 @@
             <input type="submit" name="submit" value="unsave">
             {{ else }}
             <input type="submit" name="submit" value="save">
-
             {{ end }}
+          </form>
+        </li>
+        <li>
+          <form class="link-btn" method="POST">
+            <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
+            <input type="hidden" name="op" value="block_user">
+            <input type="hidden" name="user_id" value="{{.P.Creator.ID}}">
+            <input type="submit" name="submit" value="block">
           </form>
         </li>
         <li>

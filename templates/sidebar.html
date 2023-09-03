@@ -11,8 +11,26 @@
         <input type="hidden" name="sort" value="New">
       </form>
 
+{{ if not .Session -}}
+      <form class="login" method="post">
+        <input name="username" type="text" placeholder="username" maxlength="20">
+        <input name="password" type="password" placeholder="password">
+        <div>
+          <input type="submit" name="op" value="login">
+        </div>
+      </form>
+{{ end }}
+
 {{ if .User }}
       <h1>{{ .User.PersonView.Person.Name }}</h1>
+      {{ if .Session }}
+      <div>
+        <form method="POST" class="block {{ if .UserBlocked }}unblock{{end}}">
+          <input name="submit" type="submit" value="{{ if .UserBlocked}}unblock{{else}}block{{end}}">
+          <input type="hidden" name="op" value="block_user">
+        </form>
+      </div>
+      {{ end }}
       <b>{{ .User.PersonView.Counts.PostScore}}</b> post score <br>
       <b>{{ .User.PersonView.Counts.CommentScore}}</b> comment score <br>
       <div class="age">
@@ -27,16 +45,6 @@
         {{ end }}
       </div>
   {{ end }}
-{{ end }}
-
-{{ if not .Session -}}
-      <form class="login" method="post">
-        <input name="username" type="text" placeholder="username" maxlength="20">
-        <input name="password" type="password" placeholder="password">
-        <div>
-          <input type="submit" name="op" value="login">
-        </div>
-      </form>
 {{ end }}
 
 {{ if and .PostID .Posts }}
@@ -55,7 +63,7 @@
       </div>
 {{ end }}
 
-{{ if and .Site (not .Community) }}
+{{ if and .Site (not .Community) (not .User) }}
   {{ if .Site.SiteView.Site.Banner.IsValid }}
       <div class="banner" style="background-image: url({{ .Site.SiteView.Site.Banner }})"></div>
   {{ else if .Site.SiteView.Site.Icon.IsValid }}

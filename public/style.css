@@ -408,8 +408,11 @@ form.nsfw div {
 .gray {
   color: #808080;
 }
-.loading {
+.morecomments .loading {
   color: red !important;
+}
+.blockpopup .loading {
+  padding: 2px;
 }
 .error {
   color: red;
@@ -462,7 +465,7 @@ form.nsfw div {
 .buttons li {
   display: inline;
 }
-.buttons, .buttons input {
+.buttons, .buttons > form input, .buttons li form input {
   font-weight: bold;
   font-size: 10px;
   padding: 0;
@@ -481,20 +484,32 @@ form.nsfw div {
   border-left: 2px solid #c5c1ad;
   padding: 0 8px;
 }
-.buttons a, .buttons form input, .comment .buttons form input {
+.buttons a, .buttons > form input, .comment .buttons form input {
   text-decoration: none;
   color: #888;
   display: inline-block;
   margin-right: 5px !important;
 }
-.buttons a:hover, .title a:hover, .buttons form input:hover, .comment .buttons form input:hover {
+.buttons a:hover, .title a:hover, .buttons > form input:hover, .comment .buttons form input:hover {
   text-decoration: underline;
 }
 .entry {
-  overflow: hidden;
   color: #888;
+  overflow:hidden;
 }
-
+.entry .buttons .blockpopup {
+  display: inline-block;
+  position: absolute;
+  border: 1px solid #888;
+  z-index: 100;
+  background-color: white;
+}
+form.blockpost {
+  margin: 2px;
+}
+.blockpost div:last-child input {
+  margin: 4px 2px 4px 4px;
+}
 .expando-button {
   width: 23px;
   height: 23px;
@@ -816,7 +831,7 @@ h1, h2 {
 .dark .moderators a {
   color: #6a98af;
 }
-.community {
+main > .community {
   margin: 20px 50px;
   max-width: 840px;
   position: relative;

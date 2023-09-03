@@ -107,6 +107,18 @@ type State struct {
 	HideThumbnails    bool
 }
 
+func (s State) UserBlocked() bool {
+	if s.User == nil || s.Site == nil || !s.Site.MyUser.IsValid() {
+		return false
+	}
+	for _, p := range s.Site.MyUser.MustValue().PersonBlocks {
+		if p.Target.ID == s.User.PersonView.Person.ID {
+			return true
+		}
+	}
+	return false
+}
+
 func (s State) Unknown() string {
 	fmt.Println(fmt.Sprintf("%v", s.Error))
 	re := regexp.MustCompile(`(.*?)@(.*?)@`)

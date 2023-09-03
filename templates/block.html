@@ -1,0 +1,23 @@
+{{ if not .XHR }}
+  {{ template "header.html" . }}
+  {{ template "nav.html" . }}
+{{ end }}
+<form method="POST" class="blockpost"{{ if not .XHR }} action="./"{{ end }}>
+  <div>
+    <input type="checkbox" id="blockuser" name="blockuser" checked>
+    <label for="blockuser">u/{{ fullname (index .Posts 0).Creator }}</label>
+  </div>
+  <div>
+    <input type="checkbox" id="blockcommunity" name="blockcommunity">
+    <label for="blockcommunity">c/{{ fullcname .Community.CommunityView.Community }}</label>
+  </div>
+  <div>
+    <input type="hidden" name="op" value="block_post">
+    <input type="hidden" name="postid" value="{{(index .Posts 0).Post.ID}}">
+    <input type="submit" value="block" name="submit">
+    <input type="submit" value="cancel" name="submit">
+  </div>
+</form>
+{{ if not .XHR }}
+  {{ template "footer.html" . }}
+{{ end }}

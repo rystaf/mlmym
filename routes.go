@@ -295,7 +295,7 @@ func GetTemplate(name string) (*template.Template, error) {
 	}
 	t, ok := templates[name]
 	if !ok {
-		return nil, errors.New("template not found")
+		return nil, errors.New("template not found: " + name)
 	}
 	return t, nil
 }
@@ -493,6 +493,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		Render(w, "index.html", state)
 		return
 	}
+	// redirect /post/remote_id@instance to /post/local_id
 	if path := strings.Split(ps.ByName("postid"), "@"); len(path) > 1 {
 		apid := ResolveId(r, "post", path[0], path[1])
 		if apid != "" {
@@ -529,6 +530,11 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	postid, _ := strconv.Atoi(ps.ByName("postid"))
 	state.GetPost(postid)
+	if ps.ByName("op") == "block" {
+		state.Op = "block"
+		Render(w, "block.html", state)
+		return
+	}
 	state.GetComments()
 	Render(w, "index.html", state)
 }
@@ -597,6 +603,9 @@ func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 	state.GetUser(ps.ByName("username"))
+	if state.Site == nil {
+		state.GetSite()
+	}
 	Render(w, "index.html", state)
 }
 func GetMessageForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -931,6 +940,20 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			CommunityID: communityid,
 			Block:       false,
 		})
+	case "block_user":
+		personId, _ := strconv.Atoi(r.FormValue("user_id"))
+		if personId == 0 {
+			state.GetUser(ps.ByName("username"))
+			personId = state.User.PersonView.Person.ID
+		}
+		state.Client.BlockPerson(context.Background(), types.BlockPerson{
+			PersonID: personId,
+			Block:    r.FormValue("submit") == "block",
+		})
+		if r.FormValue("xhr") == "1" {
+			w.Write([]byte{})
+			return
+		}
 	case "logout":
 		deleteCookie(w, state.Host, "jwt")
 		deleteCookie(w, state.Host, "user")
@@ -1166,6 +1189,21 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.Path = "/" + state.Host + "/c/" + resp.PostView.Community.Name
 			r.URL.RawQuery = ""
 		}
+	case "block_post":
+		postid, _ := strconv.Atoi(r.FormValue("postid"))
+		state.GetPost(postid)
+		if r.FormValue("blockcommunity") != "" && len(state.Posts) > 0 {
+			state.Client.BlockCommunity(context.Background(), types.BlockCommunity{
+				CommunityID: state.Posts[0].Post.CommunityID,
+				Block:       true,
+			})
+		}
+		if r.FormValue("blockuser") != "" && len(state.Posts) > 0 {
+			state.Client.BlockPerson(context.Background(), types.BlockPerson{
+				PersonID: state.Posts[0].Post.CreatorID,
+				Block:    true,
+			})
+		}
 	case "read_post":
 		postid, _ := strconv.Atoi(r.FormValue("postid"))
 		post := types.MarkPostAsRead{
@@ -1399,6 +1437,7 @@ func GetRouter() *httprouter.Router {
 		router.GET("/:host/c/:community/edit", middleware(GetCreateCommunity))
 		router.GET("/:host/post/:postid", middleware(GetPost))
 		router.POST("/:host/post/:postid", middleware(UserOp))
+		router.GET("/:host/post/:postid/:op", middleware(GetPost))
 		router.GET("/:host/comment/:commentid", middleware(GetComment))
 		router.GET("/:host/comment/:commentid/:op", middleware(GetComment))
 		router.POST("/:host/comment/:commentid", middleware(UserOp))
