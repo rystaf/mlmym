@@ -166,10 +166,7 @@ func (p State) ListBy(v string) string {
 }
 
 func (p State) PrevPage() string {
-	var listing string
-	if p.Listing != "All" {
-		listing = "&listingType=" + p.Listing
-	}
+	listing := "&listingType=" + p.Listing
 	var q string
 	if p.Query != "" || p.SearchType == "Communities" {
 		q = "q=" + p.Query + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
@@ -178,10 +175,7 @@ func (p State) PrevPage() string {
 	return "?" + q + "sort=" + p.Sort + listing + "&page=" + page
 }
 func (p State) NextPage() string {
-	var listing string
-	if p.Listing != "All" {
-		listing = "&listingType=" + p.Listing
-	}
+	listing := "&listingType=" + p.Listing
 	var q string
 	if p.Query != "" || p.SearchType == "Communities" {
 		q = "q=" + p.Query + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
