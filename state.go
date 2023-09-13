@@ -105,6 +105,7 @@ type State struct {
 	ShowNSFW          bool
 	HideInstanceNames bool
 	HideThumbnails    bool
+	LinksInNewWindow  bool
 	SubmitURL         string
 	SubmitTitle       string
 	SubmitBody        string

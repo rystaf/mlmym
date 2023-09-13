@@ -282,6 +282,8 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	if state.Listing == "" || state.Session == nil && state.Listing == "Subscribed" {
 		state.Listing = getenv("LISTING", "All")
 	}
+	linksInNewWindowCookie := getCookie(r, "LinksInNewWindow")
+	state.LinksInNewWindow = linksInNewWindowCookie != "" && linksInNewWindowCookie != "0"
 	return state, nil
 }
 func GetTemplate(name string) (*template.Template, error) {
