@@ -282,6 +282,11 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	if state.Listing == "" || state.Session == nil && state.Listing == "Subscribed" {
 		state.Listing = getenv("LISTING", "All")
 	}
+	if linksInNewWindow := getCookie(r, "LinksInNewWindow"); linksInNewWindow != "" {
+		state.LinksInNewWindow = linksInNewWindow != "0"
+	} else {
+		state.LinksInNewWindow = os.Getenv("LINKS_IN_NEW_WINDOW") != ""
+	}
 	return state, nil
 }
 func GetTemplate(name string) (*template.Template, error) {
@@ -764,6 +769,13 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		} else {
 			setCookie(w, "", "HideThumbnails", "0")
 			state.HideInstanceNames = false
+		}
+		if r.FormValue("linksInNewWindow") != "" {
+			setCookie(w, "", "LinksInNewWindow", "1")
+			state.LinksInNewWindow = true
+		} else {
+			setCookie(w, "", "LinksInNewWindow", "0")
+			state.LinksInNewWindow = false
 		}
 		state.Listing = r.FormValue("DefaultListingType")
 		state.Sort = r.FormValue("DefaultSortType")

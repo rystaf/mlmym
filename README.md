@@ -22,4 +22,5 @@ docker run -it -e LEMMY_DOMAIN='lemmydomain.com' -p "8080:8080" ghcr.io/rystaf/m
 | LISTING | All |
 | SORT | Hot |
 | COMMENT_SORT | Hot |
+| LINKS_IN_NEW_WINDOW  | false |
 

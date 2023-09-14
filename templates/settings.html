@@ -131,6 +131,12 @@
         <input type="checkbox" name="hideThumbnails" {{ if .HideThumbnails }}checked{{end}}>
       </div>
       <div>
+        <label>
+          open links in new window
+        </label>
+        <input type="checkbox" name="linksInNewWindow" {{ if .LinksInNewWindow }}checked{{end}}>
+      </div>
+      <div>
         <label>lemmy: {{ .Site.Version }}<br><a href="https://github.com/rystaf/mlmym">mlmym</a>: {{ .Version }}</label>
         <input type="submit" value="save">
         {{ if .XHR }}<input id="closesettings" type="submit" value="close">{{ end }}
