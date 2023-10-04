@@ -56,7 +56,7 @@ function commentClick(e) {
       } else { return }
       e.target.disabled = "disabled"
       if (data.get("op") == "delete_comment") {
-        if (!confirm("Are you sure you want to delete?")) {
+        if (!confirm("Are you sure?")) {
           return false
         }
       }
@@ -242,6 +242,11 @@ function formSubmit(e) {
     targ.remove()
     return
   }
+  if (data.get("op") == "delete_post") {
+    if (!confirm("Are you sure?")) {
+      return false
+    }
+  }
   e.submitter.disabled = "disabled"
   request(targ.target, data,
     function(res){
@@ -266,6 +271,10 @@ function formSubmit(e) {
         }
         targ.remove()
         return
+      }
+      if (data.get("op") == "delete_post") {
+        window.location.reload()
+        return false
       }
       targ.outerHTML = res
       setup()
