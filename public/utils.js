@@ -55,6 +55,11 @@ function commentClick(e) {
         targ = form
       } else { return }
       e.target.disabled = "disabled"
+      if (data.get("op") == "delete_comment") {
+        if (!confirm("Are you sure you want to delete?")) {
+          return false
+        }
+      }
       request(targ.action || "", data,
         function(res){
           if (data.get("op") == "block_user") {

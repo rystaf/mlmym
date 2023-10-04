@@ -61,13 +61,15 @@
 {{ if .State.Session }}
   {{ if and (eq .P.Comment.CreatorID .State.Session.UserID) (ne .Op "edit") }}
         <li><a class="edit" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?edit">edit</a></li>
+        {{ if not .P.Comment.Deleted }}
         <li>
           <form class="delete" method="POST">
             <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
             <input type="hidden" name="op" value="delete_comment">
-            <input type="submit" value="delete">
+            <input type="submit" name="submit" value="delete">
           </form>
         </li>
+        {{ end }}
   {{ end }}
         <li>
           <form class="link-btn" method="POST">

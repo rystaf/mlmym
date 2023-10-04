@@ -1297,7 +1297,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			postid, _ := strconv.Atoi(ps.ByName("postid"))
 			state.PostID = postid
 		}
-		if r.FormValue("parentid") != "" {
+		if r.FormValue("parentid") != "" && r.FormValue("parentid") != "0" {
 			parentid, _ := strconv.Atoi(r.FormValue("parentid"))
 			state.GetComment(parentid)
 		}
@@ -1428,6 +1428,13 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
+			if r.FormValue("xhr") != "" {
+				state.XHR = true
+				state.Comments = append(state.Comments, Comment{P: resp.CommentView, State: &state})
+				state.CommentID = commentid
+				Render(w, "index.html", state)
+				return
+			}
 			commentid := strconv.Itoa(resp.CommentView.Comment.ID)
 			r.URL.Fragment = "c" + commentid
 			r.URL.RawQuery = ""
