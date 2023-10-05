@@ -8,7 +8,8 @@ require (
 	github.com/k3a/html2text v1.2.1
 	github.com/rystaf/go-lemmy v0.0.0-20230903163721-9db5472b7a03
 	github.com/yuin/goldmark v1.5.4
-	golang.org/x/text v0.10.0
+	golang.org/x/net v0.15.0
+	golang.org/x/text v0.13.0
 )
 
 require (
