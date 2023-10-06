@@ -25,14 +25,12 @@ func bodyHasError(n *html.Node) (result bool) {
 			return true
 		}
 	}
-	var finding bool = false
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		if bodyHasError(c) {
-			finding = true
-			break
+			return true
 		}
 	}
-	return finding
+	return false
 }
 
 func main() {
