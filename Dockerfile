@@ -19,4 +19,4 @@ COPY --from=builder /app/public /app/public
 COPY --from=builder /app/VERSION /app/VERSION
 COPY --from=builder /app/health-check /app/health-check
 CMD ["./mlmym", "--addr", "0.0.0.0:8080"]
-HEALTHCHECK --interval=5s CMD /app/health-check
+HEALTHCHECK CMD /app/health-check
