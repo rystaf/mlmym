@@ -9,12 +9,10 @@ import (
 )
 
 func divHasError(n *html.Node) (result bool) {
-	if n.Type == html.ElementNode && n.Data == "div" {
-		for _, a := range n.Attr {
-			if a.Key == "class" && a.Val == "error" {
-				if n.FirstChild.Type == html.TextNode && strings.Contains(n.FirstChild.Data, "unable to retrieve site") {
-					return true
-				}
+	for _, a := range n.Attr {
+		if a.Key == "class" && a.Val == "error" {
+			if n.FirstChild.Type == html.TextNode && strings.Contains(n.FirstChild.Data, "unable to retrieve site") {
+				return true
 			}
 		}
 	}
