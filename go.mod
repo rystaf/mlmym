@@ -15,4 +15,5 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	go.elara.ws/go-lemmy v0.19.0 // indirect
 )

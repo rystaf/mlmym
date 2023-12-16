@@ -31,11 +31,9 @@
         </form>
       </div>
       {{ end }}
-      <b>{{ .User.PersonView.Counts.PostScore}}</b> post score <br>
-      <b>{{ .User.PersonView.Counts.CommentScore}}</b> comment score <br>
       <div class="age">
         {{ if .Session }}<span class="left">✉ <a href="/{{ $host}}/u/{{ fullname .User.PersonView.Person }}/message">send a message</a></span>{{end}}
-        <span title="{{ .User.PersonView.Person.Published.Time}}">joined {{ humanize .User.PersonView.Person.Published.Time }}</span>
+        <span title="{{ .User.PersonView.Person.Published}}">joined {{ humanize .User.PersonView.Person.Published }}</span>
       </div>
   {{ if .User.Moderates }}
       MODERATOR OF
@@ -49,7 +47,7 @@
 
 {{ if and .PostID .Posts }}
       <div class="stats">
-        this post was submitted on {{ (index .Posts 0).Post.Published.Time.Format "02 Jan 2006" }}
+        this post was submitted on {{ (index .Posts 0).Post.Published.Format "02 Jan 2006" }}
         <div><b><span>{{ (index .Posts 0).Counts.Score }}</span> points</b> ({{likedPerc (index .Posts 0).Counts}}% liked)</div>
       </div>
 {{ end }}
@@ -74,7 +72,7 @@
       <span class="green" title="Users active in the last day"></span>
       {{ printer .Site.SiteView.Counts.UsersActiveDay }} users here now
       {{ markdown .Host .Site.SiteView.Site.Sidebar.String }}
-      <div class="age" title="{{ .Site.SiteView.Site.Published.Time}}">founded {{ humanize .Site.SiteView.Site.Published.Time }}</div>
+      <div class="age" title="{{ .Site.SiteView.Site.Published}}">founded {{ humanize .Site.SiteView.Site.Published }}</div>
   {{ if .Site.Admins }}
       ADMINS
       <div class="moderators">
@@ -112,8 +110,8 @@
       <p class="gray">you are a moderator of this community</p>
   {{ end }}
       <p>{{ markdown .Host .Community.CommunityView.Community.Description.String }}</p>
-      <div class="age" title="{{ .Community.CommunityView.Counts.Published.Time}}">
-        founded {{ humanize .Community.CommunityView.Counts.Published.Time }}
+      <div class="age" title="{{ .Community.CommunityView.Counts.Published}}">
+        founded {{ humanize .Community.CommunityView.Counts.Published }}
       </div>
   {{ if and .Session (isMod .Community .Session.UserName) }}
       MODERATOR TOOLS

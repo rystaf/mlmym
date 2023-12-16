@@ -47,7 +47,7 @@
           {{- end -}}
         </a>
     {{end}}
-      sent {{ humanize $activity.Message.PrivateMessage.Published.Time }}
+      sent {{ humanize $activity.Message.PrivateMessage.Published }}
       </span>
     <div>{{ markdown "" $activity.Message.PrivateMessage.Content }}</div>
     </div>

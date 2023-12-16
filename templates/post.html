@@ -44,12 +44,12 @@
           <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
           <div class="meta">
             submitted
-            <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span>
-            {{- if gt .Post.Updated.Time.Unix .Post.Published.Time.Unix -}}
-            * (last edited <span title="{{.Post.Updated.Time}}">{{ humanize .Post.Updated.Time }}</span>)
+            <span title="{{.Post.Published}}">{{ humanize .Post.Published -}}</span>
+            {{- if gt .Post.Updated.Unix .Post.Published.Unix -}}
+            * (last edited <span title="{{.Post.Updated}}">{{ humanize .Post.Updated }}</span>)
             {{ end }}
             by
-            <a class="submitter{{ if .Creator.Admin}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">
+            <a class="submitter{{ if false}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">
               {{- if .State.HideInstanceNames -}}
               {{ .Creator.Name }}
               {{- else -}}
@@ -104,7 +104,7 @@
           {{ if .State.PostID }}
             <a id="hidechildren" class="scripting" href="">hide all child comments</a>
           {{ end }}
-          {{ if and .State.Site .State.Site.MyUser.IsValid (not .State.Site.MyUser.MustValue.LocalUserView.LocalUser.ShowReadPosts) }}
+          {{ if and .State.Site .State.Site.MyUser.IsValid (not .State.Site.MyUser.ValueOrZero.LocalUserView.LocalUser.ShowReadPosts) }}
             <form class="link-btn" method="POST">
               <input type="hidden" name="postid" value="{{.Post.ID }}">
               <input type="hidden" name="op" value="read_post">

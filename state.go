@@ -18,12 +18,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rystaf/go-lemmy"
-	"github.com/rystaf/go-lemmy/types"
+	"go.elara.ws/go-lemmy"
 )
 
 type Comment struct {
-	P          types.CommentView
+	P          lemmy.CommentView
 	C          []Comment
 	Selected   bool
 	State      *State
@@ -35,25 +34,25 @@ func (c *Comment) Submitter() bool {
 	return c.P.Comment.CreatorID == c.P.Post.CreatorID
 }
 
-func (c *Comment) ParentID() int {
+func (c *Comment) ParentID() int64 {
 	path := strings.Split(c.P.Comment.Path, ".")
-	id, _ := strconv.Atoi(path[len(path)-2])
+	id, _ := strconv.ParseInt(path[len(path)-2], 10, 64)
 	return id
 }
 
 type Person struct {
-	types.PersonViewSafe
+	lemmy.PersonView
 }
 
 type Activity struct {
 	Timestamp time.Time
 	Comment   *Comment
 	Post      *Post
-	Message   *types.PrivateMessageView
+	Message   *lemmy.PrivateMessageView
 }
 
 type Post struct {
-	types.PostView
+	lemmy.PostView
 	Rank  int
 	State *State
 }
@@ -61,7 +60,7 @@ type Post struct {
 type Session struct {
 	UserName    string
 	UserID      int
-	Communities []types.CommunityView
+	Communities []lemmy.CommunityView
 }
 
 type State struct {
@@ -75,9 +74,9 @@ type State struct {
 	Alert             string
 	Host              string
 	CommunityName     string
-	Community         *types.GetCommunityResponse
-	TopCommunities    []types.CommunityView
-	Communities       []types.CommunityView
+	Community         *lemmy.GetCommunityResponse
+	TopCommunities    []lemmy.CommunityView
+	Communities       []lemmy.CommunityView
 	UnreadCount       int64
 	Sort              string
 	CommentSort       string
@@ -88,19 +87,19 @@ type State struct {
 	Comments          []Comment
 	Activities        []Activity
 	CommentCount      int
-	PostID            int
-	CommentID         int
+	PostID            int64
+	CommentID         int64
 	Context           int
 	UserName          string
-	User              *types.GetPersonDetailsResponse
+	User              *lemmy.GetPersonDetailsResponse
 	Now               int64
 	XHR               bool
 	Op                string
-	Site              *types.GetSiteResponse
+	Site              *lemmy.GetSiteResponse
 	Query             string
 	Content           string
 	SearchType        string
-	Captcha           *types.CaptchaResponse
+	Captcha           *lemmy.CaptchaResponse
 	Dark              bool
 	ShowNSFW          bool
 	HideInstanceNames bool
@@ -115,7 +114,7 @@ func (s State) UserBlocked() bool {
 	if s.User == nil || s.Site == nil || !s.Site.MyUser.IsValid() {
 		return false
 	}
-	for _, p := range s.Site.MyUser.MustValue().PersonBlocks {
+	for _, p := range s.Site.MyUser.ValueOrZero().PersonBlocks {
 		if p.Target.ID == s.User.PersonView.Person.ID {
 			return true
 		}
@@ -261,7 +260,7 @@ func (state *State) LemmyError(domain string) error {
 }
 
 func (state *State) GetCaptcha() {
-	resp, err := state.Client.Captcha(context.Background(), types.GetCaptcha{})
+	resp, err := state.Client.Captcha(context.Background())
 	if err != nil {
 		fmt.Printf("Get %v %v", err, resp)
 	} else {
@@ -272,7 +271,7 @@ func (state *State) GetCaptcha() {
 	}
 }
 func (state *State) GetSite() {
-	resp, err := state.Client.Site(context.Background(), types.GetSite{})
+	resp, err := state.Client.Site(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
@@ -284,8 +283,8 @@ func (state *State) GetSite() {
 	if !state.Site.MyUser.IsValid() {
 		return
 	}
-	for _, c := range state.Site.MyUser.MustValue().Follows {
-		state.Session.Communities = append(state.Session.Communities, types.CommunityView{
+	for _, c := range state.Site.MyUser.ValueOrZero().Follows {
+		state.Session.Communities = append(state.Session.Communities, lemmy.CommunityView{
 			Community:  c.Community,
 			Subscribed: "Subscribed",
 		})
@@ -295,16 +294,16 @@ func (state *State) GetSite() {
 	})
 }
 
-func (state *State) GetComment(commentid int) {
+func (state *State) GetComment(commentid int64) {
 	if state.Sort != "Hot" && state.Sort != "Top" && state.Sort != "Old" && state.Sort != "New" {
 		state.Sort = "Hot"
 	}
 	state.CommentID = commentid
-	cresp, err := state.Client.Comments(context.Background(), types.GetComments{
-		ParentID: types.NewOptional(state.CommentID),
-		Sort:     types.NewOptional(types.CommentSortType(state.CommentSort)),
-		Type:     types.NewOptional(types.ListingType("All")),
-		Limit:    types.NewOptional(int64(50)),
+	cresp, err := state.Client.Comments(context.Background(), lemmy.GetComments{
+		ParentID: lemmy.NewOptional(state.CommentID),
+		Sort:     lemmy.NewOptional(lemmy.CommentSortType(state.CommentSort)),
+		Type:     lemmy.NewOptional(lemmy.ListingType("All")),
+		Limit:    lemmy.NewOptional(int64(50)),
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -340,7 +339,7 @@ func (state *State) GetContext(depth int, comment Comment) (ctx Comment, err err
 	if depth < 1 || comment.ParentID() == 0 {
 		return comment, nil
 	}
-	cresp, err := state.Client.Comment(context.Background(), types.GetComment{
+	cresp, err := state.Client.Comment(context.Background(), lemmy.GetComment{
 		ID: comment.ParentID(),
 	})
 	if err != nil {
@@ -358,12 +357,12 @@ func (state *State) GetComments() {
 	if state.Sort != "Hot" && state.Sort != "Top" && state.Sort != "Old" && state.Sort != "New" {
 		state.Sort = "Hot"
 	}
-	cresp, err := state.Client.Comments(context.Background(), types.GetComments{
-		PostID: types.NewOptional(state.PostID),
-		Sort:   types.NewOptional(types.CommentSortType(state.CommentSort)),
-		Type:   types.NewOptional(types.ListingType("All")),
-		Limit:  types.NewOptional(int64(50)),
-		Page:   types.NewOptional(int64(state.Page)),
+	cresp, err := state.Client.Comments(context.Background(), lemmy.GetComments{
+		PostID: lemmy.NewOptional(state.PostID),
+		Sort:   lemmy.NewOptional(lemmy.CommentSortType(state.CommentSort)),
+		Type:   lemmy.NewOptional(lemmy.ListingType("All")),
+		Limit:  lemmy.NewOptional(int64(50)),
+		Page:   lemmy.NewOptional(int64(state.Page)),
 	})
 	if err != nil {
 		state.Status = http.StatusInternalServerError
@@ -377,7 +376,7 @@ func (state *State) GetComments() {
 			continue
 		}
 		comment := Comment{P: c, State: state}
-		var postCreatorID int
+		var postCreatorID int64
 		if len(state.Posts) > 0 {
 			postCreatorID = state.Posts[0].Post.CreatorID
 		}
@@ -387,8 +386,8 @@ func (state *State) GetComments() {
 }
 
 func (state *State) GetMessages() {
-	if resp, err := state.Client.PrivateMessages(context.Background(), types.GetPrivateMessages{
-		Page: types.NewOptional(int64(state.Page)),
+	if resp, err := state.Client.PrivateMessages(context.Background(), lemmy.GetPrivateMessages{
+		Page: lemmy.NewOptional(int64(state.Page)),
 	}); err != nil {
 		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
@@ -397,13 +396,13 @@ func (state *State) GetMessages() {
 		for _, m := range resp.PrivateMessages {
 			message := m
 			state.Activities = append(state.Activities, Activity{
-				Timestamp: m.PrivateMessage.Published.Time,
+				Timestamp: m.PrivateMessage.Published,
 				Message:   &message,
 			})
 		}
 	}
-	if resp, err := state.Client.PersonMentions(context.Background(), types.GetPersonMentions{
-		Page: types.NewOptional(int64(state.Page)),
+	if resp, err := state.Client.PersonMentions(context.Background(), lemmy.GetPersonMentions{
+		Page: lemmy.NewOptional(int64(state.Page)),
 	}); err != nil {
 		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
@@ -415,20 +414,20 @@ func (state *State) GetMessages() {
 				unread = "unread"
 			}
 			comment := Comment{
-				P: types.CommentView{
+				P: lemmy.CommentView{
 					Comment: m.Comment,
 				},
 				Op:    unread,
 				State: state,
 			}
 			state.Activities = append(state.Activities, Activity{
-				Timestamp: m.Comment.Published.Time,
+				Timestamp: m.Comment.Published,
 				Comment:   &comment,
 			})
 		}
 	}
-	if resp, err := state.Client.Replies(context.Background(), types.GetReplies{
-		Page: types.NewOptional(int64(state.Page)),
+	if resp, err := state.Client.Replies(context.Background(), lemmy.GetReplies{
+		Page: lemmy.NewOptional(int64(state.Page)),
 	}); err != nil {
 		fmt.Println(err)
 		state.Status = http.StatusInternalServerError
@@ -440,7 +439,7 @@ func (state *State) GetMessages() {
 				unread = "unread"
 			}
 			comment := Comment{
-				P: types.CommentView{
+				P: lemmy.CommentView{
 					Comment:   m.Comment,
 					Post:      m.Post,
 					Creator:   m.Creator,
@@ -451,7 +450,7 @@ func (state *State) GetMessages() {
 				State: state,
 			}
 			state.Activities = append(state.Activities, Activity{
-				Timestamp: m.Comment.Published.Time,
+				Timestamp: m.Comment.Published,
 				Comment:   &comment,
 			})
 		}
@@ -464,11 +463,11 @@ func (state *State) GetUser(username string) {
 	if state.Op == "send_message" {
 		limit = 1
 	}
-	resp, err := state.Client.PersonDetails(context.Background(), types.GetPersonDetails{
-		Username:  types.NewOptional(state.UserName),
-		Page:      types.NewOptional(int64(state.Page)),
-		Limit:     types.NewOptional(int64(limit)),
-		SavedOnly: types.NewOptional(state.Op == "Saved"),
+	resp, err := state.Client.PersonDetails(context.Background(), lemmy.GetPersonDetails{
+		Username:  lemmy.NewOptional(state.UserName),
+		Page:      lemmy.NewOptional(int64(state.Page)),
+		Limit:     lemmy.NewOptional(int64(limit)),
+		SavedOnly: lemmy.NewOptional(state.Op == "Saved"),
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -487,14 +486,14 @@ func (state *State) GetUser(username string) {
 			State:    state,
 		}
 		state.Activities = append(state.Activities, Activity{
-			Timestamp: p.Post.Published.Time,
+			Timestamp: p.Post.Published,
 			Post:      &post,
 		})
 	}
 	for _, c := range resp.Comments {
 		comment := Comment{P: c, State: state}
 		state.Activities = append(state.Activities, Activity{
-			Timestamp: c.Comment.Published.Time,
+			Timestamp: c.Comment.Published,
 			Comment:   &comment,
 		})
 	}
@@ -504,7 +503,7 @@ func (state *State) GetUser(username string) {
 }
 
 func (state *State) GetUnreadCount() {
-	resp, err := state.Client.UnreadCount(context.Background(), types.GetUnreadCount{})
+	resp, err := state.Client.UnreadCount(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -512,9 +511,9 @@ func (state *State) GetUnreadCount() {
 	state.UnreadCount = resp.PrivateMessages + resp.Mentions + resp.Replies
 }
 func (state *State) GetCommunities() {
-	resp, err := state.Client.Communities(context.Background(), types.ListCommunities{
-		Sort:  types.NewOptional(types.SortType("TopAll")),
-		Limit: types.NewOptional(int64(20)),
+	resp, err := state.Client.Communities(context.Background(), lemmy.ListCommunities{
+		Sort:  lemmy.NewOptional(lemmy.SortType("TopAll")),
+		Limit: lemmy.NewOptional(int64(20)),
 	})
 	if err != nil {
 		return
@@ -522,7 +521,7 @@ func (state *State) GetCommunities() {
 	state.TopCommunities = resp.Communities
 }
 func (state *State) MarkAllAsRead() {
-	_, err := state.Client.MarkAllAsRead(context.Background(), types.MarkAllAsRead{})
+	_, err := state.Client.MarkAllAsRead(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -530,14 +529,14 @@ func (state *State) MarkAllAsRead() {
 }
 
 func (state *State) GetPosts() {
-	posts := types.GetPosts{
-		Sort:  types.NewOptional(types.SortType(state.Sort)),
-		Type:  types.NewOptional(types.ListingType(state.Listing)),
-		Limit: types.NewOptional(int64(25)),
-		Page:  types.NewOptional(int64(state.Page)),
+	posts := lemmy.GetPosts{
+		Sort:  lemmy.NewOptional(lemmy.SortType(state.Sort)),
+		Type:  lemmy.NewOptional(lemmy.ListingType(state.Listing)),
+		Limit: lemmy.NewOptional(int64(25)),
+		Page:  lemmy.NewOptional(int64(state.Page)),
 	}
 	if state.CommunityName != "" {
-		posts.CommunityName = types.NewOptional(state.CommunityName)
+		posts.CommunityName = lemmy.NewOptional(state.CommunityName)
 	}
 	resp, err := state.Client.Posts(context.Background(), posts)
 	if err != nil {
@@ -567,11 +566,11 @@ func (state *State) Search(searchtype string) {
 			state.Communities = state.Session.Communities
 			return
 		}
-		resp, err := state.Client.Communities(context.Background(), types.ListCommunities{
-			Type:  types.NewOptional(types.ListingType(state.Listing)),
-			Sort:  types.NewOptional(types.SortType(state.Sort)),
-			Limit: types.NewOptional(int64(25)),
-			Page:  types.NewOptional(int64(state.Page)),
+		resp, err := state.Client.Communities(context.Background(), lemmy.ListCommunities{
+			Type:  lemmy.NewOptional(lemmy.ListingType(state.Listing)),
+			Sort:  lemmy.NewOptional(lemmy.SortType(state.Sort)),
+			Limit: lemmy.NewOptional(int64(25)),
+			Page:  lemmy.NewOptional(int64(state.Page)),
 		})
 		if err != nil {
 			fmt.Println(err)
@@ -580,21 +579,21 @@ func (state *State) Search(searchtype string) {
 		state.Communities = resp.Communities
 		return
 	}
-	search := types.Search{
+	search := lemmy.Search{
 		Q:           state.Query,
-		Sort:        types.NewOptional(types.SortType(state.Sort)),
-		ListingType: types.NewOptional(types.ListingType(state.Listing)),
-		Type:        types.NewOptional(types.SearchType(searchtype)),
-		Limit:       types.NewOptional(int64(25)),
-		Page:        types.NewOptional(int64(state.Page)),
+		Sort:        lemmy.NewOptional(lemmy.SortType(state.Sort)),
+		ListingType: lemmy.NewOptional(lemmy.ListingType(state.Listing)),
+		Type:        lemmy.NewOptional(lemmy.SearchType(searchtype)),
+		Limit:       lemmy.NewOptional(int64(25)),
+		Page:        lemmy.NewOptional(int64(state.Page)),
 	}
 
 	if state.CommunityName != "" {
-		search.CommunityName = types.NewOptional(state.CommunityName)
+		search.CommunityName = lemmy.NewOptional(state.CommunityName)
 	}
 
 	if state.User != nil {
-		search.CreatorID = types.NewOptional(state.User.PersonView.Person.ID)
+		search.CreatorID = lemmy.NewOptional(state.User.PersonView.Person.ID)
 	}
 
 	resp, err := state.Client.Search(context.Background(), search)
@@ -616,7 +615,7 @@ func (state *State) Search(searchtype string) {
 				State: state,
 			}
 			state.Activities = append(state.Activities, Activity{
-				Timestamp: c.Comment.Published.Time,
+				Timestamp: c.Comment.Published,
 				Comment:   &comment,
 			})
 		}
@@ -624,14 +623,14 @@ func (state *State) Search(searchtype string) {
 	}
 }
 
-func (state *State) GetPost(postid int) {
+func (state *State) GetPost(postid int64) {
 	if postid == 0 {
 		return
 	}
 	state.PostID = postid
 	// get post
-	resp, err := state.Client.Post(context.Background(), types.GetPost{
-		ID: types.NewOptional(state.PostID),
+	resp, err := state.Client.Post(context.Background(), lemmy.GetPost{
+		ID: lemmy.NewOptional(state.PostID),
 	})
 	if err != nil {
 		state.Status = http.StatusInternalServerError
@@ -646,7 +645,7 @@ func (state *State) GetPost(postid int) {
 		state.Posts[0].Rank = -1
 	}
 	state.CommunityName = resp.PostView.Community.Name
-	cresp := types.GetCommunityResponse{
+	cresp := lemmy.GetCommunityResponse{
 		CommunityView: resp.CommunityView,
 		Moderators:    resp.Moderators,
 	}
@@ -660,8 +659,8 @@ func (state *State) GetCommunity(communityName string) {
 	if state.CommunityName == "" {
 		return
 	}
-	resp, err := state.Client.Community(context.Background(), types.GetCommunity{
-		Name: types.NewOptional(state.CommunityName),
+	resp, err := state.Client.Community(context.Background(), lemmy.GetCommunity{
+		Name: lemmy.NewOptional(state.CommunityName),
 	})
 	if err != nil {
 		state.Error = err
@@ -701,13 +700,13 @@ func (state *State) UploadImage(file multipart.File, header *multipart.FileHeade
 	return &pres, nil
 }
 
-func getChildren(parent *Comment, pool []types.CommentView, postCreatorID int) {
+func getChildren(parent *Comment, pool []lemmy.CommentView, postCreatorID int64) {
 	var children []Comment
-	total := int32(0)
+	var total int64
 	for _, c := range pool {
 		levels := strings.Split(c.Comment.Path, ".")
 		for i, l := range levels {
-			id, _ := strconv.Atoi(l)
+			id, _ := strconv.ParseInt(l, 10, 64)
 			if id == parent.P.Comment.ID {
 				if i == (len(levels) - 2) {
 					children = append(children, Comment{

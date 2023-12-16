@@ -21,16 +21,16 @@
         [-]
 {{- end -}}
       </a>
-      <a class="creator{{ if .P.Comment.Distinguished}}{{if .P.Creator.Admin}} admin{{end}} distinguished{{ else if .Submitter }} submitter{{end}}" href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
+      <a class="creator{{ if .P.Comment.Distinguished}}{{if false}} admin{{end}} distinguished{{ else if .Submitter }} submitter{{end}}" href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
         {{- if .State.HideInstanceNames -}}
         {{ .P.Creator.Name }}
         {{- else -}}
         {{ fullname .P.Creator }}
         {{- end -}}
       </a>
-      <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
-            {{- if gt .P.Comment.Updated.Time.Unix .P.Comment.Published.Time.Unix -}}
-            * (last edited <span title="{{.P.Comment.Updated.Time}}">{{ humanize .P.Comment.Updated.Time }}</span>)
+      <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published}}">{{ humanize .P.Comment.Published }}</span>
+            {{- if gt .P.Comment.Updated.Unix .P.Comment.Published.Unix -}}
+            * (last edited <span title="{{.P.Comment.Updated}}">{{ humanize .P.Comment.Updated }}</span>)
             {{ end }}
     </div>
     <div class="content">

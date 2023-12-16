@@ -19,8 +19,7 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/julienschmidt/httprouter"
 	"github.com/k3a/html2text"
-	"github.com/rystaf/go-lemmy"
-	"github.com/rystaf/go-lemmy/types"
+	"go.elara.ws/go-lemmy"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -43,10 +42,10 @@ var funcMap = template.FuncMap{
 		p := message.NewPrinter(language.English)
 		return p.Sprintf("%d", n)
 	},
-	"likedPerc": func(c types.PostAggregates) string {
+	"likedPerc": func(c lemmy.PostAggregates) string {
 		return fmt.Sprintf("%.1f", (float64(c.Upvotes)/float64(c.Upvotes+c.Downvotes))*100)
 	},
-	"fullname": func(person types.PersonSafe) string {
+	"fullname": func(person lemmy.Person) string {
 		if person.Local {
 			return person.Name
 		}
@@ -57,7 +56,7 @@ var funcMap = template.FuncMap{
 		}
 		return person.Name + "@" + l.Host
 	},
-	"fullcname": func(c types.CommunitySafe) string {
+	"fullcname": func(c lemmy.Community) string {
 		if c.Local {
 			return c.Name
 		}
@@ -68,7 +67,7 @@ var funcMap = template.FuncMap{
 		}
 		return c.Name + "@" + l.Host
 	},
-	"isMod": func(c *types.GetCommunityResponse, username string) bool {
+	"isMod": func(c *lemmy.GetCommunityResponse, username string) bool {
 		for _, mod := range c.Moderators {
 			if mod.Moderator.Local && username == mod.Moderator.Name {
 				return true
@@ -93,13 +92,13 @@ var funcMap = template.FuncMap{
 		}
 		return l.Host
 	},
-	"membership": func(s types.SubscribedType) string {
+	"membership": func(s lemmy.SubscribedType) string {
 		switch s {
-		case types.SubscribedTypeSubscribed:
+		case lemmy.SubscribedTypeSubscribed:
 			return "leave"
-		case types.SubscribedTypeNotSubscribed:
+		case lemmy.SubscribedTypeNotSubscribed:
 			return "join"
-		case types.SubscribedTypePending:
+		case lemmy.SubscribedTypePending:
 			return "pending"
 		}
 		return ""
@@ -111,7 +110,7 @@ var funcMap = template.FuncMap{
 		}
 		return false
 	},
-	"thumbnail": func(p types.Post) string {
+	"thumbnail": func(p lemmy.Post) string {
 		if p.ThumbnailURL.IsValid() {
 			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=96"
 		}
@@ -156,10 +155,10 @@ var funcMap = template.FuncMap{
 		return re.ReplaceAllString(text, "")
 	},
 	"contains": strings.Contains,
-	"sub": func(a int32, b int) int {
+	"sub": func(a int64, b int) int {
 		return int(a) - b
 	},
-	"add": func(a int32, b int) int {
+	"add": func(a int64, b int) int {
 		return int(a) + b
 	},
 }
@@ -410,7 +409,7 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	state, err := Initialize(ps.ByName("host"), r)
 	state.Client.Token = ""
-	resp, err := state.Client.Site(context.Background(), types.GetSite{})
+	resp, err := state.Client.Site(context.Background())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Server Error"))
@@ -478,17 +477,17 @@ func ResolveId(r *http.Request, class string, id string, host string) string {
 	if err != nil {
 		return ""
 	}
-	idn, _ := strconv.Atoi(id)
+	idn, _ := strconv.ParseInt(id, 10, 64)
 	if class == "post" {
-		resp, err := c.Post(context.Background(), types.GetPost{
-			ID: types.NewOptional(idn),
+		resp, err := c.Post(context.Background(), lemmy.GetPost{
+			ID: lemmy.NewOptional(idn),
 		})
 		if err != nil {
 			return ""
 		}
 		return resp.PostView.Post.ApID
 	}
-	resp, err := c.Comment(context.Background(), types.GetComment{
+	resp, err := c.Comment(context.Background(), lemmy.GetComment{
 		ID: idn,
 	})
 	if err != nil {
@@ -507,7 +506,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if path := strings.Split(ps.ByName("postid"), "@"); len(path) > 1 {
 		apid := ResolveId(r, "post", path[0], path[1])
 		if apid != "" {
-			resp, err := state.Client.ResolveObject(context.Background(), types.ResolveObject{
+			resp, err := state.Client.ResolveObject(context.Background(), lemmy.ResolveObject{
 				Q: apid,
 			})
 			if err != nil {
@@ -521,7 +520,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			post, _ := resp.Post.Value()
 			if post.Post.ID > 0 {
 				dest := RegReplace(r.URL.String(), `(([a-zA-Z0-9\.\-]+)?/post/)([a-zA-Z0-9\-\.@]+)`, `$1`)
-				dest += strconv.Itoa(post.Post.ID)
+				dest += strconv.FormatInt(post.Post.ID, 10)
 				http.Redirect(w, r, dest, 302)
 				return
 			} else {
@@ -538,7 +537,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if len(m["content"]) > 0 {
 		state.Content = m["content"][0]
 	}
-	postid, _ := strconv.Atoi(ps.ByName("postid"))
+	postid, _ := strconv.ParseInt(ps.ByName("postid"), 10, 64)
 	state.GetPost(postid)
 	if ps.ByName("op") == "block" {
 		state.Op = "block"
@@ -557,7 +556,7 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if path := strings.Split(ps.ByName("commentid"), "@"); len(path) > 1 {
 		apid := ResolveId(r, "comment", path[0], path[1])
 		if apid != "" {
-			resp, err := state.Client.ResolveObject(context.Background(), types.ResolveObject{
+			resp, err := state.Client.ResolveObject(context.Background(), lemmy.ResolveObject{
 				Q: apid,
 			})
 			if err != nil {
@@ -571,7 +570,7 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			comment, _ := resp.Comment.Value()
 			if comment.Comment.ID > 0 {
 				dest := RegReplace(r.URL.String(), `(([a-zA-Z0-9\.\-]+)?/comment/)([a-zA-Z0-9\-\.@]+)`, `$1`)
-				dest += strconv.Itoa(comment.Comment.ID)
+				dest += strconv.FormatInt(comment.Comment.ID, 10)
 				http.Redirect(w, r, dest, 302)
 				return
 			} else {
@@ -597,7 +596,7 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		ctx, _ := strconv.Atoi(m["context"][0])
 		state.Context = ctx
 	}
-	commentid, _ := strconv.Atoi(ps.ByName("commentid"))
+	commentid, _ := strconv.ParseInt(ps.ByName("commentid"), 10, 64)
 	state.GetComment(commentid)
 	if state.XHR && len(m["content"]) > 0 {
 		Render(w, "create_comment.html", state)
@@ -634,8 +633,8 @@ func SendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		Render(w, "index.html", state)
 		return
 	}
-	userid, _ := strconv.Atoi(r.FormValue("userid"))
-	_, err = state.Client.CreatePrivateMessage(context.Background(), types.CreatePrivateMessage{
+	userid, _ := strconv.ParseInt(r.FormValue("userid"), 10, 64)
+	_, err = state.Client.CreatePrivateMessage(context.Background(), lemmy.CreatePrivateMessage{
 		Content:     r.FormValue("content"),
 		RecipientID: userid,
 	})
@@ -800,12 +799,12 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	var username string
 	switch r.FormValue("submit") {
 	case "log in":
-		login := types.Login{
+		login := lemmy.Login{
 			UsernameOrEmail: r.FormValue("username"),
 			Password:        r.FormValue("password"),
 		}
 		if r.FormValue("totp") != "" {
-			login.Totp2faToken = types.NewOptional(r.FormValue("totp"))
+			login.TOTP2FAToken = lemmy.NewOptional(r.FormValue("totp"))
 		}
 		resp, err := state.Client.Login(context.Background(), login)
 		if err != nil {
@@ -825,23 +824,23 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			deleteCookie(w, state.Host, "ShowNSFW")
 		}
 	case "sign up":
-		register := types.Register{
+		register := lemmy.Register{
 			Username:       r.FormValue("username"),
 			Password:       r.FormValue("password"),
 			PasswordVerify: r.FormValue("passwordverify"),
 			ShowNSFW:       r.FormValue("nsfw") != "",
 		}
 		if r.FormValue("email") != "" {
-			register.Email = types.NewOptional(r.FormValue("email"))
+			register.Email = lemmy.NewOptional(r.FormValue("email"))
 		}
 		if r.FormValue("answer") != "" {
-			register.Answer = types.NewOptional(r.FormValue("answer"))
+			register.Answer = lemmy.NewOptional(r.FormValue("answer"))
 		}
 		if r.FormValue("captchauuid") != "" {
-			register.CaptchaUuid = types.NewOptional(r.FormValue("captchauuid"))
+			register.CaptchaUUID = lemmy.NewOptional(r.FormValue("captchauuid"))
 		}
 		if r.FormValue("captchaanswer") != "" {
-			register.CaptchaAnswer = types.NewOptional(r.FormValue("captchaanswer"))
+			register.CaptchaAnswer = lemmy.NewOptional(r.FormValue("captchaanswer"))
 		}
 		resp, err := state.Client.Register(context.Background(), register)
 		if err != nil {
@@ -875,7 +874,7 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			return
 		}
 		setCookie(w, state.Host, "jwt", token)
-		userid := strconv.Itoa(state.User.PersonView.Person.ID)
+		userid := strconv.FormatInt(state.User.PersonView.Person.ID, 10)
 		setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
 		setCookie(w, state.Host, "jwt", token)
 		r.URL.Path = "/" + state.Host
@@ -945,36 +944,36 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	switch r.FormValue("op") {
 	case "leave":
-		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
-		state.Client.FollowCommunity(context.Background(), types.FollowCommunity{
+		communityid, _ := strconv.ParseInt(r.FormValue("communityid"), 10, 64)
+		state.Client.FollowCommunity(context.Background(), lemmy.FollowCommunity{
 			CommunityID: communityid,
 			Follow:      false,
 		})
 	case "join":
-		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
-		state.Client.FollowCommunity(context.Background(), types.FollowCommunity{
+		communityid, _ := strconv.ParseInt(r.FormValue("communityid"), 10, 64)
+		state.Client.FollowCommunity(context.Background(), lemmy.FollowCommunity{
 			CommunityID: communityid,
 			Follow:      true,
 		})
 	case "block":
-		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
-		state.Client.BlockCommunity(context.Background(), types.BlockCommunity{
+		communityid, _ := strconv.ParseInt(r.FormValue("communityid"), 10, 64)
+		state.Client.BlockCommunity(context.Background(), lemmy.BlockCommunity{
 			CommunityID: communityid,
 			Block:       true,
 		})
 	case "unblock":
-		communityid, _ := strconv.Atoi(r.FormValue("communityid"))
-		state.Client.BlockCommunity(context.Background(), types.BlockCommunity{
+		communityid, _ := strconv.ParseInt(r.FormValue("communityid"), 10, 64)
+		state.Client.BlockCommunity(context.Background(), lemmy.BlockCommunity{
 			CommunityID: communityid,
 			Block:       false,
 		})
 	case "block_user":
-		personId, _ := strconv.Atoi(r.FormValue("user_id"))
+		personId, _ := strconv.ParseInt(r.FormValue("user_id"), 10, 64)
 		if personId == 0 {
 			state.GetUser(ps.ByName("username"))
 			personId = state.User.PersonView.Person.ID
 		}
-		state.Client.BlockPerson(context.Background(), types.BlockPerson{
+		state.Client.BlockPerson(context.Background(), lemmy.BlockPerson{
 			PersonID: personId,
 			Block:    r.FormValue("submit") == "block",
 		})
@@ -986,12 +985,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		deleteCookie(w, state.Host, "jwt")
 		deleteCookie(w, state.Host, "user")
 	case "login":
-		login := types.Login{
+		login := lemmy.Login{
 			UsernameOrEmail: r.FormValue("username"),
 			Password:        r.FormValue("password"),
 		}
 		if r.FormValue("totp") != "" {
-			login.Totp2faToken = types.NewOptional(r.FormValue("totp"))
+			login.TOTP2FAToken = lemmy.NewOptional(r.FormValue("totp"))
 		}
 		resp, err := state.Client.Login(context.Background(), login)
 		if err != nil {
@@ -1010,18 +1009,18 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.GetUser(r.FormValue("username"))
 			if state.User != nil {
 				setCookie(w, state.Host, "jwt", resp.JWT.String())
-				userid := strconv.Itoa(state.User.PersonView.Person.ID)
+				userid := strconv.FormatInt(state.User.PersonView.Person.ID, 10)
 				setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
 			}
 		}
 	case "create_community":
 		state.GetSite()
-		community := types.CreateCommunity{
+		community := lemmy.CreateCommunity{
 			Name:  r.FormValue("name"),
 			Title: r.FormValue("title"),
 		}
 		if r.FormValue("description") != "" {
-			community.Description = types.NewOptional(r.FormValue("description"))
+			community.Description = lemmy.NewOptional(r.FormValue("description"))
 		}
 		if file, handler, err := r.FormFile("icon"); err == nil {
 			pres, err := state.UploadImage(file, handler)
@@ -1030,7 +1029,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Icon = types.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Icon = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		if file, handler, err := r.FormFile("banner"); err == nil {
 			pres, err := state.UploadImage(file, handler)
@@ -1039,7 +1038,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Banner = types.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Banner = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		resp, err := state.Client.CreateCommunity(context.Background(), community)
 		if err == nil {
@@ -1055,14 +1054,14 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			return
 		}
 		state.GetSite()
-		community := types.EditCommunity{
+		community := lemmy.EditCommunity{
 			CommunityID: state.Community.CommunityView.Community.ID,
 		}
 		if r.FormValue("title") != "" {
-			community.Title = types.NewOptional(r.FormValue("title"))
+			community.Title = lemmy.NewOptional(r.FormValue("title"))
 		}
 		if r.FormValue("description") != "" {
-			community.Description = types.NewOptional(r.FormValue("description"))
+			community.Description = lemmy.NewOptional(r.FormValue("description"))
 		}
 		if file, handler, err := r.FormFile("icon"); err == nil {
 			pres, err := state.UploadImage(file, handler)
@@ -1071,7 +1070,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Icon = types.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Icon = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		if file, handler, err := r.FormFile("banner"); err == nil {
 			pres, err := state.UploadImage(file, handler)
@@ -1080,7 +1079,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Banner = types.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Banner = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		resp, err := state.Client.EditCommunity(context.Background(), community)
 		if err == nil {
@@ -1100,12 +1099,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			Render(w, "index.html", state)
 			return
 		}
-		post := types.CreatePost{
+		post := lemmy.CreatePost{
 			Name:        r.FormValue("name"),
 			CommunityID: state.Community.CommunityView.Community.ID,
 		}
 		if r.FormValue("url") != "" {
-			post.URL = types.NewOptional(r.FormValue("url"))
+			post.URL = lemmy.NewOptional(r.FormValue("url"))
 		}
 		file, handler, err := r.FormFile("file")
 		if err == nil {
@@ -1115,18 +1114,18 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			post.URL = types.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			post.URL = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		if r.FormValue("body") != "" {
-			post.Body = types.NewOptional(r.FormValue("body"))
+			post.Body = lemmy.NewOptional(r.FormValue("body"))
 		}
 		if r.FormValue("language") != "" {
-			languageid, _ := strconv.Atoi(r.FormValue("language"))
-			post.LanguageID = types.NewOptional(languageid)
+			languageid, _ := strconv.ParseInt(r.FormValue("language"), 10, 64)
+			post.LanguageID = lemmy.NewOptional(languageid)
 		}
 		resp, err := state.Client.CreatePost(context.Background(), post)
 		if err == nil {
-			postid := strconv.Itoa(resp.PostView.Post.ID)
+			postid := strconv.FormatInt(resp.PostView.Post.ID, 10)
 			r.URL.Path = "/" + state.Host + "/post/" + postid
 		} else {
 			fmt.Println(err)
@@ -1134,19 +1133,19 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case "edit_post":
 		r.ParseMultipartForm(10 << 20)
 		state.GetSite()
-		postid, _ := strconv.Atoi(ps.ByName("postid"))
-		post := types.EditPost{
+		postid, _ := strconv.ParseInt(ps.ByName("postid"), 10, 64)
+		post := lemmy.EditPost{
 			PostID: postid,
-			Body:   types.NewOptional(r.FormValue("body")),
-			Name:   types.NewOptional(r.FormValue("name")),
-			URL:    types.NewOptional(r.FormValue("url")),
+			Body:   lemmy.NewOptional(r.FormValue("body")),
+			Name:   lemmy.NewOptional(r.FormValue("name")),
+			URL:    lemmy.NewOptional(r.FormValue("url")),
 		}
 		if r.FormValue("url") == "" {
-			post.URL = types.Optional[string]{}
+			post.URL = lemmy.Optional[string]{}
 		}
 		if r.FormValue("language") != "" {
-			languageid, _ := strconv.Atoi(r.FormValue("language"))
-			post.LanguageID = types.NewOptional(languageid)
+			languageid, _ := strconv.ParseInt(r.FormValue("language"), 10, 64)
+			post.LanguageID = lemmy.NewOptional(languageid)
 		}
 		file, handler, err := r.FormFile("file")
 		if err == nil {
@@ -1156,12 +1155,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			post.URL = types.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			post.URL = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 
 		resp, err := state.Client.EditPost(context.Background(), post)
 		if err == nil {
-			postid := strconv.Itoa(resp.PostView.Post.ID)
+			postid := strconv.FormatInt(resp.PostView.Post.ID, 10)
 			r.URL.Path = "/" + state.Host + "/post/" + postid
 			r.URL.RawQuery = ""
 		} else {
@@ -1170,8 +1169,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			fmt.Println(err)
 		}
 	case "save_post":
-		postid, _ := strconv.Atoi(r.FormValue("postid"))
-		_, err := state.Client.SavePost(context.Background(), types.SavePost{
+		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)
+		_, err := state.Client.SavePost(context.Background(), lemmy.SavePost{
 			PostID: postid,
 			Save:   r.FormValue("submit") == "save",
 		})
@@ -1187,8 +1186,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			return
 		}
 	case "save_comment":
-		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
-		_, err := state.Client.SaveComment(context.Background(), types.SaveComment{
+		commentid, _ := strconv.ParseInt(r.FormValue("commentid"), 10, 64)
+		_, err := state.Client.SaveComment(context.Background(), lemmy.SaveComment{
 			CommentID: commentid,
 			Save:      r.FormValue("submit") == "save",
 		})
@@ -1202,8 +1201,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			return
 		}
 	case "delete_post":
-		postid, _ := strconv.Atoi(r.FormValue("postid"))
-		post := types.DeletePost{
+		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)
+		post := lemmy.DeletePost{
 			PostID:  postid,
 			Deleted: true,
 		}
@@ -1218,24 +1217,24 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.RawQuery = ""
 		}
 	case "block_post":
-		postid, _ := strconv.Atoi(r.FormValue("postid"))
+		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)
 		state.GetPost(postid)
 		if r.FormValue("blockcommunity") != "" && len(state.Posts) > 0 {
-			state.Client.BlockCommunity(context.Background(), types.BlockCommunity{
+			state.Client.BlockCommunity(context.Background(), lemmy.BlockCommunity{
 				CommunityID: state.Posts[0].Post.CommunityID,
 				Block:       true,
 			})
 		}
 		if r.FormValue("blockuser") != "" && len(state.Posts) > 0 {
-			state.Client.BlockPerson(context.Background(), types.BlockPerson{
+			state.Client.BlockPerson(context.Background(), lemmy.BlockPerson{
 				PersonID: state.Posts[0].Post.CreatorID,
 				Block:    true,
 			})
 		}
 	case "read_post":
-		postid, _ := strconv.Atoi(r.FormValue("postid"))
-		post := types.MarkPostAsRead{
-			PostID: postid,
+		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)
+		post := lemmy.MarkPostAsRead{
+			PostID: lemmy.NewOptional(postid),
 			Read:   true,
 		}
 		if r.FormValue("submit") == "mark unread" {
@@ -1249,7 +1248,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			return
 		}
 	case "vote_post":
-		var score int16
+		var score int64
 		score = 1
 		if r.FormValue("vote") != "▲" {
 			score = -1
@@ -1257,12 +1256,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if r.FormValue("undo") == strconv.Itoa(int(score)) {
 			score = 0
 		}
-		postid, _ := strconv.Atoi(r.FormValue("postid"))
-		post := types.CreatePostLike{
+		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)
+		post := lemmy.CreatePostLike{
 			PostID: postid,
 			Score:  score,
 		}
-		state.Client.CreatePostLike(context.Background(), post)
+		state.Client.LikePost(context.Background(), post)
 		if r.FormValue("xhr") != "" {
 			state.GetPost(postid)
 			state.PostID = 0
@@ -1272,7 +1271,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			return
 		}
 	case "vote_comment":
-		var score int16
+		var score int64
 		score = 1
 		if r.FormValue("submit") != "▲" {
 			score = -1
@@ -1280,12 +1279,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if r.FormValue("undo") == strconv.Itoa(int(score)) {
 			score = 0
 		}
-		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
-		post := types.CreateCommentLike{
+		commentid, _ := strconv.ParseInt(r.FormValue("commentid"), 10, 64)
+		post := lemmy.CreateCommentLike{
 			CommentID: commentid,
 			Score:     score,
 		}
-		state.Client.CreateCommentLike(context.Background(), post)
+		state.Client.LikeComment(context.Background(), post)
 		if r.FormValue("xhr") != "" {
 			state.XHR = true
 			state.GetComment(commentid)
@@ -1294,11 +1293,11 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 	case "create_comment":
 		if ps.ByName("postid") != "" {
-			postid, _ := strconv.Atoi(ps.ByName("postid"))
+			postid, _ := strconv.ParseInt(ps.ByName("postid"), 10, 64)
 			state.PostID = postid
 		}
 		if r.FormValue("parentid") != "" && r.FormValue("parentid") != "0" {
-			parentid, _ := strconv.Atoi(r.FormValue("parentid"))
+			parentid, _ := strconv.ParseInt(r.FormValue("parentid"), 10, 64)
 			state.GetComment(parentid)
 		}
 		content := r.FormValue("content")
@@ -1313,12 +1312,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			content += ("![](https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename + ")")
 		}
 		if r.FormValue("submit") == "save" {
-			createComment := types.CreateComment{
+			createComment := lemmy.CreateComment{
 				Content: content,
 				PostID:  state.PostID,
 			}
 			if state.CommentID > 0 {
-				createComment.ParentID = types.NewOptional(state.CommentID)
+				createComment.ParentID = lemmy.NewOptional(state.CommentID)
 			}
 			resp, err := state.Client.CreateComment(context.Background(), createComment)
 			if err == nil {
@@ -1329,8 +1328,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 					Render(w, "index.html", state)
 					return
 				}
-				postid := strconv.Itoa(state.PostID)
-				commentid := strconv.Itoa(resp.CommentView.Comment.ID)
+				postid := strconv.FormatInt(state.PostID, 10)
+				commentid := strconv.FormatInt(resp.CommentView.Comment.ID, 10)
 				r.URL.Path = "/" + state.Host + "/post/" + postid
 				r.URL.Fragment = "c" + commentid
 			} else {
@@ -1360,7 +1359,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.RawQuery = ""
 		}
 	case "edit_comment":
-		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
+		commentid, _ := strconv.ParseInt(r.FormValue("commentid"), 10, 64)
 		q := r.URL.Query()
 		content := r.FormValue("content")
 		file, handler, err := r.FormFile("file")
@@ -1375,14 +1374,14 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 
 		if r.FormValue("submit") == "save" {
-			resp, err := state.Client.EditComment(context.Background(), types.EditComment{
+			resp, err := state.Client.EditComment(context.Background(), lemmy.EditComment{
 				CommentID: commentid,
-				Content:   types.NewOptional(content),
+				Content:   lemmy.NewOptional(content),
 			})
 			if err != nil {
 				fmt.Println(err)
 			} else {
-				commentid := strconv.Itoa(resp.CommentView.Comment.ID)
+				commentid := strconv.FormatInt(resp.CommentView.Comment.ID, 10)
 				r.URL.Fragment = "c" + commentid
 				r.URL.RawQuery = ""
 			}
@@ -1420,8 +1419,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.RawQuery = ""
 		}
 	case "delete_comment":
-		commentid, _ := strconv.Atoi(r.FormValue("commentid"))
-		resp, err := state.Client.DeleteComment(context.Background(), types.DeleteComment{
+		commentid, _ := strconv.ParseInt(r.FormValue("commentid"), 10, 64)
+		resp, err := state.Client.DeleteComment(context.Background(), lemmy.DeleteComment{
 			CommentID: commentid,
 			Deleted:   true,
 		})
@@ -1435,7 +1434,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			commentid := strconv.Itoa(resp.CommentView.Comment.ID)
+			commentid := strconv.FormatInt(resp.CommentView.Comment.ID, 10)
 			r.URL.Fragment = "c" + commentid
 			r.URL.RawQuery = ""
 		}
