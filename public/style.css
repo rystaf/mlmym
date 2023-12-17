@@ -289,7 +289,9 @@ form.savecomment {
   margin: 0px 0px 10px 20px;
 }
 .comment .children {
-  margin: 5px 0px 10px 15px;
+  border-left: 1px dotted gray;
+  padding-left: 10px;
+  margin: 5px 0px 10px 5px;
 }
 .savecomment textarea {
   margin: 5px 0px;
