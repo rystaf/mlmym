@@ -44,9 +44,9 @@
           <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
           <div class="meta">
             submitted
-            <span title="{{.Post.Published}}">{{ humanize .Post.Published -}}</span>
-            {{- if gt .Post.Updated.Unix .Post.Published.Unix -}}
-            * (last edited <span title="{{.Post.Updated}}">{{ humanize .Post.Updated }}</span>)
+            <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span>
+            {{- if gt .Post.Updated.ValueOrZero.Time.Unix .Post.Published.Time.Unix -}}
+            * (last edited <span title="{{.Post.Updated.ValueOrZero.Time}}">{{ humanize .Post.Updated.ValueOrZero.Time }}</span>)
             {{ end }}
             by
             <a class="submitter{{ if false}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">

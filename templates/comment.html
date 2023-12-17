@@ -28,9 +28,9 @@
         {{ fullname .P.Creator }}
         {{- end -}}
       </a>
-      <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published}}">{{ humanize .P.Comment.Published }}</span>
-            {{- if gt .P.Comment.Updated.Unix .P.Comment.Published.Unix -}}
-            * (last edited <span title="{{.P.Comment.Updated}}">{{ humanize .P.Comment.Updated }}</span>)
+      <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
+            {{- if gt .P.Comment.Updated.ValueOrZero.Time.Unix .P.Comment.Published.Time.Unix -}}
+            * (last edited <span title="{{.P.Comment.Updated.ValueOrZero.Time}}">{{ humanize .P.Comment.Updated.ValueOrZero.Time }}</span>)
             {{ end }}
     </div>
     <div class="content">

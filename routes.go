@@ -19,7 +19,7 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/julienschmidt/httprouter"
 	"github.com/k3a/html2text"
-	"go.elara.ws/go-lemmy"
+	"github.com/rystaf/go-lemmy"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )

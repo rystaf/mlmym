@@ -12,7 +12,7 @@
 {{ end }}
     <div class="gray">
       {{ if .Counts.Subscribers }}{{ printer .Counts.Subscribers }} subscribers,{{end}}
-      a community founded {{ humanize .Community.Published }}
+      a community founded {{ humanize .Community.Published.Time }}
     </div>
   </div>
 </div>

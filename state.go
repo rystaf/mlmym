@@ -16,9 +16,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
-	"go.elara.ws/go-lemmy"
+	"github.com/rystaf/go-lemmy"
 )
 
 type Comment struct {
@@ -45,7 +44,7 @@ type Person struct {
 }
 
 type Activity struct {
-	Timestamp time.Time
+	Timestamp lemmy.LemmyTime
 	Comment   *Comment
 	Post      *Post
 	Message   *lemmy.PrivateMessageView
@@ -498,7 +497,7 @@ func (state *State) GetUser(username string) {
 		})
 	}
 	sort.Slice(state.Activities, func(i, j int) bool {
-		return state.Activities[i].Timestamp.After(state.Activities[j].Timestamp)
+		return state.Activities[i].Timestamp.After(state.Activities[j].Timestamp.Time)
 	})
 }
 
