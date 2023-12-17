@@ -82,6 +82,7 @@
           sorted by:
           <a {{ if eq .CommentSort "Hot"}}class="selected"{{end}} href="{{ .SortBy "Hot"}}">hot</a>
           <a {{ if eq .CommentSort "Top"}}class="selected"{{end}} href="{{ .SortBy "Top"}}">top</a>
+          <a {{ if eq .CommentSort "Controversial"}}class="selected"{{end}} href="{{ .SortBy "Controversial"}}">controversial</a>
           <a {{ if eq .CommentSort "New"}}class="selected"{{end}} href="{{ .SortBy "New"}}">new</a>
           <a {{ if eq .CommentSort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
         </div>

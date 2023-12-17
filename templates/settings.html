@@ -75,6 +75,8 @@
         <select name="DefaultSortType">
           <option value="Hot"{{ if eq .Sort "Hot"}} selected{{end}}>Hot</option>
           <option value="Active"{{ if eq .Sort "Active"}} selected{{end}}>Active</option>
+          <option value="Scaled"{{ if eq .Sort "Scaled"}} selected{{end}}>Scaled</option>
+          <option value="Controversial"{{ if eq .Sort "Controversial"}} selected{{end}}>Controversial</option>
           <option value="New"{{ if eq .Sort "New"}} selected{{end}}>New</option>
           <option value="Old"{{ if eq .Sort "Old"}} selected{{end}}>Old</option>
           <option value="MostComments"{{ if eq .Sort "MostComments"}} selected{{end}}>Most Comments</option>
@@ -98,6 +100,7 @@
           <option value="New"{{ if eq .CommentSort "New"}} selected{{end}}>New</option>
           <option value="Old"{{ if eq .CommentSort "Old"}} selected{{end}}>Old</option>
           <option value="Top"{{ if eq .CommentSort "Top"}} selected{{end}}>Top</option>
+          <option value="Controversial"{{ if eq .CommentSort "Controversial"}} selected{{end}}>Controversial</option>
         </select>
       </div>
       <div>

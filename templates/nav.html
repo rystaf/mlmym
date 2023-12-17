@@ -73,6 +73,8 @@
         {{ else }}
         <li{{ if eq .Sort "Hot" }} class="selected"{{end}}><a href="{{ .SortBy "Hot" }}">hot</a></li>
         <li{{ if eq .Sort "Active" }} class="selected"{{end}}><a href="{{ .SortBy "Active" }}">active</a></li>
+        <li{{ if eq .Sort "Scaled" }} class="selected"{{end}}><a href="{{ .SortBy "Scaled" }}">scaled</a></li>
+        <li{{ if eq .Sort "Controversial" }} class="selected"{{end}}><a href="{{ .SortBy "Controversial" }}">controversial</a></li>
         <li{{ if eq .Sort "Old" }} class="selected"{{end}}><a href="{{ .SortBy "Old" }}">old</a></li>
         <li{{ if eq .Sort "New" }} class="selected"{{end}}><a href="{{ .SortBy "New" }}">new</a></li>
         <li{{ if eq .Sort "MostComments" }} class="selected"{{end}}><a href="{{ .SortBy "MostComments" }}">most comments</a></li>
