@@ -15,6 +15,9 @@
   {{ template "nsfw.html" }}
 {{ else }}
     <main>
+      {{ if and (not .Community) .Tagline }}
+      <h3>{{ markdown .Host .Tagline }}</h3>
+      {{ end }}
     {{ template "menu.html" . }}
 
   {{ if .Error }}

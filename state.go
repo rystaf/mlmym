@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -95,6 +96,7 @@ type State struct {
 	XHR               bool
 	Op                string
 	Site              *lemmy.GetSiteResponse
+	Tagline           string
 	Query             string
 	Content           string
 	SearchType        string
@@ -279,6 +281,9 @@ func (state *State) GetSite() {
 		return
 	}
 	state.Site = resp
+	if len(state.Site.Taglines) > 0 {
+		state.Tagline = state.Site.Taglines[rand.Intn(len(state.Site.Taglines))].Content
+	}
 	if !state.Site.MyUser.IsValid() {
 		return
 	}
