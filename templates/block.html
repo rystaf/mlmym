@@ -7,13 +7,27 @@
     <input type="checkbox" id="blockuser" name="blockuser" checked>
     <label for="blockuser">u/{{ fullname (index .Posts 0).Creator }}</label>
   </div>
+  {{ if and (not (index .Posts 0).Creator.Local) (ne (index .Posts 0).Creator.InstanceID .Community.CommunityView.Community.InstanceID) }}
+  <div>
+    <input type="checkbox" id="blockuserinstance" name="blockuserinstance">
+    <label for="blockuserinstance">{{ instance (index .Posts 0).Creator.ActorID }}</label>
+  </div>
+  {{ end }}
   <div>
     <input type="checkbox" id="blockcommunity" name="blockcommunity">
     <label for="blockcommunity">c/{{ fullcname .Community.CommunityView.Community }}</label>
   </div>
+  {{ if not .Community.CommunityView.Community.Local }}
+  <div>
+    <input type="checkbox" id="blockpostinstance" name="blockpostinstance">
+    <label for="blockpostinstance">{{ instance .Community.CommunityView.Community.ActorID }}</label>
+  </div>
+  {{ end }}
   <div>
     <input type="hidden" name="op" value="block_post">
     <input type="hidden" name="postid" value="{{(index .Posts 0).Post.ID}}">
+    <input type="hidden" name="userinstanceid" value="{{(index .Posts 0).Creator.InstanceID}}">
+    <input type="hidden" name="postinstanceid" value="{{.Community.CommunityView.Community.InstanceID}}">
     <input type="submit" value="block" name="submit">
     <input type="submit" value="cancel" name="submit">
   </div>

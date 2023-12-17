@@ -75,6 +75,14 @@ var funcMap = template.FuncMap{
 		}
 		return false
 	},
+	"instance": func(actorID string) string {
+		l, err := url.Parse(actorID)
+		if err != nil {
+			fmt.Println(err)
+			return ""
+		}
+		return l.Host
+	},
 	"domain": func(p Post) string {
 		if p.Post.URL.IsValid() {
 			l, err := url.Parse(p.Post.URL.String())
@@ -1229,6 +1237,20 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			state.Client.BlockPerson(context.Background(), lemmy.BlockPerson{
 				PersonID: state.Posts[0].Post.CreatorID,
 				Block:    true,
+			})
+		}
+		if r.FormValue("blockpostinstance") != "" && len(state.Posts) > 0 {
+			instanceID, _ := strconv.ParseInt(r.FormValue("postinstanceid"), 10, 64)
+			state.Client.BlockInstance(context.Background(), lemmy.BlockInstance{
+				InstanceID: instanceID,
+				Block:      true,
+			})
+		}
+		if r.FormValue("blockuserinstance") != "" && len(state.Posts) > 0 {
+			instanceID, _ := strconv.ParseInt(r.FormValue("userinstanceid"), 10, 64)
+			state.Client.BlockInstance(context.Background(), lemmy.BlockInstance{
+				InstanceID: instanceID,
+				Block:      true,
 			})
 		}
 	case "read_post":

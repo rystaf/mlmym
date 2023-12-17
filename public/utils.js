@@ -257,15 +257,31 @@ function formSubmit(e) {
       if (data.get("op") == "block_post") {
         var post = document.getElementById("p"+data.get("postid"))
         var user = post.getElementsByClassName("submitter")[0].href
+        var userinstance = user.split('@').pop()
+        if (userinstance == user) {
+          userinstance = ''
+        }
         var community = post.getElementsByClassName("community")[0].href
+        var postinstance = community.split('@').pop()
+        if (postinstance == community) {
+          postinstance = ''
+        }
         var posts = Array.prototype.slice.call(document.getElementsByClassName("post"))
         for (var i = 0; i < posts.length; i++) {
           var user2 = posts[i].getElementsByClassName("submitter")[0].href
+          var userinstance2 = user2.split('@').pop()
           var community2 = posts[i].getElementsByClassName("community")[0].href
+          var postinstance2 = community2.split('@').pop()
           if (data.get("blockcommunity") != null && community2 == community) {
             posts[i].remove()
           }
           if (data.get("blockuser") != null && user2 == user) {
+            posts[i].remove()
+          }
+          if (data.get("blockuserinstance") != null && (userinstance == userinstance2 || userinstance == postinstance2)) {
+            posts[i].remove()
+          }
+          if (data.get("blockpostinstance") != null && (postinstance == userinstance2 || postinstance == postinstance2)) {
             posts[i].remove()
           }
         }
