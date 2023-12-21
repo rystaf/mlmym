@@ -1,0 +1,159 @@
+#darkmode {
+  display: none;
+}
+#undarkmode {
+  display: block;
+}
+body {
+  background-color: #262626;
+  color: #ddd;
+}
+a {
+  color: #8cb3d9;
+}
+input[type=text], input[type=password], textarea {
+  background-color: #333;
+  color: #fff;
+  border-color: #4d4d4d
+}
+.post .rank {
+  color: #646464;
+}
+.post .score {
+  color: #646464;
+}
+.score form.link-btn input {
+  color: #646464;
+}
+.post.distinguished .title a:visited {
+  color: #228822;
+  font-weight: bold;
+}
+.title a {
+  color: #dedede;
+}
+.title a:visited {
+  color: #a6a6a6
+}
+.message b {
+  color: #ddd;
+}
+.meta {
+  color: #b4b4b4;
+}
+.comment {
+  border-color: #333;
+}
+.comment .comment,
+.comment .comment .comment .comment,
+.comment .comment .comment .comment .comment .comment,
+.comment .comment .comment .comment .comment .comment .comment .comment,
+.comment .comment .comment .comment .comment .comment .comment .comment .comment .comment {
+ background-color:#161616;
+}
+.comment,
+.comment .comment .comment,
+.comment .comment .comment .comment .comment,
+.comment .comment .comment .comment .comment .comment .comment,
+.comment .comment .comment .comment .comment .comment .comment .comment .comment {
+ background-color: #121212;
+}
+.preview h3 {
+  background-color: #333;
+  border-color: #333;
+  color: #ccc;
+}
+.meta a {
+  color: #6a98af;
+}
+#mycommunities a {
+  color: #8cb3d9;
+}
+#mycommunities a:hover {
+  background-color: #3e3e3e;
+}
+#settingspopup, #mycommunities {
+  background-color: #262626;
+}
+.expando .md {
+  background-color: #262626;
+  color: #ddd;
+  border-color: #666;
+}
+.side .stats {
+  background-color: #393939;
+  border-color: #666;
+}
+.create a div {
+  background-color: #444444;
+  border: 0;
+}
+.create a div:hover {
+  background-color: #333333;
+}
+.create a {
+  color: white;
+}
+.create a:hover{
+  color: #0cbe30;
+}
+.create input[type=submit],
+.search .query input, 
+.create input[type=file],
+.create select {
+  color: #fff;
+  border: 1px outset gray;
+  background-color: #4d4d4d;
+}
+.moderators a {
+  color: #6a98af;
+}
+.community .description {
+  background-color: #333;
+  color: #ddd;
+  border-color: #777;
+}
+nav {
+  background-color: #696969;
+}
+nav .communities {
+  background-color: #cccccc;
+}
+nav .communities a {
+  color: #000;
+}
+nav .communities a.more {
+  background-color: #cccccc;
+}
+nav .title, nav > span {
+  color: #ececec;
+}
+nav ul a, nav ul .selected a {
+  background-color: #262626;
+  color: #ddd;
+}
+nav ul .selected a {
+  color: #d25a32;
+  border-bottom: 1px solid #262626;
+}
+nav .right {
+  background-color: #333333;
+}
+nav .right a, nav .right input[type=submit]{
+  color: #dadada;
+}
+.commentmenu .selected, .menu .selected {
+  color: #ddd;
+}
+.commentmenu a, .dark .menu {
+  color: #6a98af;
+}
+.warning {
+  background-color: #544400;
+}
+.highlight{
+  background-color: #4c4c4c;
+}
+form.create div {
+  background-color: #181818
+}

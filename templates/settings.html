@@ -4,9 +4,12 @@
     <title>{{  host .Host }}: preferences</title>
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
     <link rel="stylesheet" href="/_/static/style.css?v={{ .Version }}">
+    {{ if not .Dark }}
+    <link rel="stylesheet" href="/_/static/dark.css?v={{ .Version }}" media="(prefers-color-scheme:dark)">
+    {{ end }}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
-  <body {{ if .Dark}}class="dark"{{end}}>
+  <body {{ if is .Dark}}class="dark"{{end}}>
     <noscript>
       <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
@@ -103,11 +106,17 @@
           <option value="Controversial"{{ if eq .CommentSort "Controversial"}} selected{{end}}>Controversial</option>
         </select>
       </div>
-      <div>
+      <div id="darkmode">
         <label>
           dark mode
         </label>
-        <input type="checkbox" name="darkmode" {{ if .Dark }}checked{{end}}>
+        <input type="checkbox" name="darkmode" {{ if is .Dark }}checked{{end}}>
+      </div>
+      <div id="undarkmode">
+        <label>
+          dark mode
+        </label>
+        <input type="checkbox" name="undarkmode" checked>
       </div>
       <div class="scripting">
         <label>

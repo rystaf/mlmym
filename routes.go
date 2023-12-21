@@ -169,6 +169,12 @@ var funcMap = template.FuncMap{
 	"add": func(a int64, b int) int {
 		return int(a) + b
 	},
+	"is": func(x *bool) bool {
+		if x == nil {
+			return false
+		}
+		return *x
+	},
 }
 
 func LemmyLinkRewrite(input string, host string, lemmy_domain string) (body string) {
@@ -268,9 +274,11 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	state.Sort = getCookie(r, "DefaultSortType")
 	state.CommentSort = getCookie(r, "DefaultCommentSortType")
 	if dark := getCookie(r, "Dark"); dark != "" {
-		state.Dark = dark != "0"
-	} else {
-		state.Dark = os.Getenv("DARK") != ""
+		state.Dark = new(bool)
+		*state.Dark = dark != "0"
+	} else if dark := os.Getenv("DARK"); dark != "" {
+		state.Dark = new(bool)
+		*state.Dark = true
 	}
 	state.ShowNSFW = getCookie(r, "ShowNSFW") != ""
 	state.HideInstanceNames = getCookie(r, "HideInstanceNames") != ""
@@ -748,12 +756,12 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			deleteCookie(w, state.Host, name)
 			setCookie(w, "", name, r.FormValue(name))
 		}
-		if r.FormValue("darkmode") != "" {
-			setCookie(w, "", "Dark", "1")
-			state.Dark = true
-		} else {
+		state.Dark = new(bool)
+		if r.FormValue("undarkmode") == "" {
 			setCookie(w, "", "Dark", "0")
-			state.Dark = false
+		} else if r.FormValue("darkmode") != "" {
+			setCookie(w, "", "Dark", "1")
+			*state.Dark = true
 		}
 		if r.FormValue("shownsfw") != "" {
 			setCookie(w, "", "ShowNSFW", "1")

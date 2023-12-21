@@ -3,23 +3,11 @@ body {
   margin: 0px;
   padding-bottom: 20px;
 }
-body.dark {
-  background-color: #262626;
-  color: #ddd;
-}
 code {
   word-wrap: break-word;
 }
 summary {
   cursor: pointer;
-}
-.dark a {
-  color: #8cb3d9;
-}
-.dark input[type=text], .dark input[type=password], .dark textarea {
-  background-color: #333;
-  color: #fff;
-  border-color: #4d4d4d
 }
 .rank, .thumb, .score {
   float: left;
@@ -60,18 +48,12 @@ summary {
   text-align: right;
   min-width: 21px;
 }
-.dark .post .rank {
-  color: #646464;
-}
 .post .score {
   color: #c6c6c6;
   font-size: 12px;
   font-weight: 700;
   text-align: center;
   min-width: 42px;
-}
-.dark .post .score {
-  color: #646464;
 }
 .comment .score {
   clear:left;
@@ -95,9 +77,6 @@ summary {
   font-size: 20px;
   line-height: 15px;
 }
-.dark .score form.link-btn input {
-  color: #646464;
-}
 .comment .score form.link-btn input {
   line-height: 17px;
 }
@@ -116,15 +95,9 @@ summary {
   display: inline;
 }
 .post.distinguished .title a, .post.announcement .title a,
-.dark .post.distinguished .title a:visited, .post.announcement .title a:visited {
+.post.announcement .title a:visited {
   color: #228822;
   font-weight: bold;
-}
-.dark .title a {
-  color: #dedede;
-}
-.dark .title a:visited {
-  color: #a6a6a6
 }
 .post.deleted .title a {
   text-decoration: line-through;
@@ -163,22 +136,12 @@ summary {
 .message b {
   color: #000;
 }
-.dark .message b {
-  color: #ddd;
-}
-.dark .meta {
-  color: #b4b4b4;
-}
-
 .comment {
   font-size: 14px;
   margin: 0px 0px 5px 0px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
   padding: 10px 10px 0px 7px;
-}
-.dark .comment {
-  border-color: #333;
 }
 .activity .comment {
   border: 0px;
@@ -195,25 +158,11 @@ summary {
 .comment .comment .comment .comment .comment .comment .comment .comment .comment .comment {
  background-color:#f7f7f8;
 }
-.dark .comment .comment,
-.dark .comment .comment .comment .comment,
-.dark .comment .comment .comment .comment .comment .comment,
-.dark .comment .comment .comment .comment .comment .comment .comment .comment,
-.dark .comment .comment .comment .comment .comment .comment .comment .comment .comment .comment {
- background-color:#161616;
-}
 .comment .comment .comment,
 .comment .comment .comment .comment .comment,
 .comment .comment .comment .comment .comment .comment .comment,
 .comment .comment .comment .comment .comment .comment .comment .comment .comment {
  background-color:#fff;
-}
-.dark .comment,
-.dark .comment .comment .comment,
-.dark .comment .comment .comment .comment .comment,
-.dark .comment .comment .comment .comment .comment .comment .comment,
-.dark .comment .comment .comment .comment .comment .comment .comment .comment .comment {
- background-color: #121212;
 }
 .comment .meta {
   font-size: 10px;
@@ -228,11 +177,6 @@ summary {
   padding: 10px;
   font-size: 14px;
 }
-.dark .preview h3 {
-  background-color: #333;
-  border-color: #333;
-  color: #ccc;
-}
 .preview .comment {
   margin-top: 5px;
   padding: 0px;
@@ -245,9 +189,6 @@ summary {
   text-decoration: none;
   font-size: 10px;
   font-weight: 700;
-}
-.dark .meta a {
-  color: #6a98af;
 }
 .comment .meta a.distinguished.admin, .post.distinguished a.admin, .post.announcement a.admin {
   background-color: #ff0011;
@@ -484,7 +425,7 @@ form.nsfw div {
   border-left: 2px solid #c5c1ad;
   padding: 0 8px;
 }
-.buttons a, .buttons > form input, .comment .buttons form input {
+.dark .buttons a, .buttons a, .buttons > form input, .comment .buttons form input {
   text-decoration: none;
   color: #888;
   display: inline-block;
@@ -590,12 +531,6 @@ form.blockpost {
   display: block;
   padding: 0px 3px;
 }
-.dark #mycommunities a {
-  color: #8cb3d9;
-}
-.dark #mycommunities a:hover {
-  background-color: #3e3e3e;
-}
 #mycommunities a:hover {
   background-color: #c7def7;
 }
@@ -605,9 +540,6 @@ form.blockpost {
 }
 #settingspopup form {
   margin: 0px;
-}
-.dark #settingspopup, .dark #mycommunities {
-  background-color: #262626;
 }
 #settingspopup.open, #mycommunities.open {
   display: inline-block;
@@ -647,11 +579,6 @@ form.blockpost {
 }
 .expando.open.showimage .md {
   display: none;
-}
-.dark .expando .md {
-  background-color: #262626;
-  color: #ddd;
-  border-color: #666;
 }
 .expando p, .comment p, .message p {
   margin-top: 0;
@@ -729,10 +656,6 @@ main {
   background-color: #EFF7FF;
   border-radius: 3px;
 }
-.dark .side .stats {
-  background-color: #393939;
-  border-color: #666;
-}
 .side .stats b span {
   font-size: 22px;
 }
@@ -772,15 +695,8 @@ main {
   padding: 5px;
   border: 1px solid #369;
 }
-.dark .create a div {
-  background-color: #444444;
-  border: 0;
-}
 .create a div:hover {
   background-color: #369;
-}
-.dark .create a div:hover {
-  background-color: #333333;
 }
 .create a {
   font-weight: bold;
@@ -788,22 +704,8 @@ main {
   font-size: 13px;
   color: #369;
 }
-.dark .create a {
-  color: white;
-}
 .create a:hover {
   color: white;
-}
-.dark .create a:hover{
-  color: #0cbe30;
-}
-.dark .create input[type=submit],
-.dark .search .query input, 
-.dark .create input[type=file],
-.dark .create select {
-  color: #fff;
-  border: 1px outset gray;
-  background-color: #4d4d4d;
 }
 h1, h2 {
   margin: 5px 0px;
@@ -828,9 +730,6 @@ h1, h2 {
   text-decoration: none;
   color: #369;
 }
-.dark .moderators a {
-  color: #6a98af;
-}
 main > .community {
   margin: 20px 50px;
   max-width: 840px;
@@ -846,11 +745,6 @@ main > .community {
   max-height: 170px;
   overflow: auto;
 }
-.dark .community .description {
-  background-color: #333;
-  color: #ddd;
-  border-color: #777;
-}
 .community .details {
   margin-left: 36px;
 }
@@ -861,10 +755,6 @@ nav {
   margin-bottom: 5px;
   position: relative;
 }
-.dark nav {
-  background-color: #696969;
-}
-
 nav .communities {
  background-color: #f0f0f0;
  color: gray;
@@ -878,12 +768,6 @@ nav .communities {
 nav .communities a {
   margin: 0px 2px;
 }
-.dark nav .communities {
-  background-color: #cccccc;
-}
-.dark nav .communities a {
-  color: #000;
-}
 nav .communities a.more {
   background-color: #f0f0f0;
   color: black;
@@ -892,9 +776,6 @@ nav .communities a.more {
   position: absolute;
   right: 0;
   margin: 0;
-}
-.dark nav .communities a.more {
-  background-color: #cccccc;
 }
 .orangered, .orangered b {
   color: orangered !important;
@@ -915,9 +796,6 @@ nav .title, nav > span {
   color: black;
   text-decoration: none;
   font-variant: small-caps;
-}
-.dark nav .title, .dark nav > span {
-  color: #ececec;
 }
 nav a.title {
   margin-left: 70px;
@@ -976,11 +854,6 @@ nav ul a {
   text-decoration: none;
   padding: 2px 6px 0 6px;
 }
-.dark nav ul a {
-  background-color: #262626;
-  color: #ddd;
-}
-
 .selected {
   font-weight: bold;
 }
@@ -991,11 +864,6 @@ nav .selected a {
   border: 1px solid #00a846;
   border-bottom: 1px solid white;
 }
-.dark nav .selected a {
-  color: #d25a32;
-  border-bottom: 1px solid #262626;
-}
-
 nav .right {
   position: absolute;
   right: 0px;
@@ -1009,9 +877,6 @@ nav .right {
   font-size: 10px;
   z-index: 101;
 }
-.dark nav .right {
-  background-color: #333333;
-}
 nav .right a.mailbox {
   font-size: 21px;
   position: relative;
@@ -1021,9 +886,6 @@ nav .right a.mailbox {
 nav .right a, nav .right input[type=submit] {
   color: #369;
   text-decoration: none;
-}
-.dark nav .right a, .dark nav .right input[type=submit]{
-  color: #dadada;
 }
 nav .right form, .comment form, form.link-btn {
   display: inline-block;
@@ -1054,12 +916,6 @@ nav .right form input, .comment .buttons input, form.link-btn input {
   font-weight: bold;
   text-decoration: none;
 }
-.dark .commentmenu .selected, .dark .menu .selected {
-  color: #ddd;
-}
-.dark .commentmenu a, .dark .menu {
-  color: #6a98af;
-}
 .warning {
   background-color: #f6e69f;
   border-color: #ffa500;
@@ -1068,17 +924,10 @@ nav .right form input, .comment .buttons input, form.link-btn input {
   padding: 5px 10px;
   margin: 5px 10px;
 }
-.dark .warning {
-  background-color: #544400;
-}
 .highlight {
   background-color: #ffc;
   padding-left: 5px;
 }
-.dark .highlight{
-  background-color: #4c4c4c;
-}
-
 form.create {
   width: 520px;
 }
@@ -1088,9 +937,6 @@ form.create div {
   padding: 5px 5px 10px 5px;
   background-color: #cee3f8;
   border-radius: 4px;
-}
-.dark form.create div {
-  background-color: #181818
 }
 form.create label {
   display: block;
@@ -1172,4 +1018,160 @@ form.create input[type=file], form.create select {
 .signup .question {
   max-width: 500px;
   font-size: 13px;
+}
+body.dark {
+  background-color: #262626;
+  color: #ddd;
+}
+.dark a {
+  color: #8cb3d9;
+}
+.dark input[type=text], .dark input[type=password], .dark textarea {
+  background-color: #333;
+  color: #fff;
+  border-color: #4d4d4d
+}
+.dark .post .rank {
+  color: #646464;
+}
+.dark .post .score {
+  color: #646464;
+}
+.dark .score form.link-btn input {
+  color: #646464;
+}
+.dark .post.distinguished .title a:visited {
+  color: #228822;
+  font-weight: bold;
+}
+.dark .title a {
+  color: #dedede;
+}
+.dark .title a:visited {
+  color: #a6a6a6
+}
+.dark .message b {
+  color: #ddd;
+}
+.dark .meta {
+  color: #b4b4b4;
+}
+.dark .comment {
+  border-color: #333;
+}
+.dark .comment .comment,
+.dark .comment .comment .comment .comment,
+.dark .comment .comment .comment .comment .comment .comment,
+.dark .comment .comment .comment .comment .comment .comment .comment .comment,
+.dark .comment .comment .comment .comment .comment .comment .comment .comment .comment .comment {
+ background-color:#161616;
+}
+.dark .comment,
+.dark .comment .comment .comment,
+.dark .comment .comment .comment .comment .comment,
+.dark .comment .comment .comment .comment .comment .comment .comment,
+.dark .comment .comment .comment .comment .comment .comment .comment .comment .comment {
+ background-color: #121212;
+}
+.dark .preview h3 {
+  background-color: #333;
+  border-color: #333;
+  color: #ccc;
+}
+.dark .meta a {
+  color: #6a98af;
+}
+.dark #mycommunities a {
+  color: #8cb3d9;
+}
+.dark #mycommunities a:hover {
+  background-color: #3e3e3e;
+}
+.dark #settingspopup, .dark #mycommunities {
+  background-color: #262626;
+}
+.dark .expando .md {
+  background-color: #262626;
+  color: #ddd;
+  border-color: #666;
+}
+.dark .side .stats {
+  background-color: #393939;
+  border-color: #666;
+}
+.dark .create a div {
+  background-color: #444444;
+  border: 0;
+}
+.dark .create a div:hover {
+  background-color: #333333;
+}
+.dark .create a {
+  color: white;
+}
+.dark .create a:hover{
+  color: #0cbe30;
+}
+.dark .create input[type=submit],
+.dark .search .query input, 
+.dark .create input[type=file],
+.dark .create select {
+  color: #fff;
+  border: 1px outset gray;
+  background-color: #4d4d4d;
+}
+.dark .moderators a {
+  color: #6a98af;
+}
+.dark .community .description {
+  background-color: #333;
+  color: #ddd;
+  border-color: #777;
+}
+.dark nav {
+  background-color: #696969;
+}
+.dark nav .communities {
+  background-color: #cccccc;
+}
+.dark nav .communities a {
+  color: #000;
+}
+.dark nav .communities a.more {
+  background-color: #cccccc;
+}
+.dark nav .title, .dark nav > span {
+  color: #ececec;
+}
+.dark nav ul a {
+  background-color: #262626;
+  color: #ddd;
+}
+.dark nav .selected a {
+  color: #d25a32;
+  border-bottom: 1px solid #262626;
+}
+.dark nav .right {
+  background-color: #333333;
+}
+.dark nav .right a, .dark nav .right input[type=submit]{
+  color: #dadada;
+}
+.dark .commentmenu .selected, .dark .menu .selected {
+  color: #ddd;
+}
+.dark .commentmenu a, .dark .menu {
+  color: #6a98af;
+}
+.dark .warning {
+  background-color: #544400;
+}
+.dark .highlight{
+  background-color: #4c4c4c;
+}
+.dark form.create div {
+  background-color: #181818
+}
+#undarkmode {
+  display: none;
 }

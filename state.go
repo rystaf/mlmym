@@ -101,7 +101,7 @@ type State struct {
 	Content           string
 	SearchType        string
 	Captcha           *lemmy.CaptchaResponse
-	Dark              bool
+	Dark              *bool
 	ShowNSFW          bool
 	HideInstanceNames bool
 	HideThumbnails    bool

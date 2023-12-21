@@ -5,7 +5,7 @@
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
     <link rel="stylesheet" href="/_/static/style.css?v={{ .Version }}">
   </head>
-  <body{{ if .Dark }} class="dark"{{end}}>
+  <body{{ if is .Dark }} class="dark"{{end}}>
     <noscript>
       <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
