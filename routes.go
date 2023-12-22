@@ -153,6 +153,9 @@ var funcMap = template.FuncMap{
 		}
 		body = buf.String()
 		body = strings.Replace(body, `<img `, `<img loading="lazy" `, -1)
+		if host != "." {
+			body = RegReplace(body, `href="/`, `href="./`)
+		}
 		body = RegReplace(body, `href="(https:\/\/[a-zA-Z0-9\.\-]+\/(c|u|comment|post)\/[^#\?]*?)"`, `href="/`+host+`/link?url=$1"`)
 		body = RegReplace(body, `::: ?spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(body)
