@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -111,9 +112,13 @@ var funcMap = template.FuncMap{
 		}
 		return ""
 	},
-	"isImage": func(url string) bool {
-		ext := url[len(url)-4:]
-		if ext == "jpeg" || ext == ".jpg" || ext == ".png" || ext == "webp" || ext == ".gif" {
+	"isImage": func(u string) bool {
+		p, err := url.Parse(u)
+		if err != nil || p.Path == "" {
+			return false
+		}
+		ext := filepath.Ext(p.Path)
+		if ext == ".jpeg" || ext == ".jpg" || ext == ".png" || ext == ".webp" || ext == ".gif" {
 			return true
 		}
 		return false

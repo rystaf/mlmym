@@ -548,9 +548,6 @@ form.blockpost {
 .expando.open{
   display: block;
 }
-.expando .embed {
-  text-align: center;
-}
 .expando .image {
   max-width: 578px;
 }
