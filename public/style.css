@@ -59,6 +59,8 @@ summary {
   clear:left;
   margin-right: 4px;
   overflow:hidden;
+  min-width: 3px;
+  min-height: 38px;
 }
 .comment .content {
   line-height: 20px;
@@ -138,7 +140,7 @@ summary {
 }
 .comment {
   font-size: 14px;
-  margin: 0px 0px 5px 0px;
+  margin: 0px 0px 10px 0px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
   padding: 10px 10px 0px 7px;
@@ -230,7 +232,7 @@ form.savecomment {
   margin: 0px 0px 10px 20px;
 }
 .comment .children {
-  margin: 5px 0px 10px 15px;
+  margin: 5px 0px 5px 15px;
 }
 .savecomment textarea {
   margin: 5px 0px;
@@ -280,9 +282,8 @@ form.savecomment {
 .children .morecomments {
 }
 .morecomments {
-  height: 20px;
+  height: 15px;
   clear: left;
-  margin: 0px 0px 10px 0px;
   font-size: 10px;
 }
 .morecomments a {
@@ -500,7 +501,7 @@ form.blockpost {
 }
 .expando {
   display: none;
-  max-width: 870px;
+  max-width: 900px;
   margin-top: 5px;
   position: relative;
   color: #000;
@@ -551,18 +552,7 @@ form.blockpost {
   text-align: center;
 }
 .expando .image {
-  display: block;
-  overflow: hidden;
-  resize: both;
   max-width: 578px;
-  margin: 0 auto;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: top left;
-}
-.expando .image img {
-  visibility: hidden;
-  max-width: 100%;
 }
 .expando .md {
   background-color: #fafafa;
@@ -570,7 +560,6 @@ form.blockpost {
   border-radius: 7px;
   padding: 5px 10px;
   margin: 5px auto;
-  max-width: 578px;
   font-size: 14px;
   overflow: auto;
 }

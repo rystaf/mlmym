@@ -1,6 +1,6 @@
 <div class="comment{{if or (lt .P.Counts.Score -5) .P.Comment.Deleted .P.Comment.Removed }} hidden{{end}}" id="c{{.P.Comment.ID}}">
-{{ if .State.Session }}
       <div class="score">
+{{ if .State.Session }}
       <form class="link-btn{{ if eq .P.MyVote.String "1"}} like{{ else if eq .P.MyVote.String "-1"}} dislike{{end}}" method="POST">
         <input type="submit" name="submit" value="▲"> 
         <div></div>
@@ -11,8 +11,8 @@
         <input type="hidden" name="commentid" value="{{.P.Comment.ID }}">
         <input type="submit" name="submit" value="▼"> 
       </form>
-      </div>
 {{ end }}
+      </div>
     <div class="meta">
       <a class="minimize" href="" for="c{{.P.Comment.ID}}">
 {{- if or (lt .P.Counts.Score -5) .P.Comment.Deleted -}}

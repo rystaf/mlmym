@@ -30,7 +30,34 @@ function postClick(e) {
     if (id = parseYoutube(url)) {
       targ.getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
     }
+    // TODO set image handler
+    var images = bdy.getElementsByTagName('img')
+    for (var i = 0; i < images.length; i++) {
+      images[i].onmousedown = function(e) {
+        e.preventDefault()
+        startCoordinates = [e.clientX, e.clientY]
+        startSize = [e.target.height, e.target.width]
+        resizeTarget = e.target
+        return false
+      }
+    }
   }
+}
+var resizeTarget
+var startCoordinates = [0,0]
+var startSize = [0,0]
+document.onmousemove = function(e) {
+  if (resizeTarget) {
+    resizeTarget.style.maxWidth = 'unset';
+    let y = startSize[0] + (e.clientY - startCoordinates[1]) * 1.5
+    let x = startSize[1] + (e.clientX - startCoordinates[0]) * 1.5
+    let ratio = Math.min(y/startSize[0], x/startSize[1])
+    resizeTarget.height = startSize[0]*ratio
+    resizeTarget.width = startSize[1]*ratio
+  }
+}
+document.onmouseup = function(e){
+ resizeTarget = false;
 }
 function uptil (el, f) { 
   if (el) return f(el) ? el : uptil(el.parentNode, f) 

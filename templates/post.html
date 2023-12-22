@@ -116,19 +116,16 @@
             </form>
           {{ end }}
           </div>
-        </div>
-        <div></div>
-        <div class="clearleft"></div>
           <div class="expando{{ if eq .Rank 0 }} open{{ end}}">
 {{ if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
             <div class="md">{{ markdown .State.Host .Post.Body.String }}</div>
 {{ end }}
 {{ if isImage .Post.URL.String}}
-          <div class="image" style="background-image: url({{.Post.URL}})">
-            <img loading="lazy" src="{{ .Post.URL }}">
-          </div>
+            <img class="image" loading="lazy" src="{{ .Post.URL }}">
 {{ end }}
             <div class="embed"></div>
           </div>
+        </div>
+          <div class="clearleft"></div>
       </div>
 {{ end }}
