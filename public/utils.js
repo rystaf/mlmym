@@ -49,11 +49,13 @@ var startSize = [0,0]
 document.onmousemove = function(e) {
   if (resizeTarget) {
     resizeTarget.style.maxWidth = 'unset';
-    let y = startSize[0] + (e.clientY - startCoordinates[1]) * 1.5
-    let x = startSize[1] + (e.clientX - startCoordinates[0]) * 1.5
+    let y = startSize[0] + (e.clientY - startCoordinates[1]) *3
+    let x = startSize[1] + (e.clientX - startCoordinates[0]) *3
     let ratio = Math.min(y/startSize[0], x/startSize[1])
-    resizeTarget.height = startSize[0]*ratio
-    resizeTarget.width = startSize[1]*ratio
+    let newY = startSize[0]*ratio
+    let newX = startSize[1]*ratio
+    resizeTarget.height = newY > 30 ? newY : 30
+    resizeTarget.width = newX > 30 ? newX : 30
   }
 }
 document.onmouseup = function(e){
