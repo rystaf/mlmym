@@ -68,12 +68,12 @@
         </label>
         {{ end }}
         {{ if and .Site .Site.SiteView.LocalSite.CaptchaEnabled .Captcha }}
-        <figure><img src="data:image/png;base64,{{ .Captcha.Png }}"></figure>
-        <figure><audio controls src="data:audio/wav;base64,{{ .Captcha.Wav }}"></audio></figure>
+        <figure><img src="data:image/png;base64,{{ .Captcha.PNG }}"></figure>
+        <figure><audio controls src="data:audio/wav;base64,{{ .Captcha.WAV }}"></audio></figure>
         <label>
           enter code
           <div><input required name="captchaanswer" type="text"></div>
-          <input type="hidden" name="captchauuid" value="{{ .Captcha.Uuid }}">
+          <input type="hidden" name="captchauuid" value="{{ .Captcha.UUID }}">
         </label>
         {{ end }}
         {{ if and .Site .Site.SiteView.LocalSite.EnableNSFW }}
