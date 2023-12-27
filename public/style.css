@@ -545,11 +545,14 @@ form.blockpost {
 #settingspopup.open, #mycommunities.open {
   display: inline-block;
 }
+.expando {
+  text-align: center;
+}
 .expando.open{
   display: block;
 }
 .expando .image {
-  max-width: 578px;
+  max-width: 100%;
 }
 .expando .md {
   background-color: #fafafa;
@@ -615,6 +618,12 @@ main {
   margin: 0px 10px;
 }
 @media (min-width: 900px) {
+  .expando {
+    text-align: left;
+  }
+  .expando .image {
+    max-width: 578px;
+  }
   .side {
     display: block;
     position: absolute;

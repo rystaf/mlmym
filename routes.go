@@ -357,8 +357,8 @@ func GetRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	data["Title"] = r.Host
 	if dark := getCookie(r, "Dark"); dark != "" {
 		data["Dark"] = dark != "0"
-	} else {
-		data["Dark"] = os.Getenv("DARK") != ""
+	} else if dark := os.Getenv("DARK"); dark != "" {
+		data["Dark"] = true
 	}
 	tmpl, err := GetTemplate("root.html")
 	if err != nil {

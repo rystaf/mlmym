@@ -12,6 +12,9 @@ function request(url, params, callback, errorcallback = function(){}) {
   xmlHttp.open(method, url, true);
   xmlHttp.send(params);
 }
+var resizeTarget
+var startCoordinates = [0,0]
+var startSize = [0,0]
 function postClick(e) {
   e = e || window.event;
   if (e.target.className.indexOf("expando-button") == -1) { return }
@@ -24,28 +27,15 @@ function postClick(e) {
     btn.className = "expando-button"
     targ.getElementsByClassName("embed")[0].innerHTML = ""
   } else {
+    if (window.innerWidth <= 800) targ.appendChild(bdy);
     bdy.className = 'expando open';
     btn.className = "expando-button open"
     var url = targ.getElementsByClassName("url")[0].href
     if (id = parseYoutube(url)) {
       targ.getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
     }
-    // TODO set image handler
-    var images = bdy.getElementsByTagName('img')
-    for (var i = 0; i < images.length; i++) {
-      images[i].onmousedown = function(e) {
-        e.preventDefault()
-        startCoordinates = [e.clientX, e.clientY]
-        startSize = [e.target.height, e.target.width]
-        resizeTarget = e.target
-        return false
-      }
-    }
   }
 }
-var resizeTarget
-var startCoordinates = [0,0]
-var startSize = [0,0]
 document.onmousemove = function(e) {
   if (resizeTarget) {
     resizeTarget.style.maxWidth = 'unset';
@@ -58,9 +48,9 @@ document.onmousemove = function(e) {
     resizeTarget.width = newX > 30 ? newX : 30
   }
 }
-document.onmouseup = function(e){
+window.addEventListener('mouseup', function(e){
  resizeTarget = false;
-}
+})
 function uptil (el, f) { 
   if (el) return f(el) ? el : uptil(el.parentNode, f) 
 }
@@ -490,6 +480,16 @@ function setup() {
         posts[i].getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
       } else {
         btn.className = "expando-button"
+      }
+    }
+    let images = posts[i].getElementsByTagName('img')
+    for (let i = 0; i < images.length; i++) {
+      images[i].onmousedown = function(e) {
+        e.preventDefault()
+        startCoordinates = [e.clientX, e.clientY]
+        startSize = [e.target.height, e.target.width]
+        resizeTarget = e.target
+        return false
       }
     }
   }
