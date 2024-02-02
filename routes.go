@@ -966,6 +966,10 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		Render(w, "index.html", state)
 		return
 	}
+	host := state.Host
+	if host == "." {
+		host = os.Getenv("LEMMY_DOMAIN")
+	}
 	switch r.FormValue("op") {
 	case "leave":
 		communityid, _ := strconv.ParseInt(r.FormValue("communityid"), 10, 64)
@@ -1053,7 +1057,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Icon = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Icon = lemmy.NewOptional("https://" + host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		if file, handler, err := r.FormFile("banner"); err == nil {
 			pres, err := state.UploadImage(file, handler)
@@ -1062,7 +1066,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Banner = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Banner = lemmy.NewOptional("https://" + host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		resp, err := state.Client.CreateCommunity(context.Background(), community)
 		if err == nil {
@@ -1094,7 +1098,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Icon = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Icon = lemmy.NewOptional("https://" + host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		if file, handler, err := r.FormFile("banner"); err == nil {
 			pres, err := state.UploadImage(file, handler)
@@ -1103,7 +1107,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			community.Banner = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			community.Banner = lemmy.NewOptional("https://" + host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		resp, err := state.Client.EditCommunity(context.Background(), community)
 		if err == nil {
@@ -1138,7 +1142,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			post.URL = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			post.URL = lemmy.NewOptional("https://" + host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 		if r.FormValue("body") != "" {
 			post.Body = lemmy.NewOptional(r.FormValue("body"))
@@ -1179,7 +1183,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			post.URL = lemmy.NewOptional("https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename)
+			post.URL = lemmy.NewOptional("https://" + host + "/pictrs/image/" + pres.Files[0].Filename)
 		}
 
 		resp, err := state.Client.EditPost(context.Background(), post)
@@ -1347,7 +1351,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			content += ("![](https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename + ")")
+			content += ("![](https://" + host + "/pictrs/image/" + pres.Files[0].Filename + ")")
 		}
 		if r.FormValue("submit") == "save" {
 			createComment := lemmy.CreateComment{
@@ -1408,7 +1412,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				Render(w, "index.html", state)
 				return
 			}
-			content += ("![](https://" + state.Host + "/pictrs/image/" + pres.Files[0].Filename + ")")
+			content += ("![](https://" + host + "/pictrs/image/" + pres.Files[0].Filename + ")")
 		}
 
 		if r.FormValue("submit") == "save" {

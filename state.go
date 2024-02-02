@@ -683,7 +683,11 @@ func (state *State) UploadImage(file multipart.File, header *multipart.FileHeade
 	}
 	io.Copy(part, file)
 	writer.Close()
-	req, err := http.NewRequest("POST", "https://"+state.Host+"/pictrs/image", body)
+	host := state.Host
+	if host == "." {
+		host = os.Getenv("LEMMY_DOMAIN")
+	}
+	req, err := http.NewRequest("POST", "https://"+host+"/pictrs/image", body)
 	if err != nil {
 		return nil, err
 	}
