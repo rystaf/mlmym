@@ -156,7 +156,7 @@ var funcMap = template.FuncMap{
 		if host != "." {
 			body = RegReplace(body, `href="/`, `href="./`)
 		}
-		body = RegReplace(body, `href="(https:\/\/[a-zA-Z0-9\.\-]+\/(c|u|comment|post)\/[^#\?]*?)"`, `href="/`+host+`/link?url=$1"`)
+		//body = RegReplace(body, `href="(https:\/\/[a-zA-Z0-9\.\-]+\/(c|u|comment|post)\/[^#\?]*?)"`, `href="/`+host+`/link?url=$1"`)
 		body = RegReplace(body, `::: ?spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(body)
 	},
@@ -1490,6 +1490,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	http.Redirect(w, r, r.URL.String(), 301)
 }
 func GetLink(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	ref, _ := url.Parse(r.Referer())
+	if r.Host != ref.Host {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Referer"))
+		return
+	}
 	var dest *url.URL
 	m, _ := url.ParseQuery(r.URL.RawQuery)
 	if len(m["url"]) > 0 {
