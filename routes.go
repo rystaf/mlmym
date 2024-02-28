@@ -1560,7 +1560,7 @@ func GetRouter() *httprouter.Router {
 		router.GET("/:host/create_community", middleware(GetCreateCommunity))
 		router.POST("/:host/create_community", middleware(UserOp))
 		router.GET("/:host/communities", middleware(GetCommunities))
-		router.GET("/:host/link", middleware(GetLink))
+		//router.GET("/:host/link", middleware(GetLink))
 	} else {
 		router.ServeFiles("/_/static/*filepath", http.Dir("public"))
 		router.GET("/", middleware(GetFrontpage))
@@ -1593,7 +1593,7 @@ func GetRouter() *httprouter.Router {
 		router.GET("/create_community", middleware(GetCreateCommunity))
 		router.POST("/create_community", middleware(UserOp))
 		router.GET("/communities", middleware(GetCommunities))
-		router.GET("/link", middleware(GetLink))
+		//router.GET("/link", middleware(GetLink))
 	}
 	return router
 }
