@@ -545,9 +545,6 @@ form.blockpost {
 #settingspopup.open, #mycommunities.open {
   display: inline-block;
 }
-.expando {
-  text-align: center;
-}
 .expando.open{
   display: block;
 }
@@ -969,7 +966,7 @@ form.create input[type=file], form.create select {
   width: 150px;
   margin-right: 5px;
   text-align: right;
- 
+
 }
 .preferences input[type=submit] {
   margin-top:10px;
@@ -1108,7 +1105,7 @@ body.dark {
   color: #0cbe30;
 }
 .dark .create input[type=submit],
-.dark .search .query input, 
+.dark .search .query input,
 .dark .create input[type=file],
 .dark .create select {
   color: #fff;
