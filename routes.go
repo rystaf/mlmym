@@ -1329,7 +1329,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.Client.LikeComment(context.Background(), post)
 		if r.FormValue("xhr") != "" {
 			state.XHR = true
-			state.GetComment(commentid)
+			if r.URL.Path == "/inbox" || r.URL.Path[:3] == "/u/" {
+				state.Query = "show context link"
+				state.GetSingleComment(commentid)
+			} else {
+				state.GetComment(commentid)
+			}
 			Render(w, "index.html", state)
 			return
 		}

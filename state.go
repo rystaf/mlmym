@@ -298,6 +298,23 @@ func (state *State) GetSite() {
 	})
 }
 
+func (state *State) GetSingleComment(commentid int64) {
+	state.CommentID = commentid
+	cresp, err := state.Client.Comment(context.Background(), lemmy.GetComment{
+		ID: commentid,
+	})
+	if err != nil {
+		fmt.Println(err)
+		state.Status = http.StatusInternalServerError
+		return
+	}
+	state.Comments = []Comment{Comment{
+		P:     cresp.CommentView,
+		State: state,
+		Op:    state.Op,
+	}}
+}
+
 func (state *State) GetComment(commentid int64) {
 	if state.Sort != "Hot" && state.Sort != "Top" && state.Sort != "Old" && state.Sort != "New" {
 		state.Sort = "Hot"
@@ -449,6 +466,7 @@ func (state *State) GetMessages() {
 					Creator:   m.Creator,
 					Community: m.Community,
 					Counts:    m.Counts,
+					MyVote:    m.MyVote,
 				},
 				Op:    unread,
 				State: state,
