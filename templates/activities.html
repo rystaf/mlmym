@@ -8,10 +8,6 @@
       {{ end }}
       <a href="/{{$state.Host}}/post/{{ $activity.Comment.P.Post.ID}}">{{ $activity.Comment.P.Post.Name}}</a>
       <span class="meta">
-      {{ if $state.User}}
-      by
-      <a href="">{{$state.User.PersonView.Person.Name }}</a>
-      {{ end }}
       in
       <a href="/{{$state.Host}}/c/{{ fullcname $activity.Comment.P.Community }}">
         c/{{ if $state.HideInstanceNames -}}
