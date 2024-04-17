@@ -1585,6 +1585,7 @@ func GetRouter() *httprouter.Router {
 		router.GET("/c/:community/edit", middleware(GetCreateCommunity))
 		router.GET("/post/:postid", middleware(GetPost))
 		router.POST("/post/:postid", middleware(UserOp))
+		router.GET("/post/:postid/:op", middleware(GetPost))
 		router.GET("/comment/:commentid", middleware(GetComment))
 		router.GET("/comment/:commentid/:op", middleware(GetComment))
 		router.POST("/comment/:commentid", middleware(UserOp))

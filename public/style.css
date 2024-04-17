@@ -442,12 +442,12 @@ form.nsfw div {
 .entry .buttons .blockpopup {
   display: inline-block;
   position: absolute;
-  border: 1px solid #888;
   z-index: 100;
   background-color: white;
 }
 form.blockpost {
-  margin: 2px;
+  padding: 2px;
+  border: 1px solid #888;
 }
 .blockpost div:last-child input {
   margin: 4px 2px 4px 4px;
