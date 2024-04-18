@@ -14,7 +14,7 @@ a {
 input[type=text], input[type=password], textarea {
   background-color: #333;
   color: #fff;
-  border-color: #4d4d4d
+  border-color: #4d4d4d !important;
 }
 .post .rank {
   color: #646464;
@@ -76,7 +76,7 @@ input[type=text], input[type=password], textarea {
   background-color: #262626;
 }
 .expando .md {
-  background-color: #262626;
+  background-color: #373737;
   color: #ddd;
   border-color: #666;
 }

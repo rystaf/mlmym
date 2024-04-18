@@ -873,7 +873,7 @@ nav .right a.mailbox {
   font-size: 21px;
   position: relative;
   top: 4px;
-  color: gray;
+  color: gray !important;
 }
 nav .right a, nav .right input[type=submit] {
   color: #369;
@@ -900,7 +900,7 @@ nav .right form input, .comment .buttons input, form.link-btn input {
 }
 .menu a {
   margin: 0px 2.5px;
-  color: gray;
+  color: gray !important;
   font-weight: bold;
 }
 .commentmenu .selected, .menu .selected {
