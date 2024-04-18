@@ -62,7 +62,7 @@ summary {
   min-width: 3px;
   min-height: 38px;
 }
-.comment .content {
+.comment .content, .expando .md {
   line-height: 20px;
   overflow:hidden;
   max-width: 840px;
@@ -1083,7 +1083,7 @@ body.dark {
   background-color: #262626;
 }
 .dark .expando .md {
-  background-color: #262626;
+  background-color: #373737;
   color: #ddd;
   border-color: #666;
 }
