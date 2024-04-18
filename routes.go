@@ -770,6 +770,9 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		} else if r.FormValue("darkmode") != "" {
 			setCookie(w, "", "Dark", "1")
 			*state.Dark = true
+		} else {
+			setCookie(w, "", "Dark", "0")
+			*state.Dark = false
 		}
 		if r.FormValue("shownsfw") != "" {
 			setCookie(w, "", "ShowNSFW", "1")
