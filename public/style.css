@@ -24,12 +24,12 @@ summary {
   transform: scale(1.03);
 }
 .post {
-  margin: 6px 0px;
+  margin: 8px 0px;
 }
 .post .thumb {
   height: 52px;
   width: 70px;
-  margin: 0px 4px;
+  margin: 0px 8px 0px 0px;
   position: relative;
   overflow: hidden;
   --background-color: #e7e7e7;
@@ -113,6 +113,7 @@ summary {
 .post .title  {
   color: #888;
   font-size: 10px;
+  margin-bottom: 2px;
 }
 .activity .post .title a {
   font-size: medium;
@@ -445,6 +446,9 @@ form.nsfw div {
   z-index: 100;
   background-color: white;
 }
+.entry .meta {
+  margin: -1px 0px 1px 0px;
+}
 form.blockpost {
   padding: 2px;
   border: 1px solid #888;
@@ -457,7 +461,7 @@ form.blockpost {
   height: 23px;
   background-color: #ccccc9;
   border-radius: 4px;
-  margin: 0px 4px 0px 0px;
+  margin: 0px 6px 0px 0px;
   cursor: pointer;
   float:left;
 }
