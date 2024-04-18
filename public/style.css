@@ -125,10 +125,13 @@ summary {
   font-size: 13px;
 }
 .activity .title {
-  margin: 5px 0px 0px 10px;
+  margin: 5px 0px 2px 10px;
 }
 .activity .post {
   margin-bottom: 10px;
+}
+.activity .comment {
+  padding-bottom: 1px;
 }
 .message {
   margin: 10px 10px 15px 10px;
@@ -1027,6 +1030,9 @@ body.dark {
   color: #fff;
   border-color: #4d4d4d
 }
+.dark .side input[type=text] {
+  border-color: gray;
+}
 .dark .post .rank {
   color: #646464;
 }
@@ -1154,7 +1160,7 @@ body.dark {
   color: #dadada;
 }
 .dark .commentmenu .selected, .dark .menu .selected {
-  color: #ddd;
+  color: #ddd !important;
 }
 .dark .commentmenu a, .dark .menu {
   color: #6a98af;
