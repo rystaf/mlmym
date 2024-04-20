@@ -79,7 +79,7 @@
         <a href="../post/{{.PostID}}/#c{{.CommentID}}">view the rest of the comments</a>
       </div>
     {{ else }}
-      <div class="commentmenu">
+      <div id="comments" class="commentmenu">
         {{if .Comments}}{{if gt .Page 1}}(page {{ .Page }}) {{else if lt (index .Posts 0).Counts.Comments .CommentCount }}all{{else}}top{{end}} {{.CommentCount}} comments{{else}} no comments (yet){{end}}
         <div>
           sorted by:

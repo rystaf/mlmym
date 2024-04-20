@@ -63,7 +63,7 @@ input[type=text], input[type=password], textarea {
   border-color: #333;
   color: #ccc;
 }
-.meta a {
+.meta a, .activity .meta a {
   color: #6a98af;
 }
 #mycommunities a {
