@@ -41,7 +41,7 @@
             </a>
             ({{ domain . }})
           </div>
-          <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
+          <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) (not (isYoutube .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
           <div class="meta">
             submitted
             <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span>

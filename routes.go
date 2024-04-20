@@ -123,6 +123,13 @@ var funcMap = template.FuncMap{
 		}
 		return false
 	},
+	"isYoutube": func(u string) bool {
+		re := regexp.MustCompile(`^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$`)
+		if re.MatchString(u) {
+			return true
+		}
+		return false
+	},
 	"thumbnail": func(p lemmy.Post) string {
 		if p.ThumbnailURL.IsValid() {
 			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=96"
