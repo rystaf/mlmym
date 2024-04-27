@@ -436,7 +436,7 @@ form.nsfw div {
   display: inline-block;
   margin-right: 5px !important;
 }
-.buttons a:hover, .title a:hover, .buttons > form input:hover, .comment .buttons form input:hover {
+.buttons a:hover, .buttons > form input:hover, .comment .buttons form input:hover {
   text-decoration: underline;
 }
 .entry {
