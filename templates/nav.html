@@ -84,6 +84,10 @@
         <li id="showimages"><a id="se" href="">show images</a></li>
           {{ end }}
         {{ end }}
+
+        {{ if and .PostID }}{{ $post := (index .Posts 0) }}{{ if $post.CrossPosts }}
+        <li><a href="/{{.Host}}/search?q={{ $post.Post.URL.String }}&searchtype=Url{{ if not $post.Post.Local }}&listingType=All{{end}}">other discussions ({{ $post.CrossPosts }})</a></li>
+        {{ end }}{{ end }}
       </ul>
       {{ end }}
     </nav>

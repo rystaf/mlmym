@@ -53,8 +53,9 @@ type Activity struct {
 
 type Post struct {
 	lemmy.PostView
-	Rank  int
-	State *State
+	Rank       int
+	State      *State
+	CrossPosts int
 }
 
 type Session struct {
@@ -666,10 +667,19 @@ func (state *State) GetPost(postid int64) {
 		state.Error = err
 		return
 	}
-	state.Posts = []Post{Post{
-		PostView: resp.PostView,
-		State:    state,
-	}}
+	post := Post{
+		PostView:   resp.PostView,
+		State:      state,
+		CrossPosts: len(resp.CrossPosts),
+	}
+	if state.Listing == "Local" && post.Post.Local {
+		for _, p := range resp.CrossPosts {
+			if !p.Post.Local {
+				post.CrossPosts--
+			}
+		}
+	}
+	state.Posts = []Post{post}
 	if state.CommentID > 0 && len(state.Posts) > 0 {
 		state.Posts[0].Rank = -1
 	}
