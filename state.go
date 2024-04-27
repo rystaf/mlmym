@@ -157,14 +157,14 @@ func (s State) Unknown() string {
 func (p State) SortBy(v string) string {
 	var q string
 	if p.Query != "" || p.SearchType == "Communities" {
-		q = "q=" + p.Query + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
+		q = "q=" + url.QueryEscape(p.Query) + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
 	}
 	return "?" + q + "sort=" + v + "&listingType=" + p.Listing
 }
 func (p State) ListBy(v string) string {
 	var q string
 	if p.Query != "" || p.SearchType == "Communities" {
-		q = "q=" + p.Query + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
+		q = "q=" + url.QueryEscape(p.Query) + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
 	}
 	return "?" + q + "sort=" + p.Sort + "&listingType=" + v
 }
@@ -625,10 +625,14 @@ func (state *State) Search(searchtype string) {
 		return
 	} else {
 		for i, p := range resp.Posts {
-			state.Posts = append(state.Posts, Post{
+			post := Post{
 				PostView: p,
 				Rank:     (state.Page-1)*25 + i + 1,
 				State:    state,
+			}
+			state.Activities = append(state.Activities, Activity{
+				Timestamp: p.Post.Published,
+				Post:      &post,
 			})
 		}
 		for _, c := range resp.Comments {
@@ -641,6 +645,9 @@ func (state *State) Search(searchtype string) {
 				Comment:   &comment,
 			})
 		}
+		sort.Slice(state.Activities, func(i, j int) bool {
+			return state.Activities[i].Timestamp.After(state.Activities[j].Timestamp.Time)
+		})
 		state.Communities = resp.Communities
 	}
 }

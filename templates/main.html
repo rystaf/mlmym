@@ -34,8 +34,10 @@
         {{ if ne .SearchType "Communities" }}
         <div>
           <select name="searchtype">
+            <option value="All"{{ if eq .SearchType "All" }} selected{{ end }}>all</option>
             <option value="Posts"{{ if eq .SearchType "Posts" }} selected{{ end }}>posts</option>
             <option value="Comments"{{ if eq .SearchType "Comments" }} selected{{ end }}>comments</option>
+            <option value="Url"{{ if eq .SearchType "Url" }} selected{{ end }}>url</option>
           </select>
           <label>from
             <input type="text" placeholder="everywhere" name="communityname" value="{{.CommunityName}}"></label>

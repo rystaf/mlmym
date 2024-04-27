@@ -947,14 +947,19 @@ func Search(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.GetSite()
 	}
 	m, _ := url.ParseQuery(r.URL.RawQuery)
-	state.SearchType = "Posts"
+	state.SearchType = "All"
 	if len(m["searchtype"]) > 0 {
 		switch m["searchtype"][0] {
+		case "Posts":
+			state.SearchType = "Posts"
 		case "Comments":
 			state.SearchType = "Comments"
 		case "Communities":
 			state.SearchType = "Communities"
+		case "Url":
+			state.SearchType = "Url"
 		}
+
 	}
 	state.Search(state.SearchType)
 	Render(w, "index.html", state)
