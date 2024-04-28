@@ -32,8 +32,8 @@ input[type=text], input[type=password], textarea {
 .title a {
   color: #dedede;
 }
-.title a:visited {
-  color: #a6a6a6
+.title a:visited, .title.visited a {
+  color: #a6a6a6 !important;
 }
 .message b {
   color: #ddd;

@@ -115,6 +115,9 @@ summary {
   font-size: 10px;
   margin-bottom: 2px;
 }
+.post .title.visited a {
+  color: #551A8B;
+}
 .activity .post .title a {
   font-size: medium;
 }
@@ -1049,8 +1052,8 @@ body.dark {
 .dark .title a {
   color: #dedede;
 }
-.dark .title a:visited {
-  color: #a6a6a6
+.dark .title a:visited, .dark .title.visited a {
+  color: #a6a6a6 !important;
 }
 .dark .message b {
   color: #ddd;

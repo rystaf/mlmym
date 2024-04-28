@@ -33,7 +33,7 @@
         </div>
         {{ end }}
         <div class="entry">
-          <div class="title">
+          <div class="title{{ if .Read}} visited{{end}}">
             <a class="url"
                href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}"
                 {{ if .State.LinksInNewWindow }} target="_blank" {{ end }}>
