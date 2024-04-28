@@ -1,11 +1,11 @@
 function request(url, params, callback, errorcallback = function(){}) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState != 4 ) { return }
+    if (xmlHttp.readyState != 4 || !callback ) { return }
     if (xmlHttp.status == 200) {
       return callback(xmlHttp.responseText);
     }
-    errorcallback(xmlHttp.responseText);
+    if (errorcallback) errorcallback(xmlHttp.responseText);
   }
   var method = "GET"
   if (params) method = "POST"
@@ -31,6 +31,10 @@ function postClick(e) {
     bdy.className = 'expando open';
     btn.className = "expando-button open"
     var url = targ.getElementsByClassName("url")[0].href
+    if (bdy.querySelector("img.image") && localStorage.getItem("markRead") == "true") {
+      bdy.parentNode.querySelector(".title").className = "title visited"
+      request(bdy.parentNode.querySelector('.buttons a').href, { op: "read_post", submit: "mark read"})
+    }
     if (id = parseYoutube(url)) {
       targ.getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
     }
@@ -378,7 +382,7 @@ function saveSettings(e) {
   var data = new FormData(targ)
   e.preventDefault()
   request(targ.target, data, function(res) {
-    ["endlessScrolling", "autoLoad"].map(function(x) {
+    ["endlessScrolling", "autoLoad", "markRead"].map(function(x) {
       localStorage.setItem(x, data.get(x)=="on")
     })
     window.location.reload()
