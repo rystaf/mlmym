@@ -772,14 +772,14 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			setCookie(w, "", name, r.FormValue(name))
 		}
 		state.Dark = new(bool)
-		if r.FormValue("undarkmode") == "" {
+		dark := r.FormValue("darkmode")
+		undark := r.FormValue("undarkmode")
+		if dark == "0" && undark != "0" {
+		} else if dark == "0" && undark == "0" {
 			setCookie(w, "", "Dark", "0")
-		} else if r.FormValue("darkmode") != "" {
+		} else {
 			setCookie(w, "", "Dark", "1")
 			*state.Dark = true
-		} else {
-			setCookie(w, "", "Dark", "0")
-			*state.Dark = false
 		}
 		if r.FormValue("shownsfw") != "" {
 			setCookie(w, "", "ShowNSFW", "1")

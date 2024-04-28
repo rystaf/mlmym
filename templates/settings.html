@@ -111,12 +111,16 @@
           dark mode
         </label>
         <input type="checkbox" name="darkmode" {{ if is .Dark }}checked{{end}}>
+        <input type="hidden" name="darkmode" value="0">
       </div>
       <div id="undarkmode">
         <label>
           dark mode
         </label>
+          {{ if not .Dark }}
         <input type="checkbox" name="undarkmode" checked>
+          {{ end }}
+          <input type="hidden" name="undarkmode" value="0">
       </div>
       <div class="scripting">
         <label>
