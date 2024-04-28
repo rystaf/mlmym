@@ -5,7 +5,7 @@ function request(url, params, callback, errorcallback = function(){}) {
     if (xmlHttp.status == 200) {
       return callback(xmlHttp.responseText);
     }
-    if (errorcallback) errorcallback(xmlHttp.responseText);
+    errorcallback(xmlHttp.responseText);
   }
   var method = "GET"
   if (params) method = "POST"
@@ -33,7 +33,12 @@ function postClick(e) {
     var url = targ.getElementsByClassName("url")[0].href
     if (bdy.querySelector("img.image") && localStorage.getItem("markRead") == "true") {
       bdy.parentNode.querySelector(".title").className = "title visited"
-      request(bdy.parentNode.querySelector('.buttons a').href, { op: "read_post", submit: "mark read"})
+      var data = new FormData();
+      data.append("op", "read_post")
+      data.append("submit", "mark read")
+      data.append("xhr", "1")
+      data.append("postid", bdy.parentNode.parentNode.id.slice(1))
+      request("", data)
     }
     if (id = parseYoutube(url)) {
       targ.getElementsByClassName("embed")[0].innerHTML = youtubeIframe(id)
