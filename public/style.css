@@ -879,11 +879,11 @@ nav .right {
   font-size: 10px;
   z-index: 101;
 }
-nav .right a.mailbox {
+body nav .right a.mailbox {
   font-size: 21px;
   position: relative;
   top: 4px;
-  color: gray !important;
+  color: gray;
 }
 nav .right a, nav .right input[type=submit] {
   color: #369;
