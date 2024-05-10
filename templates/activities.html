@@ -22,9 +22,9 @@
         {{ template "post.html" $activity.Post }}
     {{ else if $activity.Message }}
     <div class="message">
-      <span class="meta{{ if not $activity.Message.PrivateMessage.Read }} orangered{{end}}">
-        <b>message</b>
     {{ if eq $activity.Message.Creator.ID $state.Session.UserID }}
+      <span class="meta">
+        <b>message</b>
         to
         <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Recipient}}">
           {{- if $state.HideInstanceNames -}}
@@ -34,6 +34,8 @@
           {{- end -}}
         </a>
     {{ else }}
+      <span class="meta{{ if not $activity.Message.PrivateMessage.Read }} orangered{{end}}">
+        <b>message</b>
         from
         <a href="/{{$state.Host}}/u/{{fullname $activity.Message.Creator}}">
           {{- if $state.HideInstanceNames -}}
