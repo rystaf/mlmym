@@ -22,7 +22,7 @@
     {{ template "menu.html" . }}
   {{ end}}
 
-  {{ if or (ne .Query "") .Communities }}
+  {{ if or (ne .SearchType "") (ne .Query "") .Communities }}
       <form class="search" method="GET">
         <input type="hidden" name="sort" value="{{.Sort}}">
         <input type="hidden" name="listingType" value="{{.Listing}}">
@@ -31,12 +31,12 @@
           <input type="text" name="q" value="{{.Query}}">
           <input type="submit" value="search">
         </div>
-        {{ if ne .SearchType "Communities" }}
         <div>
           <select name="searchtype">
             <option value="All"{{ if eq .SearchType "All" }} selected{{ end }}>all</option>
             <option value="Posts"{{ if eq .SearchType "Posts" }} selected{{ end }}>posts</option>
             <option value="Comments"{{ if eq .SearchType "Comments" }} selected{{ end }}>comments</option>
+            <option value="Communities"{{ if eq .SearchType "Communities" }} selected{{ end }}>communities</option>
             <option value="Url"{{ if eq .SearchType "Url" }} selected{{ end }}>url</option>
           </select>
           <label>from
@@ -44,9 +44,6 @@
           <label>by
             <input type="text" placeholder="anyone" name="username" value="{{.UserName}}"></label>
         </div>
-        {{ else }}
-        <input type="hidden" name="searchtype" value="Communities">
-        {{ end }}
       </form>
   {{ end}}
 
