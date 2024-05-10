@@ -10,8 +10,10 @@
         |
         {{ $host := .Host }}
         {{ range $i, $c := .TopCommunities}}
+        {{ if or (ne $state.Listing "Local") $c.Community.Local }}
         <a href="/{{$host}}/c/{{fullcname $c.Community}}">{{$c.Community.Name}}</a>
         <span> - </span>
+        {{ end }}
         {{ end }}
         <a href="/{{$host}}/search?searchtype=Communities&sort=TopMonth" class="more">more »</a>
       </div>
