@@ -560,6 +560,7 @@ form.blockpost {
 }
 .expando .image {
   max-width: 100%;
+  cursor: nwse-resize;
 }
 .expando .md {
   background-color: #fafafa;
