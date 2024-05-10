@@ -99,6 +99,17 @@
       {{ end }}
     {{ end }}
   {{ end}}
+  {{ if and .User .Activities }}
+      <div id="comments" class="commentmenu">
+        <div>
+          sorted by:
+          <a {{ if eq .Sort "New"}}class="selected"{{end}} href="{{ .SortBy "New"}}">new</a>
+          <a {{ if eq .Sort "TopAll"}}class="selected"{{end}} href="{{ .SortBy "TopAll"}}">top</a>
+          <a {{ if eq .Sort "Controversial"}}class="selected"{{end}} href="{{ .SortBy "Controversial"}}">controversial</a>
+          <a {{ if eq .Sort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
+        </div>
+      </div>
+  {{ end }}
 
 
   {{ range $i, $comment := .Comments }}

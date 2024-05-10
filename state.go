@@ -491,6 +491,7 @@ func (state *State) GetUser(username string) {
 		Page:      lemmy.NewOptional(int64(state.Page)),
 		Limit:     lemmy.NewOptional(int64(limit)),
 		SavedOnly: lemmy.NewOptional(state.Op == "Saved"),
+		Sort:      lemmy.NewOptional(lemmy.SortType(state.Sort)),
 	})
 	if err != nil {
 		fmt.Println(err)

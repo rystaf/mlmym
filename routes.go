@@ -638,6 +638,11 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.Sort = "New"
+	m, _ := url.ParseQuery(r.URL.RawQuery)
+	if len(m["sort"]) > 0 {
+		state.Sort = m["sort"][0]
+	}
 	if err != nil {
 		Render(w, "index.html", state)
 		return
