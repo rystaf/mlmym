@@ -56,10 +56,6 @@
       </div>
   {{ end }}
 
-  {{ range .Communities }}
-    {{ template "community.html" . }}
-  {{ end }}
-
   {{ if eq .Op "create_community" "edit_community" }}
     {{ template "create_community.html" . }}
   {{ end }}
@@ -121,6 +117,10 @@
     {{ template "send_message.html" . }}
   {{ else }}
     {{ template "activities.html" . }}
+  {{ end }}
+
+  {{ range .Communities }}
+    {{ template "community.html" . }}
   {{ end }}
 
   {{ if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
