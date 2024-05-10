@@ -503,6 +503,13 @@ func (state *State) GetUser(username string) {
 	if state.Query != "" {
 		return
 	}
+	for _, c := range resp.Comments {
+		comment := Comment{P: c, State: state}
+		state.Activities = append(state.Activities, Activity{
+			Timestamp: c.Comment.Published,
+			Comment:   &comment,
+		})
+	}
 	for i, p := range resp.Posts {
 		post := Post{
 			PostView: resp.Posts[i],
@@ -514,15 +521,15 @@ func (state *State) GetUser(username string) {
 			Post:      &post,
 		})
 	}
-	for _, c := range resp.Comments {
-		comment := Comment{P: c, State: state}
-		state.Activities = append(state.Activities, Activity{
-			Timestamp: c.Comment.Published,
-			Comment:   &comment,
-		})
-	}
 	sort.Slice(state.Activities, func(i, j int) bool {
-		return state.Activities[i].Timestamp.After(state.Activities[j].Timestamp.Time)
+		switch state.Sort {
+		case "New":
+			return state.Activities[i].Timestamp.After(state.Activities[j].Timestamp.Time)
+		case "Old":
+			return state.Activities[i].Timestamp.Before(state.Activities[j].Timestamp.Time)
+		}
+		// TODO Top and Controversial
+		return false
 	})
 }
 
