@@ -9,7 +9,7 @@
           </label>
         </div>
         <div>
-          <textarea name="content">
+          <textarea name="content" {{ if .XHR }}autofocus{{ end }}>
           {{- if .Content }}
           {{- .Content -}}
           {{ else if and (eq .Op "edit") .Comments }}
