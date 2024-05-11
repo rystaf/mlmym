@@ -365,18 +365,22 @@ func Render(w http.ResponseWriter, templateName string, state State) {
 func GetRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	data := make(map[string]any)
 	data["Title"] = r.Host
+	d := true
 	if dark := getCookie(r, "Dark"); dark != "" {
-		data["Dark"] = dark != "0"
+		d = dark != "0"
+		data["Dark"] = &d
 	} else if dark := os.Getenv("DARK"); dark != "" {
-		data["Dark"] = true
+		data["Dark"] = &d
 	}
 	tmpl, err := GetTemplate("root.html")
 	if err != nil {
-		fmt.Println("execute fail", err)
+		fmt.Println("template fail", err)
 		w.Write([]byte("500 - Server Error"))
 		return
 	}
-	tmpl.Execute(w, data)
+	if err = tmpl.Execute(w, data); err != nil {
+		fmt.Println("execute fail", err)
+	}
 }
 
 type NodeSoftware struct {
