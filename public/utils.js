@@ -159,6 +159,7 @@ function commentClick(e) {
     for (var i = 0; i < comments.length; i++) {
       skip.push(comments[i].id)
     }
+    e.target.innerHTML = "loading more comments"
     request(e.target.href+"&xhr",false, function(res){
       var parent = e.target.parentNode
       parent.innerHTML = res
