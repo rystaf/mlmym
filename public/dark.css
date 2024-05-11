@@ -1,9 +1,3 @@
-#darkmode {
-  display: none;
-}
-#undarkmode {
-  display: block;
-}
 body {
   background-color: #262626;
   color: #ddd;

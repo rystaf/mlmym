@@ -1,14 +1,14 @@
 <!DOCTYPE html>
   <head>
     <title>mlmym</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="/{{.Host}}/icon.jpg">
     <link rel="stylesheet" href="/_/static/style.css?v=7">
-    {{ if not .Dark }}
-    <link rel="stylesheet" href="/_/static/dark.css?v={{ .Version }}" media="(prefers-color-scheme:dark)">
-    {{ end }}
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {{- if or (not .Dark) (is .Dark) }}
+    <link rel="stylesheet" href="/_/static/dark.css?v={{ .Version }}" {{ if not .Dark }}media="(prefers-color-scheme:dark)"{{ end }}>
+    {{- end }}
   </head>
-  <body{{ if .Dark }} class="dark" {{end}}>
+  <body>
     <nav>
       <div class="spacer"></div>
       <span class="title">{{ .Title }}</span>
