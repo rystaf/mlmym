@@ -1,44 +1,38 @@
-{{ $state := . }}
+{{- $state := . -}}
 <nav>
       <div class="communities">
-        {{ if .Session }}
+        {{- if .Session }}
         <a id="openmycommunities" href="/{{.Host}}/search?searchtype=Communities&listingType=Subscribed&page=0">my communities ▼</a>
-        {{ end }}
+        {{- end }}
         <a href="/{{.Host}}">home</a>
         <span> - </span>
-        <a href="/{{.Host}}?listingType=All">all</a>
-        |
-        {{ $host := .Host }}
-        {{ range $i, $c := .TopCommunities}}
-        {{ if or (ne $state.Listing "Local") $c.Community.Local }}
-        <a href="/{{$host}}/c/{{fullcname $c.Community}}">{{$c.Community.Name}}</a>
-        <span> - </span>
-        {{ end }}
-        {{ end }}
+        <a href="/{{.Host}}?listingType=All">all</a>|
+        {{- $host := .Host -}}
+        {{- range $i, $c := .TopCommunities}}
+        {{- if or (ne $state.Listing "Local") $c.Community.Local }}
+        <a href="/{{$host}}/c/{{fullcname $c.Community}}">{{$c.Community.Name}}</a><span> - </span>
+        {{- end }}
+        {{- end }}
         <a href="/{{$host}}/search?searchtype=Communities&sort=TopAll{{ if eq .Listing "Local" }}&listingType=Local{{end}}" class="more">more »</a>
       </div>
       <div id="mycommunities">
 {{- if and .Session .Session.Communities }}
-<a href="/{{.Host}}/search?searchtype=Communities&listingType=Subscribed&page=0">view all »</a>
-  {{ range .Session.Communities }}
-<a href="/{{ $state.Host}}/{{ if .Community.Local }}c/{{.Community.Name}}{{else}}{{ localize .Community.ActorID }}{{end}}">{{fullcname .Community }}</a>
-  {{ end }}
-{{ end -}}
+        <a href="/{{.Host}}/search?searchtype=Communities&listingType=Subscribed&page=0">view all »</a>
+  {{- range .Session.Communities }}
+        <a href="/{{ $state.Host}}/{{ if .Community.Local }}c/{{.Community.Name}}{{else}}{{ localize .Community.ActorID }}{{end}}">{{fullcname .Community }}</a>
+  {{- end }}
+{{- end -}}
       </div>
       <div class="right">
-{{ if .Session }}
-        <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>
-        |
-        <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>
-        |
-        <a id="opensettings" href="/{{.Host}}/settings">settings</a>
-        | 
+{{- if .Session }}
+        <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>|
+        <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>|
+        <a id="opensettings" href="/{{.Host}}/settings">settings</a>| 
         <form method="POST"><input type="submit" name="op" value="logout"></form>
-{{else}}
-        <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
-        | 
+{{- else}}
+        <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>| 
         <a id="opensettings" href="/{{.Host}}/settings">settings</a>
-{{end}}
+{{- end}}
       </div>
       <div id="settingspopup"></div>
       <div class="spacer">
@@ -82,14 +76,13 @@
         <li{{ if eq .Sort "MostComments" }} class="selected"{{end}}><a href="{{ .SortBy "MostComments" }}">most comments</a></li>
         <li{{ if eq .Sort "NewComments" }} class="selected"{{end}}><a href="{{ .SortBy "NewComments" }}">new comments</a></li>
         <li{{ if contains .Sort "Top" }} class="selected"{{end}}><a href="{{ .SortBy "TopDay" }}">top</a></li>
-          {{ if .Posts }}
+          {{- if .Posts }}
         <li id="showimages"><a id="se" href="">show images</a></li>
-          {{ end }}
-        {{ end }}
-
-        {{ if and .PostID }}{{ $post := (index .Posts 0) }}{{ if $post.CrossPosts }}
+          {{- end }}
+        {{- end }}
+        {{- if and .PostID }}{{ $post := (index .Posts 0) }}{{ if $post.CrossPosts }}
         <li><a href="/{{.Host}}/search?q={{ $post.Post.URL.String }}&searchtype=Url{{ if not $post.Post.Local }}&listingType=All{{end}}">other discussions ({{ $post.CrossPosts }})</a></li>
-        {{ end }}{{ end }}
+        {{- end }}{{ end }}
       </ul>
-      {{ end }}
+      {{- end }}
     </nav>

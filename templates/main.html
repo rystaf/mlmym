@@ -12,17 +12,16 @@
     <noscript>
       <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
-
     {{ template "nav.html" . -}}
-{{ if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
-  {{ template "nsfw.html" }}
-{{ else }}
+    {{- if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
+      {{ template "nsfw.html" }}
+    {{- else }}
     <main>
-  {{ if or (.Query) (.SearchType) (and (not .PostID) (not .User) (not .Activities) (eq .Op ""))}}
-    {{ template "menu.html" . }}
-  {{ end}}
+    {{- if or (.Query) (.SearchType) (and (not .PostID) (not .User) (not .Activities) (eq .Op ""))}}
+      {{ template "menu.html" . }}
+    {{- end}}
 
-  {{ if or (ne .SearchType "") (ne .Query "") .Communities }}
+  {{- if or (ne .SearchType "") (ne .Query "") .Communities }}
       <form class="search" method="GET">
         <input type="hidden" name="sort" value="{{.Sort}}">
         <input type="hidden" name="listingType" value="{{.Listing}}">
@@ -45,9 +44,9 @@
             <input type="text" placeholder="anyone" name="username" value="{{.UserName}}"></label>
         </div>
       </form>
-  {{ end}}
+  {{- end}}
 
-  {{ if .Error }}
+  {{- if .Error }}
       <div class="error">
         {{.Error}}.
       {{ if .Unknown }}
@@ -56,26 +55,26 @@
       </div>
   {{ end }}
 
-  {{ if eq .Op "create_community" "edit_community" }}
+  {{- if eq .Op "create_community" "edit_community" }}
     {{ template "create_community.html" . }}
-  {{ end }}
+  {{- end }}
 
-  {{ range .Posts }}
+  {{- range .Posts }}
     {{ template "post.html" . }}
-  {{ end }}
+  {{- end }}
 
-  {{ if eq .Op "create_post" "edit_post" }}
+  {{- if eq .Op "create_post" "edit_post" }}
     {{ template "create_post.html" . }}
-  {{ end }}
+  {{- end }}
 
-  {{ if and .PostID .Posts}}
-    {{ if .CommentID}}
+  {{- if and .PostID .Posts}}
+    {{- if .CommentID}}
       <div class="warning">you are viewing a single comment's thread<br>
         <a href="../post/{{.PostID}}/#c{{.CommentID}}">view the rest of the comments</a>
       </div>
-    {{ else }}
+    {{- else }}
       <div id="comments" class="commentmenu">
-        {{if .Comments}}{{if gt .Page 1}}(page {{ .Page }}) {{else if lt (index .Posts 0).Counts.Comments .CommentCount }}all{{else}}top{{end}} {{.CommentCount}} comments{{else}} no comments (yet){{end}}
+        {{- if .Comments}}{{if gt .Page 1}}(page {{ .Page }}) {{else if lt (index .Posts 0).Counts.Comments .CommentCount }}all{{else}}top{{end}} {{.CommentCount}} comments{{else}} no comments (yet){{end}}
         <div>
           sorted by:
           <a {{ if eq .CommentSort "Hot"}}class="selected"{{end}} href="{{ .SortBy "Hot"}}">hot</a>
@@ -85,14 +84,14 @@
           <a {{ if eq .CommentSort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
         </div>
       </div>
-      {{ if and .Session (ne .Op "edit_post") }}
+      {{- if and .Session (ne .Op "edit_post") }}
       <div class="create_comment">
-        {{ template "create_comment.html" .}}
+  {{ template "create_comment.html" . }}
       </div>
-      {{ end }}
-    {{ end }}
-  {{ end}}
-  {{ if and .User .Activities }}
+      {{- end }}
+    {{- end }}
+  {{- end}}
+  {{- if and .User .Activities }}
       <div class="menu">
         sorted by:
         <a {{ if eq .Sort "New"}}class="selected"{{end}} href="{{ .SortBy "New"}}">new</a>
@@ -100,48 +99,46 @@
         <a {{ if eq .Sort "Controversial"}}class="selected"{{end}} href="{{ .SortBy "Controversial"}}">controversial</a>
         <a {{ if eq .Sort "Old"}}class="selected"{{end}} href="{{ .SortBy "Old"}}">old</a>
       </div>
-  {{ end }}
+  {{- end -}}
 
-
-  {{ range $i, $comment := .Comments }}
+  {{- range $i, $comment := .Comments }}
     {{ template "comment.html" $comment }}
-  {{ end }}
+  {{- end -}}
 
-  {{ if and .Comments .Posts (gt (index .Posts 0).Counts.Comments .CommentCount) (not .CommentID)}}
+  {{- if and .Comments .Posts (gt (index .Posts 0).Counts.Comments .CommentCount) (not .CommentID)}}
     <div class="morecomments">
       <a id="lmc" href="" data-page="2">load more comments</a>
     </div>
-  {{ end }}
+  {{- end -}}
 
-  {{ if eq .Op "send_message" }}
+  {{- if eq .Op "send_message" }}
     {{ template "send_message.html" . }}
-  {{ else }}
+  {{- else }}
     {{ template "activities.html" . }}
-  {{ end }}
+  {{- end -}}
 
-  {{ range .Communities }}
+  {{- range .Communities }}
     {{ template "community.html" . }}
-  {{ end }}
+  {{- end -}}
 
-  {{ if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
+  {{- if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
   <div class="error">there doesn't seem to be anything here</div>
-  {{ end }}
+  {{- end -}}
 
-  {{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (gt (index .Posts 0).Counts.Comments .CommentCount) (not .CommentID)) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount 10))) }}
+  {{- if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (gt (index .Posts 0).Counts.Comments .CommentCount) (not .CommentID)) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount 10))) }}
     <div class="pager">
       view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
     </div>
-    {{ if not .PostID }}
+    {{- if not .PostID }}
     <input id="loadmore" type="submit" value="load more" data-page="2">
-    {{ end }}
-  {{ end }}
-
+    {{- end }}
+  {{- end }}
     <script src="/_/static/utils.js?v={{ .Version }}"></script>
-    {{ if .Watch }}
+    {{- if .Watch }}
     <script src="/_/static/ws.js"></script>
-    {{ end }}
-    {{ template "sidebar.html" . }}
+    {{- end }}
+    {{- template "sidebar.html" . }}
     </main>
-{{ end }}
+{{- end }}
   </body>
 </html>

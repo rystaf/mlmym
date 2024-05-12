@@ -1,15 +1,15 @@
-{{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
+{{- if and (ne .State.Op "vote_post") (ne .State.Op "save_post") -}}
 <div class="post{{if .Post.Deleted}} deleted{{end}}{{ if .Post.FeaturedCommunity }} distinguished{{end}}{{if .Post.FeaturedLocal }} announcement{{end}}" id="p{{.Post.ID}}">
-  {{ if gt .Rank 0 }}
+  {{- if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
-  {{ end }}
-          <div class="score">
-{{ end }}
-{{ if or (ne .State.Op "save_post") (eq .State.Op "vote_post") }}
-{{ if .State.Session }}
+  {{- end }}
+        <div class="score">
+{{- end }}
+{{- if or (ne .State.Op "save_post") (eq .State.Op "vote_post") }}
+{{- if .State.Session }}
           <form class="link-btn {{ if lt .Rank 1 }}squish{{end}}{{ if eq .MyVote.String "1" }} like{{else if eq .MyVote.String "-1"}} dislike{{end}}" method="POST">
             <input type="submit" name="vote" value="▲"> 
-            {{ if .MyVote.IsValid}}
+            {{- if .MyVote.IsValid}}
             <input type="hidden" name="undo" value="{{.MyVote.String}}">
             {{ end}}
             <input type="hidden" name="op" value="vote_post">
@@ -17,27 +17,25 @@
             <div>{{ .Counts.Score }}</div>
             <input type="submit" name="vote" value="▼"> 
           </form>
-{{ else }}
+{{- else }}
           <div style="margin-top: 19px;">{{ .Counts.Score }}</div>
-{{ end }}
-{{ end }}
-{{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
+{{- end }}
+{{- end }}
+{{- if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
         </div>
         {{ if not .State.HideThumbnails }}
         <div class="thumb">
-          <a class="url"
-             href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}"
-             {{ if .State.LinksInNewWindow }} target="_blank" {{ end }}>
-            <div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}} style="background-image: url({{thumbnail .Post}})"></div>
+          <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}"
+            {{- if .State.LinksInNewWindow }} target="_blank" {{ end }}>
+            <div {{ if and .Post.NSFW (not (and .State.Community .State.Community.CommunityView.Community.NSFW))}}class="img-blur"{{end}}style="background-image: url({{thumbnail .Post}})"></div>
           </a>
         </div>
         {{ end }}
         <div class="entry">
           <div class="title{{ if .Read}} visited{{end}}">
-            <a class="url"
-               href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}"
-                {{ if .State.LinksInNewWindow }} target="_blank" {{ end }}>
-                {{ rmmarkdown .Post.Name }}
+            <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}"
+              {{- if .State.LinksInNewWindow }} target="_blank" {{ end }}>
+              {{ rmmarkdown .Post.Name }}
             </a>
             ({{ domain . }})
           </div>
@@ -66,66 +64,67 @@
             </a>
           </div>
           <div class="buttons">
-            {{ if .Post.NSFW }}<span class="nsfw">NSFW</span>{{end}}
+            {{- if .Post.NSFW }}
+            <span class="nsfw">NSFW</span>{{end}}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}">{{ .Counts.Comments }} comments</a>
             <a href="{{ .Post.ApID}}">fedilink</a>
-            {{ if .State.Session }}
+            {{- if .State.Session }}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}/block" rel="xhr" target="block{{ .Post.ID }}">block</a>
-            {{ end }}
+            {{- end }}
             <span class="blockpopup" name="block{{.Post.ID}}"></span>
-          {{ if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
-            {{ if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
+          {{- if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
+            {{- if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
             <form class="link-btn" method="POST">
               <input type="hidden" name="postid" value="{{.Post.ID }}">
               <input type="hidden" name="op" value="delete_post">
-              {{ if .Post.Deleted }}
+              {{- if .Post.Deleted }}
               <input type="submit" value="undelete">
               <input type="hidden" name="undo" value="1">
-              {{ else }}
+              {{- else }}
               <input type="submit" value="delete">
-              {{ end }}
+              {{- end }}
             </form>
-          {{ end}}
-{{ end }}
-{{ if or (ne .State.Op "vote_post") (eq .State.Op "save_post") }}
-          {{ if .State.Session }}
+          {{- end}}
+{{- end }}
+{{- if or (ne .State.Op "vote_post") (eq .State.Op "save_post") }}
+          {{- if .State.Session }}
             <form class="link-btn" method="POST">
               <input type="hidden" name="postid" value="{{.Post.ID }}">
               <input type="hidden" name="op" value="save_post">
-              {{ if .PostView.Saved }}
+              {{- if .PostView.Saved }}
               <input type="submit" name="submit" value="unsave">
-              {{ else }}
+              {{- else }}
               <input type="submit" name="submit" value="save">
-              {{ end }}
+              {{- end }}
             </form>
-          {{end}}
-{{ end }}
-{{ if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
-          {{ if .State.PostID }}
+          {{- end}}
+{{- end }}
+{{- if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
+          {{- if .State.PostID }}
             <a id="hidechildren" class="scripting" href="">hide all child comments</a>
-          {{ end }}
-          {{ if and .State.Site .State.Site.MyUser.IsValid (not .State.Site.MyUser.ValueOrZero.LocalUserView.LocalUser.ShowReadPosts) }}
+          {{- end }}
+          {{- if and .State.Site .State.Site.MyUser.IsValid (not .State.Site.MyUser.ValueOrZero.LocalUserView.LocalUser.ShowReadPosts) }}
             <form class="link-btn" method="POST">
               <input type="hidden" name="postid" value="{{.Post.ID }}">
               <input type="hidden" name="op" value="read_post">
-              {{ if .Post.Deleted }}
+              {{- if .Post.Deleted }}
               <input type="submit" name="submit" value="mark unread">
-              {{ else }}
+              {{- else }}
               <input type="submit" name="submit" value="mark read">
-              {{ end }}
+              {{- end }}
             </form>
-          {{ end }}
+          {{- end }}
           </div>
           <div class="expando{{ if eq .Rank 0 }} open{{ end}}">
-{{ if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
+{{- if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
             <div class="md">{{ markdown .State.Host .Post.Body.String }}</div>
-{{ end }}
-{{ if isImage .Post.URL.String}}
+{{- end }}
+{{- if isImage .Post.URL.String}}
             <img class="image" loading="lazy" src="{{ .Post.URL }}">
-{{ end }}
+{{- end }}
             <div class="embed"></div>
           </div>
         </div>
-          <div class="clearleft"></div>
+        <div class="clearleft"></div>
       </div>
-{{ end }}
+{{- end -}}

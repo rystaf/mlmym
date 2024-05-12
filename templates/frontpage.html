@@ -12,18 +12,18 @@
     <noscript>
       <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
-
     {{ template "nav.html" . -}}
-{{ if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
-  {{ template "nsfw.html" }}
-{{ else }}
+    {{- if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
+      {{ template "nsfw.html" }}
+    {{- else }}
     <main>
-      {{ if and (not .Community) .Tagline }}
-      <h3>{{ markdown .Host .Tagline }}</h3>
-      {{ end }}
-    {{ template "menu.html" . }}
-
-  {{ if .Error }}
+      {{- if and (not .Community) .Tagline }}
+      <h3>
+        {{ markdown .Host .Tagline }}
+      </h3>
+      {{- end }}
+      {{ template "menu.html" . }}
+  {{- if .Error }}
       <div class="error">
         {{.Error}}.
       {{ if .Unknown }}
@@ -32,16 +32,14 @@
       </div>
   {{ end }}
 
-  {{ range .Posts }}
+  {{- range .Posts }}
       {{ template "post.html" . }}
   {{ end }}
-
-  {{ if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
+  {{- if or (and (not .Op) (not .Activities) (not .Comments) (not .Posts) (not .Communities)) (and (not .Comments) .PostID) (and (not .Activities) (not .Query) .User) }}
       <div class="error">there doesn't seem to be anything here</div>
   {{ end }}
 
-
-  {{ if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (and (eq .CommentCount 200) (gt (index .Posts 0).Counts.Comments .CommentCount))) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
+  {{- if or .Query (eq .SearchType "Communities") (eq (len .Posts) 25) (and .Comments (and (eq .CommentCount 200) (gt (index .Posts 0).Counts.Comments .CommentCount))) (and .User (or (gt .User.PersonView.Counts.CommentCount 10) (gt .User.PersonView.Counts.PostCount  10))) }}
       <div class="pager">
         view more: {{if gt .Page 1 }}<a href="{{ .PrevPage }}">‹ prev</a>{{ end }} <a href="{{ .NextPage }}">next ›</a>
       </div>
