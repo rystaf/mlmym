@@ -160,6 +160,9 @@ func (p State) SortBy(v string) string {
 	if p.Query != "" || p.SearchType == "Communities" {
 		q = "q=" + url.QueryEscape(p.Query) + "&communityname=" + p.CommunityName + "&username=" + p.UserName + "&searchtype=" + p.SearchType + "&"
 	}
+	if p.Op == "Saved" {
+		q = "view=Saved&"
+	}
 	return "?" + q + "sort=" + v + "&listingType=" + p.Listing
 }
 func (p State) ListBy(v string) string {
