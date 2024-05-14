@@ -125,7 +125,7 @@ func (s State) UserBlocked() bool {
 }
 
 func (s State) Unknown() string {
-	fmt.Println(fmt.Sprintf("%v", s.Error))
+	fmt.Printf("%v\n", s.Error)
 	re := regexp.MustCompile(`(.*?)@(.*?)@`)
 	if strings.Contains(fmt.Sprintf("%v", s.Error), "couldnt_find_community") {
 		matches := re.FindAllStringSubmatch(s.CommunityName+"@", -1)
@@ -252,7 +252,7 @@ func (state *State) LemmyError(domain string) error {
 		return err
 	}
 	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("Status Code: %v", res.StatusCode)
+		return fmt.Errorf("status code: %v", res.StatusCode)
 	}
 	err = json.NewDecoder(res.Body).Decode(&nodeInfo)
 	if err != nil {
@@ -261,7 +261,7 @@ func (state *State) LemmyError(domain string) error {
 	if nodeInfo.Software.Name == "lemmy" {
 		return nil
 	}
-	return errors.New("Not a lemmy instance")
+	return errors.New("not a lemmy instance")
 }
 
 func (state *State) GetCaptcha() {
@@ -312,7 +312,7 @@ func (state *State) GetSingleComment(commentid int64) {
 		state.Status = http.StatusInternalServerError
 		return
 	}
-	state.Comments = []Comment{Comment{
+	state.Comments = []Comment{{
 		P:     cresp.CommentView,
 		State: state,
 		Op:    state.Op,
@@ -777,7 +777,7 @@ func getChildren(parent *Comment, pool []lemmy.CommentView, postCreatorID int64)
 
 		}
 	}
-	for i, _ := range children {
+	for i := range children {
 		getChildren(&children[i], pool, postCreatorID)
 		parent.ChildCount += 1
 	}

@@ -126,10 +126,7 @@ var funcMap = template.FuncMap{
 	},
 	"isYoutube": func(u string) bool {
 		re := regexp.MustCompile(`^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$`)
-		if re.MatchString(u) {
-			return true
-		}
-		return false
+		return re.MatchString(u)
 	},
 	"thumbnail": func(p lemmy.Post) string {
 		if p.ThumbnailURL.IsValid() {
@@ -422,7 +419,7 @@ func PostRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if re.MatchString(input) {
 		input = "https://" + input
 	}
-	dest, err := url.Parse(input)
+	dest, _ := url.Parse(input)
 	if dest.Host != "" {
 		state, _ := Initialize(dest.Host, r)
 		if err := state.LemmyError(dest.Host); err != nil {
@@ -432,7 +429,7 @@ func PostRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			if dest.RawQuery != "" {
 				redirectUrl = redirectUrl + "?" + dest.RawQuery
 			}
-			http.Redirect(w, r, redirectUrl, 302)
+			http.Redirect(w, r, redirectUrl, http.StatusFound)
 			return
 		}
 	} else {
@@ -445,7 +442,7 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 - Not Found"))
 	}
-	state, err := Initialize(ps.ByName("host"), r)
+	state, _ := Initialize(ps.ByName("host"), r)
 	state.Client.Token = ""
 	resp, err := state.Client.Site(context.Background())
 	if err != nil {
@@ -469,8 +466,6 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "image/jpeg")
 	w.Header().Set("Cache-Control", "max-age=2592000")
 	io.Copy(w, iresp.Body)
-	return
-
 }
 func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
@@ -502,7 +497,7 @@ func GetCommunities(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		r.URL.Path = "/" + ps.ByName("host") + "/search"
 	}
 	r.URL.RawQuery = "searchtype=Communities&sort=TopMonth"
-	http.Redirect(w, r, r.URL.String(), 301)
+	http.Redirect(w, r, r.URL.String(), http.StatusFound)
 }
 
 func ResolveId(r *http.Request, class string, id string, host string) string {
@@ -552,17 +547,17 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				if os.Getenv("LEMMY_DOMAIN") == "" {
 					dest = RegReplace(dest, `https:\/\/([a-zA-Z0-9\.\-]+\/post\/\d+)`, `/$1`)
 				}
-				http.Redirect(w, r, dest, 302)
+				http.Redirect(w, r, dest, http.StatusFound)
 				return
 			}
 			post, _ := resp.Post.Value()
 			if post.Post.ID > 0 {
 				dest := RegReplace(r.URL.String(), `(([a-zA-Z0-9\.\-]+)?/post/)([a-zA-Z0-9\-\.@]+)`, `$1`)
 				dest += strconv.FormatInt(post.Post.ID, 10)
-				http.Redirect(w, r, dest, 302)
+				http.Redirect(w, r, dest, http.StatusFound)
 				return
 			} else {
-				http.Redirect(w, r, apid, 302)
+				http.Redirect(w, r, apid, http.StatusFound)
 				return
 			}
 		}
@@ -602,17 +597,17 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				if os.Getenv("LEMMY_DOMAIN") == "" {
 					dest = RegReplace(dest, `https:\/\/([a-zA-Z0-9\.\-]+\/comment\/\d+)`, `/$1`)
 				}
-				http.Redirect(w, r, dest, 302)
+				http.Redirect(w, r, dest, http.StatusFound)
 				return
 			}
 			comment, _ := resp.Comment.Value()
 			if comment.Comment.ID > 0 {
 				dest := RegReplace(r.URL.String(), `(([a-zA-Z0-9\.\-]+)?/comment/)([a-zA-Z0-9\-\.@]+)`, `$1`)
 				dest += strconv.FormatInt(comment.Comment.ID, 10)
-				http.Redirect(w, r, dest, 302)
+				http.Redirect(w, r, dest, http.StatusFound)
 				return
 			} else {
-				http.Redirect(w, r, apid, 302)
+				http.Redirect(w, r, apid, http.StatusFound)
 				return
 			}
 		}
@@ -687,7 +682,7 @@ func SendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		return
 	}
 	r.URL.Path = "/" + state.Host + "/inbox"
-	http.Redirect(w, r, r.URL.String(), 301)
+	http.Redirect(w, r, r.URL.String(), http.StatusFound)
 }
 func GetCreatePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
@@ -826,10 +821,10 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		state.Sort = r.FormValue("DefaultSortType")
 		state.CommentSort = r.FormValue("DefaultCommentSortType")
 		// TODO save user settings
-	case "GET":
-		if state.Session != nil {
-			// TODO fetch user settings
-		}
+		// TODO fetch user settings
+		//case "GET":
+		//	if state.Session != nil {
+		//	}
 	}
 	Render(w, "settings.html", state)
 }
@@ -910,7 +905,7 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			q := r.URL.Query()
 			q.Add("alert", alert)
 			r.URL.RawQuery = q.Encode()
-			http.Redirect(w, r, r.URL.String(), 301)
+			http.Redirect(w, r, r.URL.String(), http.StatusFound)
 			return
 		}
 	}
@@ -924,7 +919,7 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
 		setCookie(w, state.Host, "jwt", token)
 		r.URL.Path = "/" + state.Host
-		http.Redirect(w, r, r.URL.String(), 301)
+		http.Redirect(w, r, r.URL.String(), http.StatusFound)
 		return
 	}
 }
@@ -1519,7 +1514,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			r.URL.Path = "/" + state.Host
 		}
 	}
-	http.Redirect(w, r, r.URL.String(), 301)
+	http.Redirect(w, r, r.URL.String(), http.StatusFound)
 }
 func GetLink(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	ref, _ := url.Parse(r.Referer())
@@ -1534,7 +1529,7 @@ func GetLink(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		dest, _ = url.Parse(m["url"][0])
 	}
 	if dest.Host == r.Host || !IsLemmy(dest.Host, RemoteAddr(r)) {
-		http.Redirect(w, r, dest.String(), 302)
+		http.Redirect(w, r, dest.String(), http.StatusFound)
 		return
 	}
 	if host := ps.ByName("host"); host != "" {
@@ -1542,7 +1537,7 @@ func GetLink(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if host != dest.Host && !strings.Contains(redirect, "@") {
 			redirect += ("@" + dest.Host)
 		}
-		http.Redirect(w, r, redirect, 302)
+		http.Redirect(w, r, redirect, http.StatusFound)
 		return
 	}
 	if host := os.Getenv("LEMMY_DOMAIN"); host != "" {
@@ -1550,7 +1545,7 @@ func GetLink(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if host != dest.Host && !strings.Contains(redirect, "@") {
 			redirect += ("@" + dest.Host)
 		}
-		http.Redirect(w, r, redirect, 302)
+		http.Redirect(w, r, redirect, http.StatusFound)
 		return
 	}
 }
