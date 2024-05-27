@@ -25,9 +25,12 @@
       </div>
       <div class="right">
 {{- if .Session }}
-        <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>|
-        <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>|
-        <a id="opensettings" href="/{{.Host}}/settings">settings</a>| 
+        <a href="/{{.Host}}/u/{{ .Session.UserName}}">{{ .Session.UserName }}</a>
+        |
+        <a href="/{{.Host}}/inbox" class="mailbox{{ if .UnreadCount }} orangered{{end}}">✉</a>
+        |
+        <a id="opensettings" href="/{{.Host}}/settings">settings</a>
+        |
         <form method="POST"><input type="submit" name="op" value="logout"></form>
 {{- else}}
         <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>| 
