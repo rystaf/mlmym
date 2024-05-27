@@ -60,7 +60,7 @@
     <div class="error">{{.Error}}</div>
 {{ end }}
 {{ end }}
-<form id="settings" class="preferences" method="POST" target="/{{.Host}}/settings">
+<form id="settings" class="preferences" method="POST" data-target="/{{.Host}}/settings">
       <div>
         <label>
           default listing
@@ -106,21 +106,13 @@
           <option value="Controversial"{{ if eq .CommentSort "Controversial"}} selected{{end}}>Controversial</option>
         </select>
       </div>
-      <div id="darkmode">
-        <label>
-          dark mode
-        </label>
-        <input type="checkbox" name="darkmode" {{ if is .Dark }}checked{{end}}>
-        <input type="hidden" name="darkmode" value="0">
-      </div>
-      <div id="undarkmode">
-        <label>
-          dark mode
-        </label>
-          {{ if not .Dark }}
-        <input type="checkbox" name="undarkmode" checked>
-          {{ end }}
-          <input type="hidden" name="undarkmode" value="0">
+      <div>
+        <label>theme</label>
+        <select name="Dark">
+          <option {{ if eq .Dark nil}}selected{{end}}>Default</option>
+          <option value="0" {{ if not (or (is .Dark) (eq .Dark nil)) }}selected{{end}}>Light</option>
+          <option value="1" {{ if is .Dark }}selected{{end}}>Dark</option>
+        </select>
       </div>
       <div class="scripting">
         <label>

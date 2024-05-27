@@ -974,7 +974,7 @@ form.create input[type=file], form.create select {
 }
 .preferences label{
   display: inline-block;
-  width: 150px;
+  width: 170px;
   margin-right: 5px;
   text-align: right;
 

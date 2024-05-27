@@ -387,7 +387,7 @@ function saveSettings(e) {
   var targ = e.currentTarget || e.srcElement || e;
   var data = new FormData(targ)
   e.preventDefault()
-  request(targ.target, data, function(res) {
+  request(targ.dataset.target, data, function(res) {
     ["endlessScrolling", "autoLoad", "markRead"].map(function(x) {
       localStorage.setItem(x, data.get(x)=="on")
     })
