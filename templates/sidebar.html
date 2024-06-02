@@ -2,6 +2,9 @@
     <div class="{{ if .User }}user {{end}}side">
       <form method="GET" action="/{{.Host}}/search">
         <input type="text" placeholder="search" name="q" value="">
+  {{- if eq .Listing "Local" }}
+        <input type="hidden" placeholder="search" name="listingType" value="Local">
+  {{- end }}
   {{- if .User }}
         <input type="hidden" name="username" value="{{.UserName}}">
   {{- else if .Community }}
