@@ -16,7 +16,8 @@
     {{- if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
       {{ template "nsfw.html" }}
     {{- else }}
-    <main>
+    <main{{ if .HideSidebar  }} class="wide"{{ end }}>
+    {{- template "sidebar.html" . }}
     {{- if or (.Query) (.SearchType) (and (not .PostID) (not .User) (not .Activities) (eq .Op ""))}}
       {{ template "menu.html" . }}
     {{- end}}
@@ -137,7 +138,6 @@
     {{- if .Watch }}
     <script src="/_/static/ws.js"></script>
     {{- end }}
-    {{- template "sidebar.html" . }}
     </main>
 {{- end }}
   </body>

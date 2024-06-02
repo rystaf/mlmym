@@ -15,3 +15,12 @@ div.pager {
 .savecomment input[type=file] {
   display: inline-block;
 }
+#sidetoggle button {
+  visibility: unset !important;
+}
+#sidetoggle button::before {
+  content: "" !important;
+}
+#sidetoggle {
+  bottom: 4px;
+}

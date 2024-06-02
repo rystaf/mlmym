@@ -16,7 +16,8 @@
     {{- if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
       {{ template "nsfw.html" }}
     {{- else }}
-    <main>
+    <main{{ if .HideSidebar  }} class="wide"{{ end }}>
+      {{ template "sidebar.html" . }}
       {{- if and (not .Community) .Tagline }}
       <h3>
         {{ markdown .Host .Tagline }}
@@ -46,7 +47,6 @@
       <input id="loadmore" type="submit" value="load more" data-page="2">
   {{ end }}
 
-      {{ template "sidebar.html" . }}
     </main>
 {{ end }}
     <script src="/_/static/utils.js?v={{ .Version }}"></script>

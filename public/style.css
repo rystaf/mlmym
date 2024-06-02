@@ -509,6 +509,9 @@ form.blockpost {
 .hidechildren span {
   pointer-events: none;
 }
+.hide {
+  display: none !important;
+}
 .expando {
   display: none;
   max-width: 900px;
@@ -607,8 +610,36 @@ form.blockpost {
   white-space: nowrap;
 }
 
-#sideToggle {
-  text-align: right;
+#sidetoggle button::before {
+  content: '[+]';
+  visibility: visible;
+  cursor: pointer;
+  position: relative;
+  top: 12px;
+}
+#sidetoggle.o button::before {
+  content: '[-]';
+  visibility: visible;
+  cursor: pointer;
+  position: relative;
+  top: 12px;
+}
+#sidetoggle button {
+  visibility: hidden;
+  width: 10px;
+  margin-right: 16px;
+  background: unset;
+  border: unset;
+}
+#sidetoggle {
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+  display: inline-flex;
+  align-items: end;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
 }
 .side {
   display: none;
@@ -625,7 +656,22 @@ main {
   position: relative;
   margin: 0px 10px;
 }
+.wide .side {
+  display: block !important;
+}
 @media (min-width: 900px) {
+  .wide {
+    padding-right: 15px;
+  }
+  .wide .side {
+    display: none !important;
+  }
+  #sidetoggle button::before {
+    content: '[-]';
+  }
+  #sidetoggle.o button::before {
+    content: '[+]';
+  }
   .expando {
     text-align: left;
   }
@@ -810,7 +856,7 @@ nav .host {
 }
 
 nav div.spacer {
-  height: 32px;
+  height: 34px;
   position: relative;
 }
 nav span.spacer {

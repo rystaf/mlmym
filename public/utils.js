@@ -513,6 +513,38 @@ function setup() {
       links[i].addEventListener("click", xhrLink)
     }
   }
+  var st = document.getElementById("sidetoggle")
+  if (st) {
+    st.addEventListener("click", sideToggle)
+  }
+}
+function sideToggle(e) {
+  e.preventDefault();
+  var side = document.getElementsByClassName("side")[0]
+  var main = document.getElementsByTagName("main")[0]
+  if (!side) return;
+  var form = e.target
+  if (form.tagName != "FORM") {
+    form = uptil(e.target, function(el){ return el.tagName == "FORM" })
+  }
+  var data = new FormData(form)
+  data.append("xhr", "1")
+  request(form.target, data)
+console.log(e)
+  if (side.className == "side") {
+    side.className = "side hide"
+    form.classList.add("o")
+    if (main) {
+      main.className = "wide"
+    }
+  } else {
+    side.className = "side"
+    form.classList.remove("o")
+    if (main) {
+      main.className = ""
+    }
+  }
+
 }
 function xhrLink(e) {
   e = e || window.event;

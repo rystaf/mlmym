@@ -1,5 +1,5 @@
 {{- $host := .Host }}
-    <div class="{{ if .User }}user {{end}}side">
+    <div class="{{ if .User }}user {{end}}side{{ if .HideSidebar  }} hide{{ end }}">
       <form method="GET" action="/{{.Host}}/search">
         <input type="text" placeholder="search" name="q" value="">
   {{- if eq .Listing "Local" }}

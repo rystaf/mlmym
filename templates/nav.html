@@ -87,6 +87,10 @@
         {{- if and .PostID }}{{ $post := (index .Posts 0) }}{{ if $post.CrossPosts }}
         <li><a href="/{{.Host}}/search?q={{ $post.Post.URL.String }}&searchtype=Url{{ if not $post.Post.Local }}&listingType=All{{end}}">other discussions ({{ $post.CrossPosts }})</a></li>
         {{- end }}{{ end }}
+        <form id="sidetoggle" class="link-btn{{ if .HideSidebar }} o{{end}}" method="POST">
+          <input type="hidden" name="op" value="sidetoggle">
+          <button>{{ if .HideSidebar }}[+]{{ else }}[-]{{ end }}</button>
+        </form>
       </ul>
       {{- end }}
     </nav>

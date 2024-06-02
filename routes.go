@@ -323,6 +323,9 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	state.Listing = getCookie(r, "DefaultListingType")
 	state.Sort = getCookie(r, "DefaultSortType")
 	state.CommentSort = getCookie(r, "DefaultCommentSortType")
+	if hideSidebar := getCookie(r, "HideSidebar"); hideSidebar == "1" {
+		state.HideSidebar = true
+	}
 	if dark := getCookie(r, "Dark"); dark != "" {
 		state.Dark = new(bool)
 		*state.Dark = dark != "0"
@@ -492,7 +495,7 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	u := resp.SiteView.Site.Icon.String()
 	if pictrs.MatchString(u) {
-		u += "?format=jpg&thumbnail=60"
+		u += "?format=png&thumbnail=60"
 	}
 	iresp, err := state.HTTPClient.Get(u)
 	if err != nil {
@@ -1071,6 +1074,15 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		})
 		if r.FormValue("xhr") == "1" {
 			w.Write([]byte{})
+			return
+		}
+	case "sidetoggle":
+		if state.HideSidebar {
+			deleteCookie(w, state.Host, "HideSidebar")
+		} else {
+			setCookie(w, state.Host, "HideSidebar", "1")
+		}
+		if r.FormValue("xhr") != "" {
 			return
 		}
 	case "logout":
