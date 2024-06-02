@@ -38,7 +38,7 @@ summary {
   height: 52px;
   width: 70px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
 }
 .rank {
@@ -809,9 +809,13 @@ nav .host {
   font-size: 12px;
 }
 
-nav .spacer {
+nav div.spacer {
   height: 32px;
   position: relative;
+}
+nav span.spacer {
+  height: 20px;
+  display: inline-block;
 }
 nav .space a {
   z-index: 100;

@@ -33,14 +33,15 @@
         |
         <form method="POST"><input type="submit" name="op" value="logout"></form>
 {{- else}}
-        <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>| 
+        <a href="/{{.Host}}/login">log in</a> or <a href="/{{.Host}}/login">sign up</a>
+        | 
         <a id="opensettings" href="/{{.Host}}/settings">settings</a>
 {{- end}}
       </div>
       <div id="settingspopup"></div>
       <div class="spacer">
         <a href="/{{ .Host}}/">
-          <img class="icon" src="{{ if and .Site .Site.SiteView.Site.Icon.IsValid }}{{ .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
+          <img class="icon" src="{{ if and .Site .Site.SiteView.Site.Icon.IsValid }}{{ shrink .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
         </a>
       </div>
       {{- if .Community }}

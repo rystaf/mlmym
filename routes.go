@@ -25,6 +25,21 @@ import (
 	"golang.org/x/text/message"
 )
 
+var pictrs = regexp.MustCompile(`\/pictrs\/image\/([a-z0-9\-]+)\.([a-z]+)$`)
+var imgur = regexp.MustCompile(`^https:\/\/(i\.)?imgur.com\/([a-zA-Z0-9]{5,})(\.[a-zA-Z0-9]+)?`)
+
+var isImage = func(u string) bool {
+	p, err := url.Parse(u)
+	if err != nil || p.Path == "" {
+		return false
+	}
+	ext := filepath.Ext(p.Path)
+	if ext == ".jpeg" || ext == ".jpg" || ext == ".png" || ext == ".webp" || ext == ".gif" {
+		return true
+	}
+	return false
+}
+
 var funcMap = template.FuncMap{
 	"host": func(host string) string {
 		if l := os.Getenv("LEMMY_DOMAIN"); l != "" {
@@ -112,37 +127,60 @@ var funcMap = template.FuncMap{
 		}
 		return ""
 	},
-	"isImage": func(u string) bool {
-		p, err := url.Parse(u)
-		if err != nil || p.Path == "" {
-			return false
-		}
-		ext := filepath.Ext(p.Path)
-		if ext == ".jpeg" || ext == ".jpg" || ext == ".png" || ext == ".webp" || ext == ".gif" {
-			return true
-		}
-		return false
-	},
+	"isImage": isImage,
 	"isYoutube": func(u string) bool {
 		re := regexp.MustCompile(`^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$`)
 		return re.MatchString(u)
 	},
 	"thumbnail": func(p lemmy.Post) string {
+		if pictrs.MatchString(p.ThumbnailURL.String()) {
+			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=64"
+		} else if pictrs.MatchString(p.URL.String()) {
+			return p.URL.String() + "?format=jpg&thumbnail=64"
+		}
+		if imgur.MatchString(p.URL.String()) {
+			return imgur.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${2}s.jpg")
+		}
 		if p.ThumbnailURL.IsValid() {
-			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=96"
+			return p.ThumbnailURL.String()
 		}
-		re := regexp.MustCompile(`\/pictrs\/image\/([a-z0-9\-]+)\.([a-z]+)$`)
-		if re.MatchString(p.URL.String()) {
-			return p.URL.String() + "?format=jpg&thumbnail=96"
-		}
-		re = regexp.MustCompile(`^https:\/\/(i\.)?imgur.com\/([a-zA-Z0-9]{5,})(\.[a-zA-Z0-9]+)?`)
-		if re.MatchString(p.URL.String()) {
-			return re.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${2}s.jpg")
+		if isImage(p.URL.String()) {
+			return "/_/static/photo.png"
 		}
 		if p.URL.IsValid() {
 			return "/_/static/link.png"
 		}
 		return "/_/static/text.png"
+	},
+	"banner": func(site lemmy.Site) string {
+		bannerURL := ""
+		if site.Banner.IsValid() {
+			bannerURL = site.Banner.String()
+		} else if site.Icon.IsValid() {
+			bannerURL = site.Icon.String()
+		}
+		if pictrs.MatchString(bannerURL) {
+			return bannerURL + "?format=jpg&thumbnail=300"
+		}
+		return bannerURL
+	},
+	"cbanner": func(c lemmy.Community) string {
+		bannerURL := ""
+		if c.Banner.IsValid() {
+			bannerURL = c.Banner.String()
+		} else if c.Icon.IsValid() {
+			bannerURL = c.Icon.String()
+		}
+		if pictrs.MatchString(bannerURL) {
+			return bannerURL + "?format=jpg&thumbnail=300"
+		}
+		return bannerURL
+	},
+	"shrink": func(u string) string {
+		if pictrs.MatchString(u) {
+			return u + "?format=png&thumbnail=60"
+		}
+		return u
 	},
 	"humanize": humanize.Time,
 	"markdown": func(host string, body string) template.HTML {
@@ -452,7 +490,11 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.Write([]byte("404 - Not Found"))
 		return
 	}
-	iresp, err := state.HTTPClient.Get(resp.SiteView.Site.Icon.String())
+	u := resp.SiteView.Site.Icon.String()
+	if pictrs.MatchString(u) {
+		u += "?format=jpg&thumbnail=60"
+	}
+	iresp, err := state.HTTPClient.Get(u)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
