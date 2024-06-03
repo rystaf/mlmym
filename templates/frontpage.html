@@ -19,9 +19,9 @@
     <main{{ if .HideSidebar  }} class="wide"{{ end }}>
       {{ template "sidebar.html" . }}
       {{- if and (not .Community) .Tagline }}
-      <h3>
+      <div id="tagline">
         {{ markdown .Host .Tagline }}
-      </h3>
+      </div>
       {{- end }}
       {{ template "menu.html" . }}
   {{- if .Error }}

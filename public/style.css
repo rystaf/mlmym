@@ -146,6 +146,7 @@ summary {
   color: #000;
 }
 .comment {
+  overflow: hidden;
   font-size: 14px;
   margin: 0px 0px 10px 0px;
   border: 1px solid #e6e6e6;
@@ -226,6 +227,7 @@ summary {
 .commentmenu {
   font-size: 16px;
   margin: 0px 0px 10px 0px;
+  overflow: hidden;
 }
 .commentmenu div {
   border-top: 1px dotted gray;
@@ -367,6 +369,7 @@ form.nsfw div {
   color: red;
   font-size: 13px;
   padding: 10px;
+  overflow: hidden;
 }
 .alert {
   color: #8080FF;
@@ -646,9 +649,8 @@ form.blockpost {
   margin: 0 auto;
   font-size: 12px;
   width: 300px;
-  padding: 0 5px;
+  padding: 0 5px 0 10px;
   margin-bottom: 10px;
-  background-color: white;
   border-radius: 0px 0px 0px 4px;
 }
 .side img, .md img{
@@ -952,11 +954,16 @@ nav .right form input, .comment .buttons input, form.link-btn input {
   padding: 0;
   margin: 0;
 }
-
+#tagline {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: bold;
+}
 .menu {
   border-bottom: 1px dotted gray;
   padding: 0px 0px 5px 20px;
   color: gray;
+  overflow: hidden;
 }
 .menu a {
   margin: 0px 2.5px;
@@ -975,6 +982,7 @@ nav .right form input, .comment .buttons input, form.link-btn input {
   border-width: 1px;
   padding: 5px 10px;
   margin: 5px 10px;
+  overflow: hidden;
 }
 .highlight {
   background-color: #ffc;
