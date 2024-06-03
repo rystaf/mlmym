@@ -65,8 +65,8 @@
 {{- end -}}
 
 {{- if and .Site (not .Community) (not .User) }}
-  {{- if (or .Site.SiteView.Site.Banner.IsValid .Site.SiteView.Site.Icon.IsValid) }}
-      <div class="banner" style="background-image: url({{ banner .Site.SiteView.Site }})"></div>
+  {{- if .Site.SiteView.Site.Banner.IsValid }}
+      <div class="banner" style="background-image: url({{ .Site.SiteView.Site.Banner.String }})"></div>
   {{- end }}
       <h1>{{ .Site.SiteView.Site.Name }}</h1>
       {{ printer .Site.SiteView.Counts.Users }} readers <br>

@@ -152,18 +152,6 @@ var funcMap = template.FuncMap{
 		}
 		return "/_/static/text.png"
 	},
-	"banner": func(site lemmy.Site) string {
-		bannerURL := ""
-		if site.Banner.IsValid() {
-			bannerURL = site.Banner.String()
-		} else if site.Icon.IsValid() {
-			bannerURL = site.Icon.String()
-		}
-		if pictrs.MatchString(bannerURL) {
-			return bannerURL + "?format=jpg&thumbnail=300"
-		}
-		return bannerURL
-	},
 	"cbanner": func(c lemmy.Community) string {
 		bannerURL := ""
 		if c.Banner.IsValid() {
