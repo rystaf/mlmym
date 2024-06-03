@@ -65,7 +65,7 @@
 {{- end -}}
 
 {{- if and .Site (not .Community) (not .User) }}
-  {{- if or .Site.SiteView.Site.Banner.IsValid .Site.SiteView.Site.Icon.IsValid }}
+  {{- if (or .Site.SiteView.Site.Banner.IsValid .Site.SiteView.Site.Icon.IsValid) }}
       <div class="banner" style="background-image: url({{ banner .Site.SiteView.Site }})"></div>
   {{- end }}
       <h1>{{ .Site.SiteView.Site.Name }}</h1>
@@ -85,7 +85,7 @@
 {{- end -}}
 
 {{- if .Community }}
-  {{- if or .Community.CommunityView.Community.Banner.IsValid .Community.CommunityView.Community.Icon.IsValid }}
+  {{- if (or .Community.CommunityView.Community.Banner.IsValid .Community.CommunityView.Community.Icon.IsValid) }}
       <div class="banner" style="background-image: url({{ cbanner .Community.CommunityView.Community }})"></div>
   {{- end }}
       <h1>{{ if ne .Community.CommunityView.Community.Title ""}}{{ .Community.CommunityView.Community.Title }}{{ else }}{{ .Community.CommunityView.Community.Name }}{{end}}</h1>

@@ -646,8 +646,10 @@ form.blockpost {
   margin: 0 auto;
   font-size: 12px;
   width: 300px;
-  padding-right: 5px;
+  padding: 0 5px;
   margin-bottom: 10px;
+  background-color: white;
+  border-radius: 0px 0px 0px 4px;
 }
 .side img, .md img{
   max-width: 100%;
@@ -660,9 +662,6 @@ main {
   display: block !important;
 }
 @media (min-width: 900px) {
-  .wide {
-    padding-right: 15px;
-  }
   .wide .side {
     display: none !important;
   }
@@ -680,13 +679,13 @@ main {
   }
   .side {
     display: block;
-    position: absolute;
-    top: 0;
-    right: 0;
+    float:right;
   }
   main {
-    padding-right: 316px;
     margin-right: 0px;
+  }
+  main > .comment {
+    margin-right: 10px;
   }
 }
 .side form {

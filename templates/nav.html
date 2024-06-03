@@ -89,7 +89,7 @@
         {{- end }}{{ end }}
         <form id="sidetoggle" class="link-btn{{ if .HideSidebar }} o{{end}}" method="POST">
           <input type="hidden" name="op" value="sidetoggle">
-          <button>{{ if .HideSidebar }}[+]{{ else }}[-]{{ end }}</button>
+          <button title="Toggle Sidebar">{{ if .HideSidebar }}[+]{{ else }}[-]{{ end }}</button>
         </form>
       </ul>
       {{- end }}
