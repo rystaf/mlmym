@@ -8,15 +8,13 @@
             <input class="imgupload" type="file" name="file" accept="image/*">
             </label>
           </div>
-          <div>
-            <textarea name="content" {{ if .XHR }}autofocus{{ end }}>
-            {{- if .Content }}
-            {{- .Content -}}
-            {{ else if and (eq .Op "edit") .Comments }}
-            {{- (index .Comments 0).P.Comment.Content -}}
-            {{ end -}}
-            </textarea>
-          </div>
+          <textarea name="content" {{ if .XHR }}autofocus{{ end }}>
+          {{- if .Content }}
+          {{- .Content -}}
+          {{ else if and (eq .Op "edit") .Comments }}
+          {{- (index .Comments 0).P.Comment.Content -}}
+          {{ end -}}
+          </textarea>
         {{- if eq .Op "edit" }}
           <input type="hidden" name="op" value="edit_comment">
           <input type="hidden" name="commentid" value="{{.CommentID}}">

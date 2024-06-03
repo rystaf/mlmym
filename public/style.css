@@ -24,54 +24,84 @@ summary {
   transform: scale(1.03);
 }
 .post {
-  margin: 8px 0px;
+  margin: 6px 0px;
+  overflow: hidden;
+}
+.post .p {
+  overflow:hidden;
 }
 .post .thumb {
-  height: 52px;
-  width: 70px;
-  margin: 0px 8px 0px 0px;
+  margin: 2px 8px 0px 0px;
   position: relative;
   overflow: hidden;
-  --background-color: #e7e7e7;
+  background-color: #f0f0f0;
+}
+.post .thumb, .post .thumb div {
+  height: 47px;
+  width: 70px;
 }
 .post .thumb div {
-  height: 52px;
-  width: 70px;
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
 }
 .rank {
   color: #c6c6c6;
   font-size: 14px;
-  margin-top: 17px;
+  margin: 16px 0 0 0;
   text-align: right;
-  min-width: 21px;
+  min-width: 19px;
 }
 .post .score {
   color: #c6c6c6;
   font-size: 12px;
   font-weight: 700;
+}
+.post .score div div,
+.post .score form {
   text-align: center;
-  min-width: 42px;
+  margin: 0 4px;
+  width: 38px;
 }
-.comment .score {
-  clear:left;
-  margin-right: 4px;
-  overflow:hidden;
-  min-width: 3px;
-  min-height: 38px;
+.post .score div div {
+  margin: 18px 2px;
 }
-.comment .content, .expando .md {
+.create_comment {
+  margin: 0 0 10px 0px;
+  overflow: hidden;
+}
+.expando .thumb, .expando .score, .expando .rank {
+  display: none;
+  background-color: unset !important;
+}
+.comment .content, .expando .md, .expando > div {
   line-height: 20px;
   overflow:hidden;
   max-width: 840px;
+  text-align: left;
+}
+.expando > div {
+  text-align: center;
 }
 .comment.hidden {
   padding-bottom:5px;
+  padding-left: 4px;
+}
+.comment.hidden .score form input {
+  display: none;
+}
+.comment .score {
+  min-height: 32px;
+  min-width: 4px;
 }
 .comment.hidden .score {
-  visibility: hidden;
+  min-height: 1px;
+}
+.comment .score form {
+  margin-right: 2px;
+  min-width: 20px;
+  position: relative;
+  bottom: 2px;
 }
 .score form.link-btn input {
   display: inline-block;
@@ -113,7 +143,6 @@ summary {
 .post .title  {
   color: #888;
   font-size: 10px;
-  margin-bottom: 2px;
 }
 .post .title.visited a {
   color: #551A8B;
@@ -132,6 +161,7 @@ summary {
 }
 .activity .post {
   margin-bottom: 10px;
+  min-height: 50px;
 }
 .activity .comment {
   padding-bottom: 1px;
@@ -148,18 +178,16 @@ summary {
 .comment {
   overflow: hidden;
   font-size: 14px;
-  margin: 0px 0px 10px 0px;
+  margin: 5px 0px 8px 0px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
-  padding: 10px 10px 0px 7px;
+  padding: 7px 8px 0px 4px;
 }
 .activity .comment {
   border: 0px;
 }
 .comment img {
   max-height: 300px;
-}
-.comment .comment {
 }
 .comment .comment,
 .comment .comment .comment .comment,
@@ -176,7 +204,8 @@ summary {
 }
 .comment .meta {
   font-size: 10px;
-  margin-bottom: 6px;
+  overflow: hidden;
+  margin-bottom: 2px;
 }
 .preview h3 {
   background-color: #f0f3fc;
@@ -232,20 +261,22 @@ summary {
 .commentmenu div {
   border-top: 1px dotted gray;
   font-size: 12px;
+  padding-top: 3px;
 }
 form.savecomment {
-  margin: 0px 0px 10px 0px;
-  width: 500px;
+  max-width: 500px;
+  padding: 0 4px;
 }
 .comment > .children > form.savecomment {
   margin: 0px 0px 10px 20px;
 }
 .comment .children {
-  margin: 5px 0px 5px 15px;
+  margin: 3px 0px 5px 21px;
 }
 .savecomment textarea {
   margin: 5px 0px;
   width: 100%;
+  box-sizing: border-box;
   height: 100px;
 }
 
@@ -270,8 +301,11 @@ form.savecomment {
 .savecomment .right a {
   line-height: 28px;
   font-size: 10px;
+  margin-right: 4px;
 }
-
+.comment.hidden .meta span, .comment.hidden .meta b {
+  font-style: italic;
+}
 .comment .meta a.minimize {
   color: #369;
   font-size: 10px;
@@ -281,14 +315,20 @@ form.savecomment {
   color: gray;
   font-weight: 400;
 }
-.comment.hidden .meta a:last-child {
+.numChildren {
+  display: none;
+  color: gray;
+  font-style: italic;
+}
+.comment.hidden .numChildren {
+  display: inline
+}
+.comment.hidden .meta a.creator {
   font-style: italic;
   font-weight: 700;
 }
 .comment.hidden .content, .comment.hidden .children, .comment.hidden .morecomments {
   display: none;
-}
-.children .morecomments {
 }
 .morecomments {
   height: 15px;
@@ -417,7 +457,7 @@ form.nsfw div {
 .buttons li {
   display: inline;
 }
-.buttons, .buttons > form input, .buttons li form input {
+.buttons, .buttons > form input, .buttons li > form input {
   font-weight: bold;
   font-size: 10px;
   padding: 0;
@@ -426,7 +466,8 @@ form.nsfw div {
   width: 100%;
 }
 .comment .buttons {
-  margin: 3px 0px 0px 0px;
+  margin: 3px 0px 2px 0px;
+  line-height: 16px;
 }
 .comment.hidden .buttons {
   display: none;
@@ -436,27 +477,38 @@ form.nsfw div {
   border-left: 2px solid #c5c1ad;
   padding: 0 8px;
 }
-.buttons a, .buttons > form input, .comment .buttons form input {
+.buttons a, .buttons > form input, .comment .buttons li > form input {
   text-decoration: none;
   color: #888;
   display: inline-block;
   margin-right: 5px !important;
 }
-.buttons a:hover, .buttons > form input:hover, .comment .buttons form input:hover {
+.buttons a:hover, .buttons > form input:hover, .comment .buttons li > form input:hover {
   text-decoration: underline;
 }
 .entry {
+  display: inline-block;
   color: #888;
-  overflow:hidden;
+  overflow: hidden;
+  padding: 4px 0 0 0;
 }
-.entry .buttons .blockpopup {
+.blockpopup {
   display: inline-block;
   position: absolute;
   z-index: 100;
   background-color: white;
 }
+.blockpopup fieldset {
+  border-color: gray;
+}
 .entry .meta {
   margin: -1px 0px 1px 0px;
+}
+.entry .meta > span {
+  white-space: nowrap;
+}
+.entry > div:last-child {
+  overflow: hidden;
 }
 form.blockpost {
   padding: 2px;
@@ -479,20 +531,22 @@ form.blockpost {
   float: left;
   position: relative;
   color: #fff;
-  font-size: 16px;
-  left: 11px;
-  top: 3px;
+  font-size: 12px;
+  left: 12px;
+  top: 7px;
 }
 .open.expando-button {
   border-radius: 30px;
 }
 .open.expando-button::before {
-  content: "x";
+  content: "✖";
   color: #fff;
-  left: 7px;
-  top: 0px;
   font-weight: bold;
   font-family: sans-serif;
+  left: 5px;
+  top: 1px;
+  font-size: 15px;
+  line-height: 22px;
 }
 .expando-button:hover{
   background-color: #466599;
@@ -506,7 +560,7 @@ form.blockpost {
 .hidechildren.hidden .show {
   display: inline;
 }
-.hidechildren.hidden .hide {
+.hidechildren.hidden span:first-child {
   display: none;
 }
 .hidechildren span {
@@ -518,7 +572,6 @@ form.blockpost {
 .expando {
   display: none;
   max-width: 900px;
-  margin-top: 5px;
   position: relative;
   color: #000;
 }
@@ -563,17 +616,19 @@ form.blockpost {
 }
 .expando.open{
   display: block;
+  clear: left;
 }
 .expando .image {
   max-width: 100%;
   cursor: nwse-resize;
+  margin-top:4px;
 }
 .expando .md {
+  margin-top:4px;
   background-color: #fafafa;
   border: 1px solid #369;
   border-radius: 7px;
   padding: 5px 10px;
-  margin: 5px auto;
   font-size: 14px;
   overflow: auto;
 }
@@ -613,44 +668,30 @@ form.blockpost {
   white-space: nowrap;
 }
 
-#sidetoggle button::before {
-  content: '[+]';
-  visibility: visible;
-  cursor: pointer;
-  position: relative;
-  top: 12px;
-}
-#sidetoggle.o button::before {
-  content: '[-]';
-  visibility: visible;
-  cursor: pointer;
-  position: relative;
-  top: 12px;
-}
-#sidetoggle button {
-  visibility: hidden;
-  width: 10px;
-  margin-right: 16px;
-  background: unset;
-  border: unset;
-}
 #sidetoggle {
   position: absolute;
-  cursor: pointer;
   right: 0;
-  display: inline-flex;
-  align-items: end;
-  height: 20px;
-  font-size: 12px;
+}
+#sidetoggle button {
+  background: unset;
+  border: unset;
   cursor: pointer;
+}
+#sidetoggle span:last-child {
+  display: none;
+}
+.sidetoggle #sidetoggle span:last-child {
+  display: inline
+}
+.sidetoggle #sidetoggle span:first-child {
+  display: none
 }
 .side {
   display: none;
   margin: 0 auto;
   font-size: 12px;
-  width: 300px;
   padding: 0 5px 0 10px;
-  margin-bottom: 10px;
+  margin: 0px auto;
   border-radius: 0px 0px 0px 4px;
 }
 .side img, .md img{
@@ -658,37 +699,80 @@ form.blockpost {
 }
 main {
   position: relative;
-  margin: 0px 10px;
+  margin: 0px 5px;
 }
-.wide .side {
+.sidetoggle .side {
   display: block !important;
+  margin: 0 auto;
 }
-@media (min-width: 900px) {
-  .wide .side {
-    display: none !important;
+#search input {
+  width: 100%;
+  box-sizing: border-box;
+}
+#search {
+  overflow: hidden;
+}
+@media (min-width: 600px) {
+  main > .community {
+    margin: 20px 50px;
   }
-  #sidetoggle button::before {
-    content: '[-]';
+  .community .details {
+    margin-left: 36px;
   }
-  #sidetoggle.o button::before {
-    content: '[+]';
+  .side {
+    float:right;
+    width: 300px;
   }
-  .expando {
-    text-align: left;
+  main {
+    margin-right: 0px;
+    margin-left: 10px;
+  }
+  main > .comment, .commentmenu, #tagline, .menu, .activity, .expando {
+    margin-right: 10px;
+  }
+  .entry {
+    display: block;
+  }
+}
+@media (min-width: 800px) {
+  .expando .thumb, .expando .score, .expando .rank {
+    display: block;
   }
   .expando .image {
     max-width: 578px;
   }
+  .expando > div {
+    text-align: left;
+  }
+}
+@media (min-width: 1064px) {
+  .signup > div:first-child {
+    position: unset !important;
+  }
+  .signup > div:first-child {
+    border-right: 1px solid #e0e0e0;
+    padding-right: 60px;
+  }
+  .sidetoggle .side {
+    display: none !important;
+  }
+  #sidetoggle span:last-child {
+    display: inline
+  }
+  #sidetoggle span:first-child {
+    display: none
+  }
+  .sidetoggle #sidetoggle span:last-child {
+    display: none;
+  }
+  .sidetoggle #sidetoggle span:first-child {
+    display: inline;
+  }
+
   .side {
     display: block;
-    float:right;
   }
-  main {
-    margin-right: 0px;
-  }
-  main > .comment {
-    margin-right: 10px;
-  }
+
 }
 .side form {
   margin: 0px 0px 5px 0px;
@@ -781,7 +865,7 @@ h1, h2 {
   color: #369;
 }
 main > .community {
-  margin: 20px 50px;
+  margin: 20px 5px;
   max-width: 840px;
   position: relative;
 }
@@ -795,15 +879,12 @@ main > .community {
   max-height: 170px;
   overflow: auto;
 }
-.community .details {
-  margin-left: 36px;
-}
 nav {
+  position: relative;
   border-bottom: 1px solid #00a846;
   background-color: #9ad59b;
   z-index: 99;
-  margin-bottom: 5px;
-  position: relative;
+  margin-bottom: 8px;
 }
 nav .communities {
  background-color: #f0f0f0;
@@ -835,7 +916,7 @@ nav .communities a {
   text-decoration: none;
   color: black;
 }
-nav .title a:hover {
+nav .title:hover {
   text-decoration: underline;
 }
 
@@ -870,7 +951,7 @@ nav .space a {
 nav .icon {
   height: 54px;
   width: 60px;
-  margin: 2px 5px;
+  margin: 2px 3px;
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center bottom;
@@ -900,6 +981,10 @@ nav li {
   margin-top: 5px;
   font-size: 12px;
   font-weight: 700;
+}
+
+nav li:nth-last-child(2) {
+  margin-right: 26px;
 }
 
 nav ul a {
@@ -936,6 +1021,7 @@ body nav .right a.mailbox {
   position: relative;
   top: 4px;
   color: gray;
+  line-height: 0;
 }
 nav .right a, nav .right input[type=submit] {
   color: #369;
@@ -945,7 +1031,7 @@ nav .right form, .comment form, form.link-btn {
   display: inline-block;
   margin: 0;
 }
-nav .right form input, .comment .buttons input, form.link-btn input {
+nav .right form input, .comment .buttons li > form input, form.link-btn input {
   background-color: rgba(0, 0, 0, 0);
   border: 0px;
   font-size: unset;
@@ -958,6 +1044,10 @@ nav .right form input, .comment .buttons input, form.link-btn input {
   overflow: hidden;
   font-size: 12px;
   font-weight: bold;
+  background-color: #fffcd4;
+  color: #000;
+  margin-bottom: 5px;
+  padding: 0px 5px;
 }
 .menu {
   border-bottom: 1px dotted gray;
@@ -1042,7 +1132,7 @@ form.create input[type=file], form.create select {
 .signup {
   margin: 0px 30px;
 }
-.signup h2 {
+.signup h1 {
   margin-bottom: 10px;
 }
 .signup > div {
@@ -1050,8 +1140,8 @@ form.create input[type=file], form.create select {
   margin: 30px;
 }
 .signup > div:first-child {
-  border-right: 1px solid #e0e0e0;
-  padding-right: 60px;
+  position: absolute;
+  top: 316px;
 }
 .root label, .signup label {
   font-size: 15px;
@@ -1073,7 +1163,10 @@ form.create input[type=file], form.create select {
 }
 .signup input[type=submit] {
   margin-top: 20px;
-  float: right;
+  display: block;
+}
+.signup figure {
+  margin: 16px 0 4px 0;
 }
 .signup .question {
   max-width: 500px;

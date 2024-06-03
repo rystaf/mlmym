@@ -3,16 +3,25 @@
   {{ template "nav.html" . }}
 {{ end }}
 <form method="POST" class="blockpost"{{ if not .XHR }} action="./"{{ end }}>
+  <fieldset>
+    <legend>block</legend>
   <div>
     <input type="checkbox" id="blockuser" name="blockuser" checked>
-    <label for="blockuser">u/{{ fullname (index .Posts 0).Creator }}</label>
+    <label for="blockuser">u/{{ if .Posts }}{{ fullname (index .Posts 0).Creator }}{{ else }}{{ fullname (index .Comments 0).P.Creator }}{{ end }}</label>
   </div>
-  {{ if and (not (index .Posts 0).Creator.Local) (ne (index .Posts 0).Creator.InstanceID .Community.CommunityView.Community.InstanceID) }}
+  {{ if and .Comments (not (index .Comments 0).P.Creator.Local) }}
+  <div>
+    <input type="checkbox" id="blockuserinstance" name="blockuserinstance">
+    <label for="blockuserinstance">{{ instance (index .Comments 0).P.Creator.ActorID }}</label>
+  </div>
+  {{ end }}
+  {{ if and .Posts (not (index .Posts 0).Creator.Local) (ne (index .Posts 0).Creator.InstanceID .Community.CommunityView.Community.InstanceID) }}
   <div>
     <input type="checkbox" id="blockuserinstance" name="blockuserinstance">
     <label for="blockuserinstance">{{ instance (index .Posts 0).Creator.ActorID }}</label>
   </div>
   {{ end }}
+  {{ if .Community }}
   <div>
     <input type="checkbox" id="blockcommunity" name="blockcommunity">
     <label for="blockcommunity">c/{{ fullcname .Community.CommunityView.Community }}</label>
@@ -23,12 +32,25 @@
     <label for="blockpostinstance">{{ instance .Community.CommunityView.Community.ActorID }}</label>
   </div>
   {{ end }}
+  {{ end }}
+</fieldset>
   <div>
+    <fieldset>
+      <legend>report {{ if .Posts }}post{{ else }}comment{{ end }}</legend>
+    <textarea name="reason"></textarea>
+  </fieldset>
+  </div>
+  <div>
+    {{ if .Posts }}
     <input type="hidden" name="op" value="block_post">
     <input type="hidden" name="postid" value="{{(index .Posts 0).Post.ID}}">
     <input type="hidden" name="userinstanceid" value="{{(index .Posts 0).Creator.InstanceID}}">
     <input type="hidden" name="postinstanceid" value="{{.Community.CommunityView.Community.InstanceID}}">
-    <input type="submit" value="block" name="submit">
+    {{ else }}
+    <input type="hidden" name="op" value="block_comment">
+    <input type="hidden" name="commentid" value="{{(index .Comments 0).P.Comment.ID}}">
+    {{ end }}
+    <input type="submit" value="submit" name="submit">
     <input type="submit" value="cancel" name="submit">
   </div>
 </form>

@@ -27,7 +27,7 @@
           <img class="icon" src="{{ if and .Site .Site.SiteView.Site.Icon.IsValid }}{{ shrink .Site.SiteView.Site.Icon.String }}{{else}}/{{ .Host}}/icon.jpg{{end}}">
         </a>
       </div>
-      <a class="title" href="/{{.Host}}">{{ host .Host}}</a><span class="title"> - sign up or login</span>
+      <a class="title" href="/{{.Host}}">{{ host .Host}}</a>
       <span class="spacer"></span>
     </nav>
 {{ if .Alert }}
@@ -41,7 +41,7 @@
     <div class="signup">
 {{ if ne .Op "2fa" }}
     <div>
-      <h2>create a new account</h2>
+      <h1>create a new account</h1>
       <form method="POST" action="/{{ .Host}}/login">
         <label>
           username
@@ -69,8 +69,9 @@
         </label>
         {{ end }}
         {{ if and .Site .Site.SiteView.LocalSite.CaptchaEnabled .Captcha }}
-        <figure><img src="data:image/png;base64,{{ .Captcha.PNG }}"></figure>
-        <figure><audio controls src="data:audio/wav;base64,{{ .Captcha.WAV }}"></audio></figure>
+        <figure>
+          <img src="data:image/png;base64,{{ .Captcha.PNG }}">
+          <figcaption><audio controls src="data:audio/wav;base64,{{ .Captcha.WAV }}"></audio></figcaption></figure>
         <label>
           enter code
           <div><input required name="captchaanswer" type="text"></div>
@@ -88,7 +89,7 @@
     </div>
 {{ end }}
     <div>
-      <h2>login</h2>
+      <h1>login</h1>
       <form method="POST" action="/{{ .Host}}/login">
         <label>
           username

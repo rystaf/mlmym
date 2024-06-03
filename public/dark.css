@@ -1,4 +1,4 @@
-body {
+body, .blockpopup {
   background-color: #262626;
   color: #ddd;
 }
@@ -15,6 +15,9 @@ input[type=text], input[type=password], textarea {
 }
 .post .score {
   color: #646464;
+}
+.post .thumb {
+  background-color: #424242;
 }
 .score form.link-btn input {
   color: #646464;

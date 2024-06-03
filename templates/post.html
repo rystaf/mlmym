@@ -3,6 +3,7 @@
   {{- if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{- end }}
+        <div class="p"> 
         <div class="score">
 {{- end }}
 {{- if or (ne .State.Op "save_post") (eq .State.Op "vote_post") }}
@@ -18,7 +19,7 @@
             <input type="submit" name="vote" value="▼"> 
           </form>
 {{- else }}
-          <div style="margin-top: 19px;">{{ .Counts.Score }}</div>
+          <div><div>{{ .Counts.Score }}</div></div>
 {{- end }}
 {{- end }}
 {{- if and (ne .State.Op "vote_post") (ne .State.Op "save_post") }}
@@ -31,7 +32,6 @@
           </a>
         </div>
         {{ end }}
-        <div class="entry">
           <div class="title{{ if .Read}} visited{{end}}">
             <a class="url" href="{{ if .Post.URL.IsValid }}{{ .Post.URL }}{{ else }}/{{ .State.Host }}/post/{{ .Post.ID }}{{ end }}"
               {{- if .State.LinksInNewWindow }} target="_blank" {{ end }}>
@@ -39,29 +39,32 @@
             </a>
             ({{ domain . }})
           </div>
+        <div class="entry">
           <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) (not (isYoutube .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
+          <div>
           <div class="meta">
+            <span>
             submitted
-            <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span>
+            <span title="{{.Post.Published.Time}}">{{ humanize .Post.Published.Time -}}</span></span>
             {{- if gt .Post.Updated.ValueOrZero.Time.Unix .Post.Published.Time.Unix -}}
-            * (last edited <span title="{{.Post.Updated.ValueOrZero.Time}}">{{ humanize .Post.Updated.ValueOrZero.Time }}</span>)
+            <span>* (last edited <span title="{{.Post.Updated.ValueOrZero.Time}}">{{ humanize .Post.Updated.ValueOrZero.Time }}</span>)</span>
             {{ end }}
-            by
+            <span>by
             <a class="submitter{{ if false}} admin{{end}}" href="/{{ .State.Host }}/u/{{ fullname .Creator }}">
               {{- if .State.HideInstanceNames -}}
               {{ .Creator.Name }}
               {{- else -}}
               {{ fullname .Creator }}
               {{- end -}}
-            </a>
-            to
+            </a></span>
+            <span>to
             <a class="community" href="/{{ .State.Host }}/c/{{ fullcname .Community }}">
               c/{{ if .State.HideInstanceNames -}}
               {{ .Community.Name }}
               {{ else -}}
               {{ fullcname .Community }}
               {{ end }}
-            </a>
+            </a></span>
           </div>
           <div class="buttons">
             {{- if .Post.NSFW }}
@@ -70,8 +73,8 @@
             <a href="{{ .Post.ApID}}">fedilink</a>
             {{- if .State.Session }}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}/block" rel="xhr" target="block{{ .Post.ID }}">block</a>
-            {{- end }}
             <span class="blockpopup" name="block{{.Post.ID}}"></span>
+            {{- end }}
           {{- if and .State.Session (eq .State.Session.UserID .Post.CreatorID) }}
             {{- if not .Post.Deleted }}<a href="/{{ .State.Host }}/post/{{ .Post.ID }}?edit">edit</a>{{end}}
             <form class="link-btn" method="POST">
@@ -115,7 +118,20 @@
             </form>
           {{- end }}
           </div>
-          <div class="expando{{ if eq .Rank 0 }} open{{ end}}">
+          </div>
+        </div>
+        </div>
+        <div class="expando{{ if eq .Rank 0 }} open{{ end}}">
+{{- if or ((and .Post.Body.IsValid (ne .Post.Body.String ""))) (isImage .Post.URL.String)}}
+        {{- if gt .Rank 0 }}
+          <div class="rank">&nbsp;</div>
+        {{- end }}
+          <div class="score"><div><div>&nbsp;</div></div></div>
+        {{ if not .State.HideThumbnails }}
+          <div class="thumb"></div>
+        {{ end }}
+{{- end }}
+          <div>
 {{- if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
             <div class="md">{{ markdown .State.Host .Post.Body.String }}</div>
 {{- end }}
@@ -125,6 +141,5 @@
             <div class="embed"></div>
           </div>
         </div>
-        <div class="clearleft"></div>
       </div>
 {{- end -}}

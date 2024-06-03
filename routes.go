@@ -134,9 +134,9 @@ var funcMap = template.FuncMap{
 	},
 	"thumbnail": func(p lemmy.Post) string {
 		if pictrs.MatchString(p.ThumbnailURL.String()) {
-			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=64"
+			return p.ThumbnailURL.String() + "?format=jpg&thumbnail=96"
 		} else if pictrs.MatchString(p.URL.String()) {
-			return p.URL.String() + "?format=jpg&thumbnail=64"
+			return p.URL.String() + "?format=jpg&thumbnail=96"
 		}
 		if imgur.MatchString(p.URL.String()) {
 			return imgur.ReplaceAllString(p.URL.String(), "https://i.imgur.com/${2}s.jpg")
@@ -661,10 +661,16 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	commentid, _ := strconv.ParseInt(ps.ByName("commentid"), 10, 64)
 	state.GetComment(commentid)
+	if ps.ByName("op") == "block" {
+		state.Op = "block"
+		Render(w, "block.html", state)
+		return
+	}
 	if state.XHR && len(m["content"]) > 0 {
 		Render(w, "create_comment.html", state)
 		return
 	}
+
 	state.GetPost(state.PostID)
 	Render(w, "index.html", state)
 }
@@ -1058,7 +1064,7 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		}
 		state.Client.BlockPerson(context.Background(), lemmy.BlockPerson{
 			PersonID: personId,
-			Block:    r.FormValue("submit") == "block",
+			Block:    r.FormValue("submit") != "unblock",
 		})
 		if r.FormValue("xhr") == "1" {
 			w.Write([]byte{})
@@ -1336,6 +1342,43 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 				InstanceID: instanceID,
 				Block:      true,
 			})
+		}
+		if reason := r.FormValue("reason"); reason != "" {
+			state.Client.CreatePostReport(context.Background(), lemmy.CreatePostReport{
+				PostID: postid,
+				Reason: reason,
+			})
+		}
+		if r.FormValue("xhr") != "" {
+			w.Write([]byte{})
+			return
+		}
+	case "block_comment":
+		commentid, _ := strconv.ParseInt(r.FormValue("commentid"), 10, 64)
+		state.GetComment(commentid)
+		if r.FormValue("blockuser") != "" && len(state.Comments) > 0 {
+			fmt.Println("blockuser")
+			state.Client.BlockPerson(context.Background(), lemmy.BlockPerson{
+				PersonID: state.Comments[0].P.Creator.ID,
+				Block:    true,
+			})
+		}
+		if r.FormValue("blockuserinstance") != "" && len(state.Comments) > 0 {
+			fmt.Println("blockuserinstance")
+			state.Client.BlockInstance(context.Background(), lemmy.BlockInstance{
+				InstanceID: state.Comments[0].P.Creator.InstanceID,
+				Block:      true,
+			})
+		}
+		if reason := r.FormValue("reason"); reason != "" {
+			state.Client.CreateCommentReport(context.Background(), lemmy.CreateCommentReport{
+				CommentID: commentid,
+				Reason:    r.FormValue("reason"),
+			})
+		}
+		if r.FormValue("xhr") != "" {
+			w.Write([]byte{})
+			return
 		}
 	case "read_post":
 		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)

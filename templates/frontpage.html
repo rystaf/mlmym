@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/_/static/dark.css?v={{ .Version }}" {{ if not .Dark }}media="(prefers-color-scheme:dark)"{{ end }}>
     {{- end }}
   </head>
-  <body>
+  <body{{ if .HideSidebar  }} class="sidetoggle"{{ end }}>
     <noscript>
       <link rel="stylesheet" href="/_/static/noscript.css?v={{ .Version }}">
     </noscript>
@@ -16,7 +16,7 @@
     {{- if and (not .ShowNSFW) .Community .Community.CommunityView.Community.NSFW }}
       {{ template "nsfw.html" }}
     {{- else }}
-    <main{{ if .HideSidebar  }} class="wide"{{ end }}>
+    <main>
       {{ template "sidebar.html" . }}
       {{- if and (not .Community) .Tagline }}
       <div id="tagline">
