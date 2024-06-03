@@ -60,7 +60,7 @@
       <span>: search</span>
       {{ end }}
       <ul>
-        {{- if eq .Op "block" }}<li class="selected"><a href="/{{ .Host }}/post/{{ (index .Posts 0).Post.ID}}">block</a></li>
+        {{- if eq .Op "block" }}<li class="selected"><a href="/{{ .Host }}{{ if .Posts }}/post/{{ (index .Posts 0).Post.ID}}{{ end}}">block</a></li>
         {{ else if and .User (not .Query)}}
         <li {{if eq .Op "" }}class="selected"{{end}}><a href="?">overview</a></li>
           {{ if and .Session (eq .User.PersonView.Person.ID .Session.UserID) }}
@@ -89,7 +89,7 @@
         {{- end }}{{ end }}
         <form id="sidetoggle" class="link-btn{{ if .HideSidebar }} o{{end}}" method="POST">
           <input type="hidden" name="op" value="sidetoggle">
-          <button title="Toggle Sidebar">{{ if .HideSidebar }}[+]{{ else }}[-]{{ end }}</button>
+          <button title="Toggle Sidebar"><span>[+]</span><span>[–]</span></button>
         </form>
       </ul>
       {{- end }}

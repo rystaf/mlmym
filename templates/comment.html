@@ -15,10 +15,10 @@
         </div>
         <div class="meta">
           <a class="minimize" href="" for="c{{.P.Comment.ID}}">
-{{- if or (lt .P.Counts.Score -5) .P.Comment.Deleted -}}
+{{- if or (lt .P.Counts.Score -5) .P.Comment.Deleted .P.Comment.Removed -}}
             [+]
 {{- else -}}
-            [-]
+            [–]
 {{- end -}}
           </a>
           <a class="creator{{ if .P.Comment.Distinguished}}{{if false}} admin{{end}} distinguished{{ else if .Submitter }} submitter{{end}}" href="/{{.State.Host}}/u/{{fullname .P.Creator}}">
@@ -31,6 +31,9 @@
           <b>{{.P.Counts.Score}} points</b> <span title="{{.P.Comment.Published.Time}}">{{ humanize .P.Comment.Published.Time }}</span>
                 {{- if gt .P.Comment.Updated.ValueOrZero.Time.Unix .P.Comment.Published.Time.Unix -}}
                 * (last edited <span title="{{.P.Comment.Updated.ValueOrZero.Time}}">{{ humanize .P.Comment.Updated.ValueOrZero.Time }}</span>)
+                {{ end }}
+                {{ if .P.Counts.ChildCount }}
+                <span class="numChildren">({{ .P.Counts.ChildCount }} children)</span>
                 {{ end }}
         </div>
         <div class="content">
@@ -83,12 +86,16 @@
               </form>
             </li>
             <li>
-              <form class="link-btn" method="POST">
+              <!--form class="link-btn" method="POST">
                 <input type="hidden" name="commentid" value="{{.P.Comment.ID}}">
                 <input type="hidden" name="op" value="block_user">
                 <input type="hidden" name="user_id" value="{{.P.Creator.ID}}">
                 <input type="submit" name="submit" value="block">
-              </form>
+              </form-->
+            </li>
+            <li>
+              <a href="/{{ .State.Host }}/comment/{{ .P.Comment.ID }}/block" rel="xhr" target="block{{ .P.Comment.ID }}">block</a>
+              <span class="blockpopup" name="block{{.P.Comment.ID}}"></span>
             </li>
             <li>
               <a class="reply" for="c{{.P.Comment.ID}}" href="/{{.State.Host}}/comment/{{.P.Comment.ID}}?reply">

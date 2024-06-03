@@ -27,7 +27,6 @@ function postClick(e) {
     btn.className = "expando-button"
     targ.getElementsByClassName("embed")[0].innerHTML = ""
   } else {
-    if (window.innerWidth <= 800) targ.appendChild(bdy);
     bdy.className = 'expando open';
     btn.className = "expando-button open"
     var url = targ.getElementsByClassName("url")[0].href
@@ -68,13 +67,12 @@ function commentClick(e) {
   var targ = e.currentTarget || e.srcElement || e;
   if (targ.nodeType == 3) targ = targ.parentNode;
   if (e.target.name=="submit") {
-    e.preventDefault()
     var form = uptil(e.target, function(el){ return el.tagName == "FORM" })
     if (form) {
       data = new FormData(form)
       data.set(e.target.name, e.target.value)
       data.set("xhr", 1)
-      if (("c"+data.get("commentid")) == targ.id) {
+      if (("c"+data.get("commentid")) == targ.id && data.get("op") != "block_comment") {
         targ.action = form.action
         if (e.target.value == "preview") {
           targ = form
@@ -82,6 +80,8 @@ function commentClick(e) {
       } else if (("c"+data.get("parentid")) == targ.id) {
         targ = form
       } else { return }
+      e.preventDefault()
+      e.target.style.cursor = 'wait'
       e.target.disabled = "disabled"
       if (data.get("op") == "delete_comment") {
         if (!confirm("Are you sure?")) {
@@ -120,7 +120,7 @@ function commentClick(e) {
       btn.innerHTML = "[+]"
     } else {
       targ.className = "comment"
-      btn.innerHTML = "[-]"
+      btn.innerHTML = "[–]"
     }
     return false
   }
@@ -506,6 +506,10 @@ function setup() {
   var comments = document.getElementsByClassName("comment")
   for (var i = 0; i < comments.length; i++) {
     comments[i].addEventListener("click", commentClick)
+    var forms = comments[i].getElementsByTagName("form")
+    for (var f = 0; f < forms.length; f++) {
+      forms[f].addEventListener("submit", formSubmit)
+    }
   }
   var links = document.getElementsByTagName("a")
   for (var i = 0; i < links.length; i++) {
@@ -521,8 +525,8 @@ function setup() {
 function sideToggle(e) {
   e.preventDefault();
   var side = document.getElementsByClassName("side")[0]
-  var main = document.getElementsByTagName("main")[0]
-  if (!side) return;
+  var body = document.getElementsByTagName("body")[0]
+  if (!side || !body) return;
   var form = e.target
   if (form.tagName != "FORM") {
     form = uptil(e.target, function(el){ return el.tagName == "FORM" })
@@ -530,19 +534,10 @@ function sideToggle(e) {
   var data = new FormData(form)
   data.append("xhr", "1")
   request(form.target, data)
-console.log(e)
-  if (side.className == "side") {
-    side.className = "side hide"
-    form.classList.add("o")
-    if (main) {
-      main.className = "wide"
-    }
+  if (body.className == "sidetoggle") {
+    body.className = ""
   } else {
-    side.className = "side"
-    form.classList.remove("o")
-    if (main) {
-      main.className = ""
-    }
+    body.className = "sidetoggle"
   }
 
 }
