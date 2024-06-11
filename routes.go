@@ -1340,8 +1340,8 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	case "read_post":
 		postid, _ := strconv.ParseInt(r.FormValue("postid"), 10, 64)
 		post := lemmy.MarkPostAsRead{
-			PostID: lemmy.NewOptional(postid),
-			Read:   true,
+			PostIDs: lemmy.NewOptional([]int64{postid}),
+			Read:    true,
 		}
 		if r.FormValue("submit") == "mark unread" {
 			post.Read = false
