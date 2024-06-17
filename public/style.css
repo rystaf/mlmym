@@ -472,27 +472,20 @@ form.blockpost {
   border-radius: 4px;
   margin: 0px 6px 0px 0px;
   cursor: pointer;
-  float:left;
+  float: left;
+  text-align: center;
+  line-height: 23px;
 }
 .expando-button::before{
   content: "+";
-  float: left;
-  position: relative;
   color: #fff;
   font-size: 16px;
-  left: 11px;
-  top: 3px;
 }
 .open.expando-button {
   border-radius: 30px;
 }
 .open.expando-button::before {
   content: "x";
-  color: #fff;
-  left: 7px;
-  top: 0px;
-  font-weight: bold;
-  font-family: sans-serif;
 }
 .expando-button:hover{
   background-color: #466599;
