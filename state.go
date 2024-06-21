@@ -290,7 +290,7 @@ func (state *State) GetSite() {
 	if len(state.Site.Taglines) > 0 {
 		state.Tagline = state.Site.Taglines[rand.Intn(len(state.Site.Taglines))].Content
 	}
-	if !state.Site.MyUser.IsValid() {
+	if !state.Site.MyUser.IsValid() || state.Session == nil {
 		return
 	}
 	for _, c := range state.Site.MyUser.ValueOrZero().Follows {

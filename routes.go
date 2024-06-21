@@ -892,7 +892,6 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		return
 	}
 	var token string
-	var username string
 	switch r.FormValue("submit") {
 	case "log in":
 		login := lemmy.Login{
@@ -916,7 +915,6 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		}
 		if resp.JWT.IsValid() {
 			token = resp.JWT.String()
-			username = r.FormValue("username")
 			deleteCookie(w, state.Host, "ShowNSFW")
 		}
 	case "sign up":
@@ -947,7 +945,6 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			return
 		}
 		if resp.JWT.IsValid() {
-			username = r.FormValue("username")
 			token = resp.JWT.String()
 		} else {
 			var alert string
@@ -965,16 +962,16 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		}
 	}
 	if token != "" {
-		state.GetUser(username)
-		if state.User == nil {
-			return
+		state.Client.Token = token
+		state.GetSite()
+		if myUser, ok := state.Site.MyUser.Value(); ok {
+			setCookie(w, state.Host, "jwt", token)
+			userid := strconv.FormatInt(myUser.LocalUserView.Person.ID, 10)
+			setCookie(w, state.Host, "user", myUser.LocalUserView.Person.Name+":"+userid)
+			setCookie(w, state.Host, "jwt", token)
+			r.URL.Path = "/" + state.Host
+			http.Redirect(w, r, r.URL.String(), http.StatusFound)
 		}
-		setCookie(w, state.Host, "jwt", token)
-		userid := strconv.FormatInt(state.User.PersonView.Person.ID, 10)
-		setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
-		setCookie(w, state.Host, "jwt", token)
-		r.URL.Path = "/" + state.Host
-		http.Redirect(w, r, r.URL.String(), http.StatusFound)
 		return
 	}
 }
@@ -1120,11 +1117,12 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			Render(w, "login.html", state)
 			return
 		} else if resp.JWT.IsValid() {
-			state.GetUser(r.FormValue("username"))
-			if state.User != nil {
+			state.Client.Token = resp.JWT.String()
+			state.GetSite()
+			if myuser, ok := state.Site.MyUser.Value(); ok {
 				setCookie(w, state.Host, "jwt", resp.JWT.String())
-				userid := strconv.FormatInt(state.User.PersonView.Person.ID, 10)
-				setCookie(w, state.Host, "user", state.User.PersonView.Person.Name+":"+userid)
+				userid := strconv.FormatInt(myuser.LocalUserView.Person.ID, 10)
+				setCookie(w, state.Host, "user", myuser.LocalUserView.Person.Name+":"+userid)
 			}
 		}
 	case "create_community":
