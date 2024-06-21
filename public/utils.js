@@ -521,6 +521,16 @@ function setup() {
   if (st) {
     st.addEventListener("click", sideToggle)
   }
+var collapseMedia = document.querySelectorAll(".content summary a, .expando > div > details summary a")
+  for (var i = 0; i < collapseMedia.length; i++) {
+    collapseMedia[i].onclick = toggleDetails
+  }
+}
+function toggleDetails(e) {
+  if (e.target.parentNode.tagName == 'SUMMARY') {
+    e.target.parentNode.click();
+  }
+  return false
 }
 function sideToggle(e) {
   e.preventDefault();

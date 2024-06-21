@@ -107,6 +107,7 @@ type State struct {
 	HideInstanceNames bool
 	HideThumbnails    bool
 	HideSidebar       bool
+	CollapseMedia     bool
 	LinksInNewWindow  bool
 	SubmitURL         string
 	SubmitTitle       string

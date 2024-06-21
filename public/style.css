@@ -83,6 +83,12 @@ summary {
 .expando > div {
   text-align: center;
 }
+.comment .content details img {
+  display: none;
+}
+.comment .content details[open] img {
+  display: unset;
+}
 .comment.hidden {
   padding-bottom:5px;
   padding-left: 4px;
@@ -526,7 +532,7 @@ form.blockpost {
   cursor: pointer;
   float:left;
 }
-.expando-button::before{
+.expando-button::before,.collapse .expando-button::before{
   content: "+";
   float: left;
   position: relative;
@@ -534,11 +540,17 @@ form.blockpost {
   font-size: 12px;
   left: 12px;
   top: 7px;
+  line-height: normal;
+  font-weight: normal;
+  font-family: unset;
 }
-.open.expando-button {
+.open.expando-button, .collapse .open.expando-button {
   border-radius: 30px;
 }
-.open.expando-button::before {
+.collapse .expando-button {
+  border-radius: 4px;
+}
+.open.expando-button::before, .collapse .open.expando-button::before {
   content: "✖";
   color: #fff;
   font-weight: bold;
@@ -614,9 +626,15 @@ form.blockpost {
 #settingspopup.open, #mycommunities.open {
   display: inline-block;
 }
-.expando.open{
+.expando.open, .collapse .expando.text{
   display: block;
   clear: left;
+}
+.collapse .expando .image {
+  display: none;
+}
+.collapse .expando.open .image {
+  display: block;
 }
 .expando .image {
   max-width: 100%;
@@ -735,7 +753,11 @@ main {
   }
 }
 @media (min-width: 800px) {
-  .expando .thumb, .expando .score, .expando .rank {
+  .collapse .open.expando .thumb, .collapse .open.expando .score, .collapse .open.expando .rank {
+    display: none;
+  }
+  .collapse.post .text.expando .thumb, .collapse.post .text.expando .score, .collapse.post .text.expando .rank,
+  .post .expando.open .thumb, .post .expando.open .score, .post .expando.open .rank {
     display: block;
   }
   .expando .image {

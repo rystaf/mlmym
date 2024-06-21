@@ -1,5 +1,5 @@
 {{- if and (ne .State.Op "vote_post") (ne .State.Op "save_post") -}}
-<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if .Post.FeaturedCommunity }} distinguished{{end}}{{if .Post.FeaturedLocal }} announcement{{end}}" id="p{{.Post.ID}}">
+<div class="post{{if .Post.Deleted}} deleted{{end}}{{ if .Post.FeaturedCommunity }} distinguished{{end}}{{if .Post.FeaturedLocal }} announcement{{end}}{{ if and (eq .Rank 0) (.State.CollapseMedia) }} collapse{{end}}" id="p{{.Post.ID}}">
   {{- if gt .Rank 0 }}
         <div class="rank"> {{ .Rank }} </div>
   {{- end }}
@@ -39,8 +39,8 @@
             </a>
             ({{ domain . }})
           </div>
-        <div class="entry">
-          <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) (not (isYoutube .Post.URL.String)) }} hidden{{else if eq .Rank 0}} open{{ end }}"></div>
+          <div class="entry">
+          <div class="expando-button{{ if and (not (and .Post.Body.IsValid .Post.Body.String )) (not (isImage .Post.URL.String)) (not (isYoutube .Post.URL.String)) }} hidden{{else if and (eq .Rank 0) (not .State.CollapseMedia)}} open{{ end }}"></div>
           <div>
           <div class="meta">
             <span>
@@ -121,7 +121,7 @@
           </div>
         </div>
         </div>
-        <div class="expando{{ if eq .Rank 0 }} open{{ end}}">
+        <div class="expando{{ if and (eq .Rank 0) (not .State.CollapseMedia)}} open{{ end}}{{ if and (not .Post.Body.IsValid) (not (isImage .Post.URL.String))}} hide{{end}}{{ if and .Post.Body.IsValid (ne .Post.Body.String "") }} text{{end}}">
 {{- if or ((and .Post.Body.IsValid (ne .Post.Body.String ""))) (isImage .Post.URL.String)}}
         {{- if gt .Rank 0 }}
           <div class="rank">&nbsp;</div>
@@ -133,12 +133,18 @@
 {{- end }}
           <div>
 {{- if (and .Post.Body.IsValid (ne .Post.Body.String "")) }}
-            <div class="md">{{ markdown .State.Host .Post.Body.String }}</div>
+          <div class="md">
+            {{ if .State.CollapseMedia }}
+              {{ collapsemedia (markdown .State.Host .Post.Body.String) }}
+            {{ else }}
+              {{ markdown .State.Host .Post.Body.String }}
+            {{ end }}
+          </div>
 {{- end }}
 {{- if isImage .Post.URL.String}}
-            <img class="image" loading="lazy" src="{{ .Post.URL }}">
+          <img class="image" loading="lazy" src="{{ .Post.URL }}">
 {{- end }}
-            <div class="embed"></div>
+          <div class="embed"></div>
           </div>
         </div>
       </div>

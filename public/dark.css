@@ -77,6 +77,9 @@ input[type=text], input[type=password], textarea {
   color: #ddd;
   border-color: #666;
 }
+.expando > div > details {
+  color: white;
+}
 .side .stats {
   background-color: #393939;
   border-color: #666;

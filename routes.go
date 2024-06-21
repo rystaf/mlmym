@@ -190,6 +190,10 @@ var funcMap = template.FuncMap{
 		body = RegReplace(body, `::: ?spoiler (.*?)\n([\S\s]*?):::`, "<details><summary>$1</summary>$2</details>")
 		return template.HTML(body)
 	},
+	"collapsemedia": func(h template.HTML) template.HTML {
+		body := string(h)
+		return template.HTML(RegReplace(body, `<img (.*?) src="(.*?)"(.*?)>`, `<details><summary><a target="_blank" href="$2">collapsed inline media</a></summary><img $1 src="$2"$3></details>`))
+	},
 	"rmmarkdown": func(body string) string {
 		var buf bytes.Buffer
 		if err := md.Convert([]byte(body), &buf); err != nil {
@@ -327,6 +331,11 @@ func Initialize(Host string, r *http.Request) (State, error) {
 		state.HideThumbnails = hide != "0"
 	} else {
 		state.HideThumbnails = os.Getenv("HIDE_THUMBNAILS") != ""
+	}
+	if collapse := getCookie(r, "CollapseMedia"); collapse != "" {
+		state.CollapseMedia = collapse != "0"
+	} else {
+		state.CollapseMedia = os.Getenv("COLLAPSE_MEDIA") != ""
 	}
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
@@ -848,6 +857,13 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		} else {
 			setCookie(w, "", "HideThumbnails", "0")
 			state.HideInstanceNames = false
+		}
+		if r.FormValue("collapseMedia") != "" {
+			setCookie(w, "", "CollapseMedia", "1")
+			state.CollapseMedia = true
+		} else {
+			setCookie(w, "", "CollapseMedia", "0")
+			state.CollapseMedia = false
 		}
 		if r.FormValue("linksInNewWindow") != "" {
 			setCookie(w, "", "LinksInNewWindow", "1")
