@@ -84,7 +84,7 @@
         <li id="showimages"><a id="se" href="">show images</a></li>
           {{- end }}
         {{- end }}
-        {{- if and .PostID }}{{ $post := (index .Posts 0) }}{{ if $post.CrossPosts }}
+        {{- if and .PostID .Posts }}{{ $post := (index .Posts 0) }}{{ if $post.CrossPosts }}
         <li><a href="/{{.Host}}/search?q={{ $post.Post.URL.String }}&searchtype=Url{{ if not $post.Post.Local }}&listingType=All{{end}}">other discussions ({{ $post.CrossPosts }})</a></li>
         {{- end }}{{ end }}
         <form id="sidetoggle" class="link-btn{{ if .HideSidebar }} o{{end}}" method="POST">
