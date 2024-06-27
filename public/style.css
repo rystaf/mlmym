@@ -64,7 +64,7 @@ summary {
   width: 38px;
 }
 .post .score div div {
-  margin: 18px 2px;
+  margin: 17px 2px;
 }
 .create_comment {
   margin: 0 0 10px 0px;
@@ -79,6 +79,7 @@ summary {
   overflow:hidden;
   max-width: 840px;
   text-align: left;
+  margin-top: 4px;
 }
 .expando > div {
   text-align: center;
@@ -90,7 +91,7 @@ summary {
   display: unset;
 }
 .comment.hidden {
-  padding-bottom:5px;
+  padding-bottom:2px;
   padding-left: 4px;
 }
 .comment.hidden .score form input {
@@ -98,31 +99,34 @@ summary {
 }
 .comment .score {
   min-height: 32px;
-  min-width: 4px;
+  min-width: 11px;
 }
 .comment.hidden .score {
   min-height: 1px;
 }
 .comment .score form {
-  margin-right: 2px;
-  min-width: 20px;
+  width: 30px;
   position: relative;
-  bottom: 2px;
+  text-align: center;
 }
 .score form.link-btn input {
   display: inline-block;
   color: #b7b7b7;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 15px;
 }
 .comment .score form.link-btn input {
-  line-height: 17px;
+  line-height: 14px;
 }
 .score form.like.link-btn input:first-child, .score .like div {
   color: #3880ff;
+  -webkit-text-stroke: unset;
+  -webkit-text-fill-color: unset;
 }
 .score form.dislike.link-btn input:last-child, .score .dislike div {
   color: #eb445a;
+  -webkit-text-stroke: unset;
+  -webkit-text-fill-color: unset;
 }
 
 .title a {
@@ -134,7 +138,7 @@ summary {
 }
 .post.distinguished .title a, .post.announcement .title a,
 .post.announcement .title a:visited {
-  color: #228822;
+  color: #228822 !important;
   font-weight: bold;
 }
 .post.deleted .title a {
@@ -163,7 +167,7 @@ summary {
   font-size: 13px;
 }
 .activity .title {
-  margin: 5px 0px 2px 10px;
+  margin: 5px 0px 0px 10px;
 }
 .activity .post {
   margin-bottom: 10px;
@@ -187,10 +191,11 @@ summary {
   margin: 5px 0px 8px 0px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
-  padding: 7px 8px 0px 4px;
+  padding: 7px 7px 0px 0px;
 }
 .activity .comment {
   border: 0px;
+  margin-top: 1px;
 }
 .comment img {
   max-height: 300px;
@@ -211,7 +216,6 @@ summary {
 .comment .meta {
   font-size: 10px;
   overflow: hidden;
-  margin-bottom: 2px;
 }
 .preview h3 {
   background-color: #f0f3fc;
@@ -472,7 +476,7 @@ form.nsfw div {
   width: 100%;
 }
 .comment .buttons {
-  margin: 3px 0px 2px 0px;
+  margin: 4px 0px 4px 0px;
   line-height: 16px;
 }
 .comment.hidden .buttons {
@@ -493,7 +497,6 @@ form.nsfw div {
   text-decoration: underline;
 }
 .entry {
-  display: inline-block;
   color: #888;
   overflow: hidden;
   padding: 4px 0 0 0;

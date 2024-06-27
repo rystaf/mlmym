@@ -21,6 +21,8 @@ input[type=text], input[type=password], textarea {
 }
 .score form.link-btn input {
   color: #646464;
+  -webkit-text-stroke: 1px #484848;
+  -webkit-text-fill-color: #222;
 }
 .post.distinguished .title a:visited {
   color: #228822;
@@ -29,8 +31,8 @@ input[type=text], input[type=password], textarea {
 .title a {
   color: #dedede;
 }
-.title a:visited, .title.visited a {
-  color: #a6a6a6 !important;
+.post .title a:visited, .post .title.visited a {
+  color: #a6a6a6;
 }
 .message b {
   color: #ddd;
