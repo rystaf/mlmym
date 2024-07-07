@@ -1406,7 +1406,9 @@ func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		_, err := state.Client.MarkPostAsRead(context.Background(), post)
 		if err != nil {
 			fmt.Println(err)
-		} else if r.FormValue("xhr") != "" {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		if r.FormValue("xhr") != "" {
 			w.Write([]byte{})
 			return
 		}
