@@ -24,6 +24,9 @@ input[type=text], input[type=password], textarea {
   -webkit-text-stroke: 1px #484848;
   -webkit-text-fill-color: #222;
 }
+.score form.link-btn input:hover {
+  -webkit-text-stroke: 1px #777;
+}
 .post.distinguished .title a:visited {
   color: #228822;
   font-weight: bold;
