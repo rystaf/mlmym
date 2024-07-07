@@ -36,7 +36,7 @@ function postClick(e) {
       data.append("op", "read_post")
       data.append("submit", "mark read")
       data.append("xhr", "1")
-      data.append("postid", bdy.parentNode.parentNode.id.slice(1))
+      data.append("postid", bdy.parentNode.id.slice(1))
       request("", data)
     }
     if (id = parseYoutube(url)) {
