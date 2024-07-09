@@ -94,6 +94,7 @@ type State struct {
 	UserName          string
 	User              *lemmy.GetPersonDetailsResponse
 	Now               int64
+	CookieAge         int
 	XHR               bool
 	Op                string
 	Site              *lemmy.GetSiteResponse

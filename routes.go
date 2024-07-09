@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/dustin/go-humanize"
 	"github.com/julienschmidt/httprouter"
@@ -312,6 +313,9 @@ func Initialize(Host string, r *http.Request) (State, error) {
 			state.Session = &sess
 		}
 	}
+	if age, err := strconv.Atoi(getCookie(r, "CookieAge")); err == nil {
+		state.CookieAge = age
+	}
 	state.Listing = getCookie(r, "DefaultListingType")
 	state.Sort = getCookie(r, "DefaultSortType")
 	state.CommentSort = getCookie(r, "DefaultCommentSortType")
@@ -508,6 +512,9 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	if state.CookieAge != int(time.Now().Month()) {
+		setCookies(w, &state)
+	}
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -791,7 +798,7 @@ func setCookie(w http.ResponseWriter, host string, name string, value string) {
 	cookie := http.Cookie{
 		Name:     name,
 		Value:    value,
-		MaxAge:   86400 * 30,
+		MaxAge:   86400 * 30 * 10,
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode,
 		Secure:   true,
@@ -810,6 +817,49 @@ func deleteCookie(w http.ResponseWriter, host string, name string) {
 	}
 	http.SetCookie(w, &cookie)
 }
+func setCookies(w http.ResponseWriter, state *State) {
+	env := make(map[string]string)
+	env["HideThumbnails"] = "HIDE_THUMBNAILS"
+	env["CollapseMedia"] = "COLLAPSE_MEDIA"
+	env["LinksInNewWindow"] = "LINKS_IN_NEW_WINDOW"
+	env["DefaultSortType"] = "SORT"
+	env["DefaultListingType"] = "LISTING"
+	env["DefaultCommentSortType"] = "COMMENT_SORT"
+	bools := make(map[string]bool)
+	bools["ShowNSFW"] = state.ShowNSFW
+	bools["HideInstanceNames"] = state.HideInstanceNames
+	bools["HideThumbnails"] = state.HideThumbnails
+	bools["CollapseMedia"] = state.CollapseMedia
+	bools["LinksInNewWindow"] = state.LinksInNewWindow
+	for k, v := range bools {
+		if v {
+			setCookie(w, "", k, "1")
+		} else if e, ok := env[k]; ok && os.Getenv(e) != "" {
+			setCookie(w, "", k, "0")
+		} else {
+			deleteCookie(w, "", k)
+		}
+	}
+	strings := make(map[string]string)
+	strings["DefaultSortType"] = state.Sort
+	strings["DefaultListingType"] = state.Listing
+	strings["DefaultCommentSortType"] = state.CommentSort
+	for k, v := range strings {
+		setCookie(w, "", k, v)
+	}
+	if state.Dark == nil {
+		deleteCookie(w, "", "Dark")
+	} else if *state.Dark {
+		setCookie(w, "", "Dark", "1")
+	} else {
+		setCookie(w, "", "Dark", "0")
+	}
+	if state.Session != nil {
+		setCookie(w, state.Host, "user", state.Session.UserName+":"+strconv.Itoa(state.Session.UserID))
+		setCookie(w, state.Host, "jwt", state.Client.Token)
+	}
+	setCookie(w, state.Host, "CookieAge", strconv.Itoa(int(time.Now().Month())))
+}
 func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
 	if err != nil {
@@ -819,62 +869,33 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state.GetSite()
 	switch r.Method {
 	case "POST":
-		for _, name := range []string{"DefaultSortType", "DefaultListingType", "DefaultCommentSortType"} {
-			deleteCookie(w, state.Host, name)
-			setCookie(w, "", name, r.FormValue(name))
-		}
 		dark := true
 		switch r.FormValue("Dark") {
 		case "1":
-			setCookie(w, "", "Dark", "1")
 			state.Dark = &dark
 		case "0":
-			setCookie(w, "", "Dark", "0")
 			dark = false
 			state.Dark = &dark
 		default:
-			deleteCookie(w, "", "Dark")
 			state.Dark = nil
 		}
-		if r.FormValue("shownsfw") != "" {
-			setCookie(w, "", "ShowNSFW", "1")
-			state.ShowNSFW = true
-		} else {
-			deleteCookie(w, state.Host, "ShowNSFW")
-			deleteCookie(w, "", "ShowNSFW")
-			state.ShowNSFW = false
+		bools := make(map[string]*bool)
+		bools["shownsfw"] = &state.ShowNSFW
+		bools["hideInstanceNames"] = &state.HideInstanceNames
+		bools["hideThumbnails"] = &state.HideThumbnails
+		bools["collapseMedia"] = &state.CollapseMedia
+		bools["linksInNewWindow"] = &state.LinksInNewWindow
+		for k, v := range bools {
+			*v = r.FormValue(k) != ""
 		}
-		if r.FormValue("hideInstanceNames") != "" {
-			setCookie(w, "", "HideInstanceNames", "1")
-			state.HideInstanceNames = true
-		} else {
-			deleteCookie(w, "", "HideInstanceNames")
-			state.HideInstanceNames = false
+		strings := make(map[string]*string)
+		strings["DefaultListingType"] = &state.Listing
+		strings["DefaultSortType"] = &state.Sort
+		strings["DefaultCommentSortType"] = &state.CommentSort
+		for k, v := range strings {
+			*v = r.FormValue(k)
 		}
-		if r.FormValue("hideThumbnails") != "" {
-			setCookie(w, "", "HideThumbnails", "1")
-			state.HideInstanceNames = true
-		} else {
-			setCookie(w, "", "HideThumbnails", "0")
-			state.HideInstanceNames = false
-		}
-		if r.FormValue("collapseMedia") != "" {
-			setCookie(w, "", "CollapseMedia", "1")
-			state.CollapseMedia = true
-		} else {
-			setCookie(w, "", "CollapseMedia", "0")
-			state.CollapseMedia = false
-		}
-		if r.FormValue("linksInNewWindow") != "" {
-			setCookie(w, "", "LinksInNewWindow", "1")
-			state.LinksInNewWindow = true
-		} else {
-			setCookie(w, "", "LinksInNewWindow", "0")
-			state.LinksInNewWindow = false
-		}
-		state.Listing = r.FormValue("DefaultListingType")
-		state.Sort = r.FormValue("DefaultSortType")
-		state.CommentSort = r.FormValue("DefaultCommentSortType")
+		setCookies(w, &state)
 		// TODO save user settings
 		// TODO fetch user settings
 		//case "GET":
