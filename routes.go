@@ -264,10 +264,17 @@ func RegReplace(input string, match string, replace string) string {
 	return re.ReplaceAllString(input, replace)
 }
 
-func getenv(key, fallback string) string {
+func getenv(key string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
-		return fallback
+		switch key {
+		case "SORT", "COMMENT_SORT":
+			return "Hot"
+		case "LISTING":
+			return "All"
+		default:
+			return ""
+		}
 	}
 	return value
 }
@@ -343,13 +350,13 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	}
 	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
-		state.Sort = getenv("SORT", "Hot")
+		state.Sort = getenv("SORT")
 	}
 	if state.CommentSort == "" {
-		state.CommentSort = getenv("COMMENT_SORT", "Hot")
+		state.CommentSort = getenv("COMMENT_SORT")
 	}
 	if state.Listing == "" || state.Session == nil && state.Listing == "Subscribed" {
-		state.Listing = getenv("LISTING", "All")
+		state.Listing = getenv("LISTING")
 	}
 	if linksInNewWindow := getCookie(r, "LinksInNewWindow"); linksInNewWindow != "" {
 		state.LinksInNewWindow = linksInNewWindow != "0"
@@ -832,10 +839,12 @@ func setCookies(w http.ResponseWriter, state *State) {
 	bools["CollapseMedia"] = state.CollapseMedia
 	bools["LinksInNewWindow"] = state.LinksInNewWindow
 	for k, v := range bools {
-		if v {
-			setCookie(w, "", k, "1")
-		} else if e, ok := env[k]; ok && os.Getenv(e) != "" {
+		e, ok := env[k]
+		ev := (ok && os.Getenv(e) != "")
+		if !v && ev {
 			setCookie(w, "", k, "0")
+		} else if v && !ev {
+			setCookie(w, "", k, "1")
 		} else {
 			deleteCookie(w, "", k)
 		}
@@ -845,7 +854,11 @@ func setCookies(w http.ResponseWriter, state *State) {
 	strings["DefaultListingType"] = state.Listing
 	strings["DefaultCommentSortType"] = state.CommentSort
 	for k, v := range strings {
-		setCookie(w, "", k, v)
+		if e, ok := env[k]; ok && getenv(e) == v {
+			deleteCookie(w, "", k)
+		} else {
+			setCookie(w, "", k, v)
+		}
 	}
 	if state.Dark == nil {
 		deleteCookie(w, "", "Dark")
