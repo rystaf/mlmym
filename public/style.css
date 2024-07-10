@@ -91,8 +91,7 @@ summary {
   display: unset;
 }
 .comment.hidden {
-  padding-bottom:2px;
-  padding-left: 4px;
+  padding-bottom:6px;
 }
 .comment.hidden .score form input {
   display: none;
@@ -188,13 +187,12 @@ summary {
 .comment {
   overflow: hidden;
   font-size: 14px;
-  margin: 5px 0px 8px 0px;
+  margin: 5px 0px 0px 0px;
   border: 1px solid #e6e6e6;
   border-radius: 3px;
-  padding: 7px 7px 0px 0px;
+  padding: 7px 7px 7px 0px;
 }
 .activity .comment {
-  border: 0px;
   margin-top: 1px;
 }
 .comment img {
@@ -281,7 +279,7 @@ form.savecomment {
   margin: 0px 0px 5px 0px;
 }
 .comment .children {
-  margin: 3px 0px 5px 30px;
+  margin: 0px 0px 0px 30px;
 }
 .savecomment textarea {
   margin: 5px 0px;
@@ -344,6 +342,7 @@ form.savecomment {
   height: 15px;
   clear: left;
   font-size: 10px;
+  margin-top: 7px;
 }
 .morecomments a {
   color: #336699;
@@ -476,7 +475,7 @@ form.nsfw div {
   width: 100%;
 }
 .comment .buttons {
-  margin: 4px 0px 4px 0px;
+  margin: 4px 0px 0px 0px;
   line-height: 16px;
 }
 .comment.hidden .buttons {
