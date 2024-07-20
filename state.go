@@ -220,7 +220,6 @@ func (state *State) ParseQuery(RawQuery string) {
 	}
 	if len(m["sort"]) > 0 {
 		state.Sort = m["sort"][0]
-		state.CommentSort = m["sort"][0]
 	}
 	if len(m["communityname"]) > 0 {
 		state.CommunityName = m["communityname"][0]

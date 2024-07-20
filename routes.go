@@ -630,6 +630,9 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		Render(w, "block.html", state)
 		return
 	}
+	if len(m["sort"]) > 0 {
+		state.CommentSort = m["sort"][0]
+	}
 	state.GetComments()
 	Render(w, "index.html", state)
 }
