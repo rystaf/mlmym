@@ -348,7 +348,6 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	} else {
 		state.CollapseMedia = os.Getenv("COLLAPSE_MEDIA") != ""
 	}
-	state.ParseQuery(r.URL.RawQuery)
 	if state.Sort == "" {
 		state.Sort = getenv("SORT")
 	}
@@ -468,6 +467,7 @@ func PostRoot(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	dest, _ := url.Parse(input)
 	if dest.Host != "" {
 		state, _ := Initialize(dest.Host, r)
+		state.ParseQuery(r.URL.RawQuery)
 		if err := state.LemmyError(dest.Host); err != nil {
 			data["Error"] = err
 		} else {
@@ -489,6 +489,7 @@ func GetIcon(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.Write([]byte("404 - Not Found"))
 	}
 	state, _ := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	state.Client.Token = ""
 	resp, err := state.Client.Site(context.Background())
 	if err != nil {
@@ -522,6 +523,7 @@ func GetFrontpage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	if state.CookieAge != int(time.Now().Month()) {
 		setCookies(w, &state)
 	}
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -584,6 +586,7 @@ func ResolveId(r *http.Request, class string, id string, host string) string {
 
 func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -638,6 +641,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -702,6 +706,7 @@ func GetComment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	state.Sort = "New"
 	m, _ := url.ParseQuery(r.URL.RawQuery)
 	if len(m["sort"]) > 0 {
@@ -719,6 +724,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func GetMessageForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -729,6 +735,7 @@ func GetMessageForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 }
 func SendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -748,6 +755,7 @@ func SendMessage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func GetCreatePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -770,6 +778,7 @@ func GetCreatePost(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 func GetCreateCommunity(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		fmt.Println(err)
 		Render(w, "index.html", state)
@@ -786,6 +795,7 @@ func GetCreateCommunity(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 
 func Inbox(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -878,6 +888,7 @@ func setCookies(w http.ResponseWriter, state *State) {
 }
 func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -923,6 +934,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		fmt.Println(err)
 		Render(w, "index.html", state)
@@ -1014,6 +1026,7 @@ func SignUpOrLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 func GetLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -1030,6 +1043,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func Search(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
@@ -1073,6 +1087,7 @@ type PictrsResponse struct {
 
 func UserOp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	state, err := Initialize(ps.ByName("host"), r)
+	state.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		Render(w, "index.html", state)
 		return
