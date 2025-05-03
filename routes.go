@@ -362,6 +362,11 @@ func Initialize(Host string, r *http.Request) (State, error) {
 	} else {
 		state.LinksInNewWindow = os.Getenv("LINKS_IN_NEW_WINDOW") != ""
 	}
+	if commentsInNewWindow := getCookie(r, "CommentsInNewWindow"); commentsInNewWindow != "" {
+		state.CommentsInNewWindow = commentsInNewWindow != "0"
+	} else {
+		state.CommentsInNewWindow = os.Getenv("COMMENTS_IN_NEW_WINDOW") != ""
+	}
 	return state, nil
 }
 func GetTemplate(name string) (*template.Template, error) {
@@ -842,6 +847,7 @@ func setCookies(w http.ResponseWriter, state *State) {
 	env["HideThumbnails"] = "HIDE_THUMBNAILS"
 	env["CollapseMedia"] = "COLLAPSE_MEDIA"
 	env["LinksInNewWindow"] = "LINKS_IN_NEW_WINDOW"
+	env["CommentsInNewWindow"] = "COMMENTS_IN_NEW_WINDOW"
 	env["DefaultSortType"] = "SORT"
 	env["DefaultListingType"] = "LISTING"
 	env["DefaultCommentSortType"] = "COMMENT_SORT"
@@ -851,6 +857,7 @@ func setCookies(w http.ResponseWriter, state *State) {
 	bools["HideThumbnails"] = state.HideThumbnails
 	bools["CollapseMedia"] = state.CollapseMedia
 	bools["LinksInNewWindow"] = state.LinksInNewWindow
+	bools["CommentsInNewWindow"] = state.CommentsInNewWindow
 	for k, v := range bools {
 		e, ok := env[k]
 		ev := (ok && os.Getenv(e) != "")
@@ -912,6 +919,7 @@ func Settings(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		bools["hideThumbnails"] = &state.HideThumbnails
 		bools["collapseMedia"] = &state.CollapseMedia
 		bools["linksInNewWindow"] = &state.LinksInNewWindow
+		bools["commentsInNewWindow"] = &state.CommentsInNewWindow
 		for k, v := range bools {
 			*v = r.FormValue(k) != ""
 		}

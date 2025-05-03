@@ -69,7 +69,10 @@
           <div class="buttons">
             {{- if .Post.NSFW }}
             <span class="nsfw">NSFW</span>{{end}}
-            <a href="/{{ .State.Host }}/post/{{ .Post.ID }}">{{ .Counts.Comments }} comments</a>
+            <a href="/{{ .State.Host }}/post/{{ .Post.ID }}"
+               {{- if .State.CommentsInNewWindow }} target="_blank" {{ end }}>
+                {{ .Counts.Comments }} comments
+            </a>
             <a href="{{ .Post.ApID}}">fedilink</a>
             {{- if .State.Session }}
             <a href="/{{ .State.Host }}/post/{{ .Post.ID }}/block" rel="xhr" target="block{{ .Post.ID }}">block</a>
