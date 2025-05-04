@@ -150,6 +150,12 @@
         </label>
         <input type="checkbox" name="linksInNewWindow" {{ if .LinksInNewWindow }}checked{{end}}>
       </div>
+      <div>
+        <label>
+          open comments in new window
+        </label>
+        <input type="checkbox" name="commentsInNewWindow" {{ if .CommentsInNewWindow }}checked{{end}}>
+      </div>
     {{ if .Session }}
       <div class="scripting">
           <label>
